@@ -1,0 +1,60 @@
+{
+  "page_title": "Online Giving",
+  "subtitle": "An expression of gratitude and dedication to God",
+  "intro": "Give conveniently online. All donations are tax-deductible.",
+  "giving_types": {
+    "title": "Giving Types",
+    "tithe": "Tithe",
+    "offering": "Thanksgiving Offering",
+    "mission": "Mission Offering",
+    "building": "Building Fund",
+    "other": "Other Designated Giving"
+  },
+  "payment_methods": {
+    "title": "Ways to Give",
+    "zelle": {
+      "name": "Zelle",
+      "description": "Most convenient - No fees",
+      "email": "giving@koreanchurch.org",
+      "instructions": "Send to the email above via Zelle and include the giving type in the memo."
+    },
+    "venmo": {
+      "name": "Venmo",
+      "description": "Mobile payment app",
+      "account": "@KoreanChurch-Giving",
+      "instructions": "Send to the account above and include giving type and your name in the memo."
+    },
+    "paypal": {
+      "name": "PayPal",
+      "description": "Credit card or PayPal account",
+      "button": "Give via PayPal",
+      "instructions": "Click the button below to give through PayPal."
+    },
+    "check": {
+      "name": "Mail Check",
+      "description": "Traditional method",
+      "payable": "Payable to: Grace Korean Church",
+      "address": "123 Main Street, Anytown, NY 12345",
+      "instructions": "Please write the giving type in the memo line."
+    }
+  },
+  "security": {
+    "title": "Security & Important Notes",
+    "point1": "Verify official accounts for your security",
+    "point2": "Giving statements are sent out in January",
+    "point3": "Contact the finance team with any questions"
+  },
+  "tax": {
+    "title": "Tax Deduction Information",
+    "description": "Grace Korean Church is a registered 501(c)(3) nonprofit organization. All donations are tax-deductible.",
+    "ein": "EIN: 12-3456789",
+    "receipt": "For year-end tax statements, please contact the church office."
+  },
+  "contact": {
+    "title": "Questions?",
+    "description": "For questions about giving, please contact:",
+    "treasurer": "Church Treasurer",
+    "email": "treasurer@koreanchurch.org",
+    "phone": "(123) 456-7890 ext. 102"
+  }
+}

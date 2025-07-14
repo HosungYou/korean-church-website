@@ -1,0 +1,77 @@
+{
+  "page_title": "Service Times",
+  "subtitle": "Join us as we gather to worship and meet God",
+  "sunday_services": {
+    "title": "Sunday Services",
+    "korean_1st": {
+      "name": "1st Korean Service",
+      "time": "8:00 AM",
+      "location": "Main Sanctuary",
+      "description": "Traditional Korean service with hymns and biblical preaching."
+    },
+    "korean_2nd": {
+      "name": "2nd Korean Service",
+      "time": "11:00 AM",
+      "location": "Main Sanctuary",
+      "description": "Contemporary Korean service with modern worship."
+    },
+    "english": {
+      "name": "English Service",
+      "time": "11:00 AM",
+      "location": "Chapel",
+      "description": "Contemporary English service for English-speaking congregation."
+    }
+  },
+  "youth_children": {
+    "title": "Next Generation Ministry",
+    "youth": {
+      "name": "Youth Group",
+      "time": "11:00 AM",
+      "location": "Youth Center",
+      "grades": "6th - 12th Grade",
+      "description": "Dynamic worship and small group activities for teenagers"
+    },
+    "children": {
+      "name": "Children's Ministry",
+      "time": "11:00 AM",
+      "location": "Education Building",
+      "grades": "K - 5th Grade",
+      "description": "Fun and educational worship for children"
+    },
+    "nursery": {
+      "name": "Nursery",
+      "time": "8:00 AM, 11:00 AM",
+      "location": "Nursery Room",
+      "ages": "0-4 years",
+      "description": "Safe and loving childcare service"
+    }
+  },
+  "weekday_services": {
+    "title": "Weekday Services",
+    "wednesday": {
+      "name": "Wednesday Service",
+      "time": "7:30 PM",
+      "location": "Main Sanctuary",
+      "description": "Mid-week service for reflection through Word and prayer"
+    },
+    "dawn": {
+      "name": "Dawn Prayer",
+      "time": "Tue-Sat 6:00 AM",
+      "location": "Chapel",
+      "description": "Start your day with God's Word and prayer"
+    }
+  },
+  "special_services": {
+    "title": "Special Services",
+    "communion": "Holy Communion on first Sunday of each month",
+    "baptism": "Quarterly baptism services",
+    "revival": "Biannual revival meetings"
+  },
+  "timezone_notice": "* All times are in Eastern Time (EST/EDT)",
+  "parking": "Free parking available next to the church building",
+  "online": {
+    "title": "Online Service",
+    "description": "Join our 2nd Sunday service live on YouTube.",
+    "watch_live": "Watch Live Service"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "hero_title": "모든 이를 환영하는 교회",
+  "hero_subtitle": "예수 그리스도의 사랑 안에서 함께 성장하는 공동체",
+  "join_us": "함께 예배드려요",
+  "about_section": {
+    "title": "우리 교회를 소개합니다",
+    "description": "은혜로운 교회는 미국에서 한인들이 함께 모여 예배드리고, 성장하며, 섬기는 공동체입니다. 한국어와 영어로 예배를 드리며, 모든 세대가 함께 신앙생활을 할 수 있는 환경을 제공합니다.",
+    "learn_more": "더 알아보기"
+  },
+  "service_schedule": {
+    "title": "예배 시간 안내",
+    "korean_1st": "1부 한국어 예배",
+    "korean_2nd": "2부 한국어 예배",
+    "english": "영어 예배",
+    "youth": "중고등부",
+    "children": "주일학교",
+    "wednesday": "수요 예배",
+    "dawn": "새벽기도",
+    "time_zone": "동부 시간 기준"
+  },
+  "latest_sermons": {
+    "title": "최신 설교 말씀",
+    "view_all": "모든 설교 보기",
+    "watch": "설교 보기"
+  },
+  "upcoming_events": {
+    "title": "예정된 행사",
+    "view_calendar": "전체 일정 보기"
+  }
+}

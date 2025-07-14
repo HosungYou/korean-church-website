@@ -1,0 +1,30 @@
+{
+  "hero_title": "A Church for Everyone",
+  "hero_subtitle": "Growing Together in the Love of Jesus Christ",
+  "join_us": "Join Us for Worship",
+  "about_section": {
+    "title": "About Our Church",
+    "description": "Grace Church is a Korean American community where we gather to worship, grow, and serve together. We offer services in both Korean and English, providing an environment where all generations can thrive in their faith journey.",
+    "learn_more": "Learn More"
+  },
+  "service_schedule": {
+    "title": "Service Times",
+    "korean_1st": "1st Korean Service",
+    "korean_2nd": "2nd Korean Service",
+    "english": "English Service",
+    "youth": "Youth Group",
+    "children": "Children's Ministry",
+    "wednesday": "Wednesday Service",
+    "dawn": "Dawn Prayer",
+    "time_zone": "Eastern Time"
+  },
+  "latest_sermons": {
+    "title": "Latest Sermons",
+    "view_all": "View All Sermons",
+    "watch": "Watch Sermon"
+  },
+  "upcoming_events": {
+    "title": "Upcoming Events",
+    "view_calendar": "View Full Calendar"
+  }
+}

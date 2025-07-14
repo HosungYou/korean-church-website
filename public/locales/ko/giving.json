@@ -1,0 +1,60 @@
+{
+  "page_title": "온라인 헌금",
+  "subtitle": "하나님께 드리는 감사와 헌신의 표현",
+  "intro": "온라인으로 편리하게 헌금하실 수 있습니다. 모든 헌금은 세금 공제가 가능합니다.",
+  "giving_types": {
+    "title": "헌금 종류",
+    "tithe": "십일조",
+    "offering": "감사헌금",
+    "mission": "선교헌금",
+    "building": "건축헌금",
+    "other": "기타 지정헌금"
+  },
+  "payment_methods": {
+    "title": "헌금 방법",
+    "zelle": {
+      "name": "Zelle",
+      "description": "가장 간편한 방법 - 수수료 없음",
+      "email": "giving@koreanchurch.org",
+      "instructions": "위 이메일 주소로 Zelle을 통해 송금하시고, 메모란에 헌금 종류를 기재해 주세요."
+    },
+    "venmo": {
+      "name": "Venmo",
+      "description": "모바일 송금 앱",
+      "account": "@KoreanChurch-Giving",
+      "instructions": "위 계정으로 송금하시고, 메모란에 헌금 종류와 성함을 기재해 주세요."
+    },
+    "paypal": {
+      "name": "PayPal",
+      "description": "신용카드 또는 PayPal 계정 사용",
+      "button": "PayPal로 헌금하기",
+      "instructions": "아래 버튼을 클릭하여 PayPal을 통해 헌금하실 수 있습니다."
+    },
+    "check": {
+      "name": "우편 수표",
+      "description": "전통적인 방법",
+      "payable": "수취인: Grace Korean Church",
+      "address": "123 Main Street, Anytown, NY 12345",
+      "instructions": "수표 메모란에 헌금 종류를 기재해 주세요."
+    }
+  },
+  "security": {
+    "title": "보안 및 주의사항",
+    "point1": "개인정보 보호를 위해 공식 계정인지 확인하세요",
+    "point2": "헌금 영수증은 매년 1월에 발송됩니다",
+    "point3": "문의사항은 재정부로 연락주세요"
+  },
+  "tax": {
+    "title": "세금 공제 안내",
+    "description": "은혜로운 교회는 501(c)(3) 비영리 단체로 등록되어 있어 모든 헌금은 세금 공제가 가능합니다.",
+    "ein": "EIN: 12-3456789",
+    "receipt": "연말 세금보고용 헌금 영수증이 필요하신 분은 사무실로 문의해 주세요."
+  },
+  "contact": {
+    "title": "문의사항",
+    "description": "헌금 관련 문의사항이 있으시면 아래로 연락주세요:",
+    "treasurer": "재정부장",
+    "email": "treasurer@koreanchurch.org",
+    "phone": "(123) 456-7890 ext. 102"
+  }
+}

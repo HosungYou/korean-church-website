@@ -1,0 +1,23 @@
+{
+  "welcome": "Welcome",
+  "church_name": "Grace Church",
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Service Times",
+    "sermons": "Sermons",
+    "news": "Church News",
+    "directions": "Directions",
+    "new_here": "New Here?",
+    "giving": "Online Giving"
+  },
+  "service_times": "Service Times",
+  "latest_sermons": "Latest Sermons",
+  "contact_us": "Contact Us",
+  "address": "Address",
+  "phone": "Phone",
+  "email": "Email",
+  "sunday": "Sunday",
+  "wednesday": "Wednesday",
+  "language": "Language"
+}

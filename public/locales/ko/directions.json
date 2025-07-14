@@ -1,0 +1,48 @@
+{
+  "page_title": "오시는 길",
+  "subtitle": "저희 교회를 찾아주셔서 감사합니다",
+  "address": {
+    "title": "주소",
+    "street": "123 Main Street",
+    "city_state_zip": "Anytown, NY 12345",
+    "copy_address": "주소 복사",
+    "address_copied": "주소가 복사되었습니다!"
+  },
+  "contact": {
+    "title": "연락처",
+    "phone": "전화",
+    "email": "이메일",
+    "office_hours": "사무실 운영시간",
+    "office_hours_detail": "월-금: 오전 9시 - 오후 5시"
+  },
+  "parking": {
+    "title": "주차 안내",
+    "main_lot": "본관 주차장",
+    "main_lot_detail": "교회 건물 동쪽에 위치한 무료 주차장 (150대 주차 가능)",
+    "overflow": "추가 주차장",
+    "overflow_detail": "주일 예배시 건너편 학교 주차장 이용 가능",
+    "handicap": "장애인 주차",
+    "handicap_detail": "정문 가까이에 장애인 전용 주차공간이 마련되어 있습니다"
+  },
+  "public_transport": {
+    "title": "대중교통",
+    "subway": "지하철",
+    "subway_detail": "Blue Line - Main St 역에서 도보 10분",
+    "bus": "버스",
+    "bus_detail": "M15, M20 버스 - Church Ave 정류장 하차"
+  },
+  "directions": {
+    "from_north": "북쪽에서 오시는 길",
+    "from_south": "남쪽에서 오시는 길",
+    "from_east": "동쪽에서 오시는 길",
+    "from_west": "서쪽에서 오시는 길",
+    "open_google_maps": "구글 지도로 열기",
+    "get_directions": "길찾기"
+  },
+  "nearby": {
+    "title": "주변 정보",
+    "grocery": "한인 마트: H-Mart (차로 5분)",
+    "restaurant": "한식당: 여러 한식당이 10분 거리에 있습니다",
+    "hospital": "병원: St. Mary's Hospital (차로 10분)"
+  }
+}

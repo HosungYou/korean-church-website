@@ -1,0 +1,48 @@
+{
+  "page_title": "Directions",
+  "subtitle": "We look forward to welcoming you",
+  "address": {
+    "title": "Address",
+    "street": "123 Main Street",
+    "city_state_zip": "Anytown, NY 12345",
+    "copy_address": "Copy Address",
+    "address_copied": "Address copied to clipboard!"
+  },
+  "contact": {
+    "title": "Contact Information",
+    "phone": "Phone",
+    "email": "Email",
+    "office_hours": "Office Hours",
+    "office_hours_detail": "Mon-Fri: 9:00 AM - 5:00 PM"
+  },
+  "parking": {
+    "title": "Parking Information",
+    "main_lot": "Main Parking Lot",
+    "main_lot_detail": "Free parking lot located east of the church building (150 spaces)",
+    "overflow": "Overflow Parking",
+    "overflow_detail": "School parking lot across the street available on Sundays",
+    "handicap": "Handicap Parking",
+    "handicap_detail": "Designated handicap spaces near the main entrance"
+  },
+  "public_transport": {
+    "title": "Public Transportation",
+    "subway": "Subway",
+    "subway_detail": "Blue Line - 10 minute walk from Main St Station",
+    "bus": "Bus",
+    "bus_detail": "M15, M20 buses - Get off at Church Ave stop"
+  },
+  "directions": {
+    "from_north": "From the North",
+    "from_south": "From the South",
+    "from_east": "From the East",
+    "from_west": "From the West",
+    "open_google_maps": "Open in Google Maps",
+    "get_directions": "Get Directions"
+  },
+  "nearby": {
+    "title": "Nearby Amenities",
+    "grocery": "Korean Grocery: H-Mart (5 min drive)",
+    "restaurant": "Korean Restaurants: Multiple options within 10 minutes",
+    "hospital": "Hospital: St. Mary's Hospital (10 min drive)"
+  }
+}
