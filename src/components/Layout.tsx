@@ -38,14 +38,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link href="/" className="flex items-center">
                 <img
                   src="/images/logo.png"
-                  alt={t('church_name') as string}
-                  className="h-10 w-auto mr-3"
+                  alt="Church Logo"
+                  className="h-12 w-auto"
                 />
-                <span className={`text-2xl font-bold text-church-primary ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('church_name')}
-                </span>
               </Link>
             </div>
 
