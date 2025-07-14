@@ -1,0 +1,21 @@
+{
+  "page_title": "Sermons",
+  "subtitle": "Be blessed by God's Word",
+  "filter": {
+    "all": "All",
+    "sunday": "Sunday Service",
+    "wednesday": "Wednesday Service", 
+    "dawn": "Dawn Prayer"
+  },
+  "search_placeholder": "Search sermons by title or scripture",
+  "no_results": "No results found",
+  "watch_sermon": "Watch Sermon",
+  "share": "Share",
+  "download": "Download",
+  "service_types": {
+    "sunday_1st": "1st Service",
+    "sunday_2nd": "2nd Service",
+    "wednesday": "Wednesday Service",
+    "dawn": "Dawn Prayer"
+  }
+}

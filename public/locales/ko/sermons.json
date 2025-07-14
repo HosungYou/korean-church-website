@@ -1,0 +1,21 @@
+{
+  "page_title": "설교 말씀",
+  "subtitle": "하나님의 말씀으로 은혜받으세요",
+  "filter": {
+    "all": "전체",
+    "sunday": "주일예배",
+    "wednesday": "수요예배",
+    "dawn": "새벽기도회"
+  },
+  "search_placeholder": "설교 제목이나 말씀을 검색하세요",
+  "no_results": "검색 결과가 없습니다",
+  "watch_sermon": "설교 보기",
+  "share": "공유하기",
+  "download": "다운로드",
+  "service_types": {
+    "sunday_1st": "1부 예배",
+    "sunday_2nd": "2부 예배", 
+    "wednesday": "수요예배",
+    "dawn": "새벽기도회"
+  }
+}

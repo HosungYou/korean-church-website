@@ -127,7 +127,7 @@ const Services: NextPage = () => {
             {t('services:youth_children.title')}
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Youth Group */}
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className={`text-xl font-semibold text-gray-900 mb-2 ${
@@ -185,35 +185,6 @@ const Services: NextPage = () => {
                 {t('services:youth_children.children.description')}
               </p>
             </div>
-
-            {/* Nursery */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className={`text-xl font-semibold text-gray-900 mb-2 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('services:youth_children.nursery.name')}
-              </h3>
-              <div className="space-y-2 mb-4">
-                <p className="text-lg font-medium text-church-accent">
-                  {t('services:youth_children.nursery.time')}
-                </p>
-                <p className={`text-gray-600 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('services:youth_children.nursery.location')}
-                </p>
-                <p className={`text-gray-600 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('services:youth_children.nursery.ages')}
-                </p>
-              </div>
-              <p className={`text-gray-700 text-sm ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('services:youth_children.nursery.description')}
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -260,16 +231,34 @@ const Services: NextPage = () => {
               <p className="text-lg font-medium text-church-primary mb-1">
                 {t('services:weekday_services.dawn.time')}
               </p>
+              <p className={`text-gray-600 mb-1 ${
+                i18n.language === 'ko' ? 'font-korean' : 'font-english'
+              }`}>
+                {t('services:weekday_services.dawn.schedule')}
+              </p>
               <p className={`text-gray-600 mb-3 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
                 {t('services:weekday_services.dawn.location')}
               </p>
-              <p className={`text-gray-700 text-sm ${
+              <p className={`text-gray-700 text-sm mb-4 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
                 {t('services:weekday_services.dawn.description')}
               </p>
+              <a
+                href={t('services:weekday_services.dawn.link') as string}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+                {t('services:weekday_services.dawn.link_text')}
+              </a>
             </div>
           </div>
         </div>

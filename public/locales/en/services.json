@@ -1,49 +1,42 @@
 {
   "page_title": "Service Times",
-  "subtitle": "Join us as we gather to worship and meet God",
+  "subtitle": "Join us in worship and encounter God together",
   "sunday_services": {
     "title": "Sunday Services",
     "korean_1st": {
       "name": "1st Korean Service",
       "time": "8:00 AM",
-      "location": "Main Sanctuary",
-      "description": "Traditional Korean service with hymns and biblical preaching."
+      "location": "Church Sanctuary",
+      "description": "Traditional Korean worship service with hymns and sermon."
     },
     "korean_2nd": {
       "name": "2nd Korean Service",
-      "time": "11:00 AM",
-      "location": "Main Sanctuary",
-      "description": "Contemporary Korean service with modern worship."
+      "time": "11:00 AM", 
+      "location": "Church Sanctuary",
+      "description": "Contemporary Korean worship service with modern praise."
     },
     "english": {
       "name": "English Service",
       "time": "11:00 AM",
-      "location": "Chapel",
-      "description": "Contemporary English service for English-speaking congregation."
+      "location": "Church Sanctuary",
+      "description": "Contemporary worship service for English speakers."
     }
   },
   "youth_children": {
-    "title": "Next Generation Ministry",
+    "title": "Next Generation Services",
     "youth": {
-      "name": "Youth Group",
+      "name": "Youth Service",
       "time": "11:00 AM",
-      "location": "Youth Center",
+      "location": "Youth Hall",
       "grades": "6th - 12th Grade",
-      "description": "Dynamic worship and small group activities for teenagers"
+      "description": "Dynamic worship and small group activities for teens"
     },
     "children": {
-      "name": "Children's Ministry",
+      "name": "Children's Sunday School",
       "time": "11:00 AM",
-      "location": "Education Building",
-      "grades": "K - 5th Grade",
+      "location": "Education Building", 
+      "grades": "Kindergarten - 5th Grade",
       "description": "Fun and educational worship for children"
-    },
-    "nursery": {
-      "name": "Nursery",
-      "time": "8:00 AM, 11:00 AM",
-      "location": "Nursery Room",
-      "ages": "0-4 years",
-      "description": "Safe and loving childcare service"
     }
   },
   "weekday_services": {
@@ -51,27 +44,30 @@
     "wednesday": {
       "name": "Wednesday Service",
       "time": "7:30 PM",
-      "location": "Main Sanctuary",
-      "description": "Mid-week service for reflection through Word and prayer"
+      "location": "Church Sanctuary",
+      "description": "Word and prayer time held at the church sanctuary."
     },
     "dawn": {
-      "name": "Dawn Prayer",
-      "time": "Tue-Sat 6:00 AM",
-      "location": "Chapel",
-      "description": "Start your day with God's Word and prayer"
+      "name": "Dawn Prayer Meeting",
+      "time": "6:30 AM",
+      "schedule": "Tue-Fri (ZOOM)",
+      "location": "Online ZOOM",
+      "description": "Online dawn prayer meeting via ZOOM.",
+      "link": "https://tinyurl.com/sckc3",
+      "link_text": "ZOOM Link"
     }
   },
   "special_services": {
     "title": "Special Services",
-    "communion": "Holy Communion on first Sunday of each month",
-    "baptism": "Quarterly baptism services",
-    "revival": "Biannual revival meetings"
+    "communion": "Communion on 1st Sunday of each month",
+    "baptism": "Baptism quarterly",
+    "revival": "Revival meetings twice a year"
   },
-  "timezone_notice": "* All times are in Eastern Time (EST/EDT)",
+  "timezone_notice": "* All times are Eastern Standard Time (EST/EDT)",
   "parking": "Free parking available next to the church building",
   "online": {
-    "title": "Online Service",
-    "description": "Join our 2nd Sunday service live on YouTube.",
-    "watch_live": "Watch Live Service"
+    "title": "Online Worship",
+    "description": "Dawn prayer meetings are conducted online via ZOOM.",
+    "watch_live": "Join Live Worship"
   }
 }
