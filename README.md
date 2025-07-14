@@ -65,4 +65,4 @@ npm start
 
 ## Live Site
 
-Visit the live website at: [korean-church-website.vercel.app](https://korean-church-website.vercel.app)
+Visit the live website at: [korean-church-website.vercel.app](https://korean-church-website.vercel.app)# Force redeploy
