@@ -3,8 +3,8 @@
   "subtitle": "We look forward to welcoming you",
   "address": {
     "title": "Address",
-    "street": "123 Main Street",
-    "city_state_zip": "Anytown, NY 12345",
+    "street": "758 Glenn Rd",
+    "city_state_zip": "State College, PA 16803",
     "copy_address": "Copy Address",
     "address_copied": "Address copied to clipboard!"
   },
@@ -26,10 +26,10 @@
   },
   "public_transport": {
     "title": "Public Transportation",
-    "subway": "Subway",
-    "subway_detail": "Blue Line - 10 minute walk from Main St Station",
-    "bus": "Bus",
-    "bus_detail": "M15, M20 buses - Get off at Church Ave stop"
+    "subway": "CATA Bus",
+    "subway_detail": "Centre Area Transportation Authority (CATA) bus service available",
+    "bus": "Parking",
+    "bus_detail": "Ample free parking available on site"
   },
   "directions": {
     "from_north": "From the North",
@@ -41,8 +41,8 @@
   },
   "nearby": {
     "title": "Nearby Amenities",
-    "grocery": "Korean Grocery: H-Mart (5 min drive)",
-    "restaurant": "Korean Restaurants: Multiple options within 10 minutes",
-    "hospital": "Hospital: St. Mary's Hospital (10 min drive)"
+    "grocery": "Korean Grocery: Available in Pittsburgh or Harrisburg areas",
+    "restaurant": "Asian Restaurants: Several options in State College and surrounding areas",
+    "hospital": "Hospital: Mount Nittany Medical Center (10 min drive)"
   }
 }

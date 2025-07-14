@@ -3,8 +3,8 @@
   "subtitle": "저희 교회를 찾아주셔서 감사합니다",
   "address": {
     "title": "주소",
-    "street": "123 Main Street",
-    "city_state_zip": "Anytown, NY 12345",
+    "street": "758 Glenn Rd",
+    "city_state_zip": "State College, PA 16803",
     "copy_address": "주소 복사",
     "address_copied": "주소가 복사되었습니다!"
   },
@@ -26,10 +26,10 @@
   },
   "public_transport": {
     "title": "대중교통",
-    "subway": "지하철",
-    "subway_detail": "Blue Line - Main St 역에서 도보 10분",
-    "bus": "버스",
-    "bus_detail": "M15, M20 버스 - Church Ave 정류장 하차"
+    "subway": "CATA 버스",
+    "subway_detail": "Centre Area Transportation Authority (CATA) 버스 이용 가능",
+    "bus": "주차",
+    "bus_detail": "충분한 무료 주차 공간이 마련되어 있습니다"
   },
   "directions": {
     "from_north": "북쪽에서 오시는 길",
@@ -41,8 +41,8 @@
   },
   "nearby": {
     "title": "주변 정보",
-    "grocery": "한인 마트: H-Mart (차로 5분)",
-    "restaurant": "한식당: 여러 한식당이 10분 거리에 있습니다",
-    "hospital": "병원: St. Mary's Hospital (차로 10분)"
+    "grocery": "한인 마트: 피츠버그나 해리스버그에서 한국 식료품 구매 가능",
+    "restaurant": "한식당: 스테이트 칼리지와 주변 지역에 몇 곳의 아시안 레스토랑",
+    "hospital": "병원: Mount Nittany Medical Center (차로 10분)"
   }
 }

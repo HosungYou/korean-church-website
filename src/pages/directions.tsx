@@ -9,7 +9,7 @@ const Directions: NextPage = () => {
   const [copied, setCopied] = useState(false)
   const [mapLoaded, setMapLoaded] = useState(false)
 
-  const churchAddress = '123 Main Street, Anytown, NY 12345'
+  const churchAddress = '758 Glenn Rd, State College, PA 16803'
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(churchAddress)}`
 
   const copyAddress = () => {
@@ -58,7 +58,7 @@ const Directions: NextPage = () => {
                 style={{ border: 0 }}
                 loading="lazy"
                 allowFullScreen
-                src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodeURIComponent(churchAddress)}&language=${i18n.language}`}
+                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAT78qq2Q5318akOlvFLCV_YsiwStx0wDs&q=${encodeURIComponent(churchAddress)}&language=${i18n.language}`}
                 onLoad={() => setMapLoaded(true)}
               ></iframe>
             </div>
@@ -129,7 +129,7 @@ const Directions: NextPage = () => {
                   }`}>
                     {t('directions:contact.phone')}:
                   </span>
-                  <span className="ml-2 text-gray-600">(123) 456-7890</span>
+                  <span className="ml-2 text-gray-600">814-380-9393</span>
                 </div>
                 <div>
                   <span className={`font-medium text-gray-700 ${
@@ -137,7 +137,7 @@ const Directions: NextPage = () => {
                   }`}>
                     {t('directions:contact.email')}:
                   </span>
-                  <span className="ml-2 text-gray-600">info@koreanchurch.org</span>
+                  <span className="ml-2 text-gray-600">KyuHongYeon@gmail.com</span>
                 </div>
                 <div>
                   <span className={`font-medium text-gray-700 ${
