@@ -55,6 +55,7 @@ const PrayerRequests: NextPage = () => {
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({})
   const [pendingFormShow, setPendingFormShow] = useState(false)
   const [authInitialized, setAuthInitialized] = useState(false)
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
 
   // Pastor's email for reply permissions
   const PASTOR_EMAIL = 'KyuHongYeon@gmail.com'
@@ -84,14 +85,19 @@ const PrayerRequests: NextPage = () => {
   }, [])
 
   const signInWithGoogle = async () => {
+    if (isLoggingIn) return;
+    setIsLoggingIn(true);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       prompt: 'select_account'
     });
     try {
       await signInWithPopup(auth, provider);
+      // onAuthStateChanged will handle the user state update
     } catch (error) {
       console.error('Google sign-in popup error:', error);
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -283,11 +289,12 @@ const PrayerRequests: NextPage = () => {
                 <div className="flex justify-center gap-3">
                   <button
                     onClick={signInWithGoogle}
-                    className={`px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors ${
+                    disabled={isLoggingIn}
+                    className={`px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed ${
                       i18n.language === 'ko' ? 'font-korean' : 'font-english'
                     }`}
                   >
-                    Google로 로그인
+                    {isLoggingIn ? t('prayer-requests:logging_in') : t('prayer-requests:login_with_google')}
                   </button>
                   <button
                     onClick={() => {
