@@ -67,16 +67,6 @@ const PrayerRequests: NextPage = () => {
       setAuthInitialized(true);
     });
 
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result) {
-          console.log('✅ Redirect login successful:', result.user);
-        }
-      })
-      .catch((error) => {
-        console.error('Redirect result error:', error);
-      });
-
     return () => unsubscribe();
   }, []);
 
@@ -99,9 +89,9 @@ const PrayerRequests: NextPage = () => {
       prompt: 'select_account'
     });
     try {
-      await signInWithRedirect(auth, provider);
+      await signInWithPopup(auth, provider);
     } catch (error) {
-      console.error('Google sign-in redirect error:', error);
+      console.error('Google sign-in popup error:', error);
     }
   };
 
