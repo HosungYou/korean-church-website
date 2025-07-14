@@ -3,7 +3,6 @@ import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
-  // 실제 Firebase 프로젝트 설정으로 교체 필요
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
@@ -11,6 +10,12 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 }
+
+console.log('🔧 Firebase Config:', {
+  apiKey: firebaseConfig.apiKey ? `${firebaseConfig.apiKey.slice(0, 10)}...` : 'MISSING',
+  projectId: firebaseConfig.projectId || 'MISSING',
+  authDomain: firebaseConfig.authDomain || 'MISSING'
+})
 
 const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
