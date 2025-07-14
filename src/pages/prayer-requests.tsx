@@ -53,23 +53,35 @@ const PrayerRequests: NextPage = () => {
   const [editingRequest, setEditingRequest] = useState<PrayerRequest | null>(null)
   const [formData, setFormData] = useState({ title: '', content: '' })
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({})
+  const [pendingFormShow, setPendingFormShow] = useState(false)
+  const [authInitialized, setAuthInitialized] = useState(false)
 
   // Pastor's email for reply permissions
   const PASTOR_EMAIL = 'KyuHongYeon@gmail.com'
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      const wasLoggedOut = !user && !loading
-      setUser(user)
+    let timeoutId: NodeJS.Timeout
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      const previousUser = user
+      
+      setUser(currentUser)
       setLoading(false)
       
-      // If user just logged in and was previously logged out, show the form
-      if (user && wasLoggedOut) {
-        setTimeout(() => {
+      // Only set authInitialized to true after first auth state change
+      if (!authInitialized) {
+        setAuthInitialized(true)
+      }
+      
+      // If user just logged in and we have a pending form show request
+      if (currentUser && !previousUser && pendingFormShow && authInitialized) {
+        clearTimeout(timeoutId)
+        timeoutId = setTimeout(() => {
           setShowForm(true)
           setEditingRequest(null)
           setFormData({ title: '', content: '' })
-        }, 100) // Small delay to ensure UI is stable
+          setPendingFormShow(false)
+        }, 150)
       }
     })
 
@@ -77,21 +89,25 @@ const PrayerRequests: NextPage = () => {
     getRedirectResult(auth)
       .then((result) => {
         if (result?.user) {
-          setUser(result.user)
-          // Show form after successful redirect login
-          setTimeout(() => {
+          // User logged in via redirect, show form
+          clearTimeout(timeoutId)
+          timeoutId = setTimeout(() => {
             setShowForm(true)
             setEditingRequest(null)
             setFormData({ title: '', content: '' })
-          }, 100)
+            setPendingFormShow(false)
+          }, 150)
         }
       })
       .catch((error) => {
         console.error('Redirect result error:', error)
       })
 
-    return () => unsubscribe()
-  }, [loading])
+    return () => {
+      clearTimeout(timeoutId)
+      unsubscribe()
+    }
+  }, [user, pendingFormShow, authInitialized])
 
   useEffect(() => {
     const q = query(collection(db, 'prayerRequests'), orderBy('createdAt', 'desc'))
@@ -120,17 +136,26 @@ const PrayerRequests: NextPage = () => {
         return result
       }
     } catch (error: any) {
-      console.error('Popup failed, trying redirect:', error)
-      // Only try redirect if popup was blocked or failed
-      if (error?.code === 'auth/popup-blocked' || error?.code === 'auth/popup-closed-by-user') {
+      console.error('Popup failed:', error)
+      
+      // If user cancelled popup, reset pending form show
+      if (error?.code === 'auth/popup-closed-by-user' || error?.code === 'auth/cancelled-popup-request') {
+        setPendingFormShow(false)
+        throw error
+      }
+      
+      // Only try redirect if popup was blocked
+      if (error?.code === 'auth/popup-blocked') {
         try {
           // Fallback to redirect method
           await signInWithRedirect(auth, provider)
         } catch (redirectError) {
           console.error('Redirect also failed:', redirectError)
+          setPendingFormShow(false)
           throw redirectError
         }
       } else {
+        setPendingFormShow(false)
         throw error
       }
     }
@@ -169,6 +194,7 @@ const PrayerRequests: NextPage = () => {
       setFormData({ title: '', content: '' })
       setShowForm(false)
       setEditingRequest(null)
+      setPendingFormShow(false)
     } catch (error) {
       console.error('Error submitting request:', error)
     }
@@ -178,6 +204,7 @@ const PrayerRequests: NextPage = () => {
     setEditingRequest(request)
     setFormData({ title: request.title, content: request.content })
     setShowForm(true)
+    setPendingFormShow(false) // Clear any pending form show
   }
 
   const handleDelete = async (requestId: string) => {
@@ -239,20 +266,24 @@ const PrayerRequests: NextPage = () => {
 
   const handleWriteClick = async () => {
     if (!user) {
+      // Set pending form show flag before attempting login
+      setPendingFormShow(true)
       try {
         await signInWithGoogle()
-        // Don't show form immediately after login attempt
-        // The form will be shown in useEffect after successful auth
+        // Form will be shown automatically after successful login via useEffect
         return
       } catch (error) {
         console.error('Login failed:', error)
+        setPendingFormShow(false) // Reset flag on login failure
         return
       }
     }
-    // Only show form if user is already authenticated
+    
+    // User is already authenticated, show form immediately
     setShowForm(true)
     setEditingRequest(null)
     setFormData({ title: '', content: '' })
+    setPendingFormShow(false)
   }
 
   return (
@@ -353,6 +384,7 @@ const PrayerRequests: NextPage = () => {
                     setShowForm(false)
                     setEditingRequest(null)
                     setFormData({ title: '', content: '' })
+                    setPendingFormShow(false)
                   }}
                   className={`px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors ${
                     i18n.language === 'ko' ? 'font-korean' : 'font-english'
