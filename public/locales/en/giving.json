@@ -1,60 +1,48 @@
 {
-  "page_title": "Online Giving",
+  "page_title": "How to Make an Offering to Our Church",
   "subtitle": "An expression of gratitude and dedication to God",
-  "intro": "Give conveniently online. All donations are tax-deductible.",
-  "giving_types": {
-    "title": "Giving Types",
-    "tithe": "Tithe",
-    "offering": "Thanksgiving Offering",
-    "mission": "Mission Offering",
-    "building": "Building Fund",
-    "other": "Other Designated Giving"
-  },
+  "intro": "There are several convenient ways to make offerings to our church. All donations are tax-deductible.",
   "payment_methods": {
-    "title": "Ways to Give",
-    "zelle": {
-      "name": "Zelle",
-      "description": "Most convenient - No fees",
-      "email": "giving@koreanchurch.org",
-      "instructions": "Send to the email above via Zelle and include the giving type in the memo."
+    "title": "Offering Methods",
+    "envelope": {
+      "name": "Offering Envelope",
+      "description": "When visiting the church",
+      "instructions": "When you visit the church, please use the offering envelopes available in the entrance lobby and place them in the offering box before the service (there is no separate offering time during worship)."
+    },
+    "mail": {
+      "name": "Mail",
+      "description": "Send by mail",
+      "address": "758 Glenn Rd, State College, PA 16803",
+      "instructions": "You can send your offering to the above address by mail."
+    },
+    "paypal": {
+      "name": "PayPal",
+      "description": "Online transfer",
+      "account": "paypal.me/sckc9191!",
+      "instructions": "You can make offerings through PayPal using the link above."
     },
     "venmo": {
       "name": "Venmo",
       "description": "Mobile payment app",
-      "account": "@KoreanChurch-Giving",
-      "instructions": "Send to the account above and include giving type and your name in the memo."
-    },
-    "paypal": {
-      "name": "PayPal",
-      "description": "Credit card or PayPal account",
-      "button": "Give via PayPal",
-      "instructions": "Click the button below to give through PayPal."
-    },
-    "check": {
-      "name": "Mail Check",
-      "description": "Traditional method",
-      "payable": "Payable to: Grace Korean Church",
-      "address": "123 Main Street, Anytown, NY 12345",
-      "instructions": "Please write the giving type in the memo line."
+      "account": "venmo.com/sckc9191!",
+      "instructions": "You can make offerings through Venmo using the link above."
     }
   },
   "security": {
-    "title": "Security & Important Notes",
-    "point1": "Verify official accounts for your security",
-    "point2": "Giving statements are sent out in January",
-    "point3": "Contact the finance team with any questions"
+    "title": "Security and Important Notes",
+    "point1": "Please verify that you are using the official accounts to protect your personal information",
+    "point2": "Offering receipts are sent out every January",
+    "point3": "Please contact the church for any questions"
   },
   "tax": {
     "title": "Tax Deduction Information",
-    "description": "Grace Korean Church is a registered 501(c)(3) nonprofit organization. All donations are tax-deductible.",
-    "ein": "EIN: 12-3456789",
-    "receipt": "For year-end tax statements, please contact the church office."
+    "description": "Our church is registered as a 501(c)(3) non-profit organization, so all donations are tax-deductible.",
+    "receipt": "If you need a year-end offering receipt for tax purposes, please contact the church."
   },
   "contact": {
-    "title": "Questions?",
-    "description": "For questions about giving, please contact:",
-    "treasurer": "Church Treasurer",
-    "email": "treasurer@koreanchurch.org",
-    "phone": "(123) 456-7890 ext. 102"
+    "title": "Questions",
+    "description": "If you have any questions about offerings, please contact us:",
+    "email": "KyuHongYeon@gmail.com",
+    "phone": "814-380-9393"
   }
 }
