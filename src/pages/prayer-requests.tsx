@@ -59,8 +59,18 @@ const PrayerRequests: NextPage = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      const wasLoggedOut = !user && !loading
       setUser(user)
       setLoading(false)
+      
+      // If user just logged in and was previously logged out, show the form
+      if (user && wasLoggedOut) {
+        setTimeout(() => {
+          setShowForm(true)
+          setEditingRequest(null)
+          setFormData({ title: '', content: '' })
+        }, 100) // Small delay to ensure UI is stable
+      }
     })
 
     // Check for redirect result on page load
@@ -68,10 +78,12 @@ const PrayerRequests: NextPage = () => {
       .then((result) => {
         if (result?.user) {
           setUser(result.user)
-          // Show form after successful login
-          setShowForm(true)
-          setEditingRequest(null)
-          setFormData({ title: '', content: '' })
+          // Show form after successful redirect login
+          setTimeout(() => {
+            setShowForm(true)
+            setEditingRequest(null)
+            setFormData({ title: '', content: '' })
+          }, 100)
         }
       })
       .catch((error) => {
@@ -79,7 +91,7 @@ const PrayerRequests: NextPage = () => {
       })
 
     return () => unsubscribe()
-  }, [])
+  }, [loading])
 
   useEffect(() => {
     const q = query(collection(db, 'prayerRequests'), orderBy('createdAt', 'desc'))
@@ -102,14 +114,24 @@ const PrayerRequests: NextPage = () => {
     
     try {
       // Try popup first, fallback to redirect if needed
-      await signInWithPopup(auth, provider)
-    } catch (error) {
+      const result = await signInWithPopup(auth, provider)
+      if (result?.user) {
+        // Popup login successful, user state will be updated via onAuthStateChanged
+        return result
+      }
+    } catch (error: any) {
       console.error('Popup failed, trying redirect:', error)
-      try {
-        // Fallback to redirect method
-        await signInWithRedirect(auth, provider)
-      } catch (redirectError) {
-        console.error('Redirect also failed:', redirectError)
+      // Only try redirect if popup was blocked or failed
+      if (error?.code === 'auth/popup-blocked' || error?.code === 'auth/popup-closed-by-user') {
+        try {
+          // Fallback to redirect method
+          await signInWithRedirect(auth, provider)
+        } catch (redirectError) {
+          console.error('Redirect also failed:', redirectError)
+          throw redirectError
+        }
+      } else {
+        throw error
       }
     }
   }
@@ -219,11 +241,15 @@ const PrayerRequests: NextPage = () => {
     if (!user) {
       try {
         await signInWithGoogle()
+        // Don't show form immediately after login attempt
+        // The form will be shown in useEffect after successful auth
+        return
       } catch (error) {
         console.error('Login failed:', error)
         return
       }
     }
+    // Only show form if user is already authenticated
     setShowForm(true)
     setEditingRequest(null)
     setFormData({ title: '', content: '' })
