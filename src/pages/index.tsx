@@ -91,9 +91,13 @@ const Home: NextPage = () => {
             </div>
             <div className="mt-8 lg:mt-0">
               <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg overflow-hidden">
-                <div className="flex items-center justify-center h-96 bg-gray-300">
-                  <span className="text-gray-500">Church Image</span>
-                </div>
+                <Image
+                  src="/images/Rev.-Yeon-e1680566245164.jpg"
+                  alt="Pastor photo"
+                  width={600}
+                  height={400}
+                  className="w-full h-96 object-cover rounded-lg"
+                />
               </div>
             </div>
           </div>
