@@ -179,7 +179,7 @@ const About: NextPage = () => {
             <div className="order-2 lg:order-1">
               <div className="text-center lg:text-left">
                 <Image
-                  src="/images/Rev.-Yeon-e1680566245164.jpg"
+                  src="/images/Paster and Family.jpg"
                   alt="Rev. Yoon Seok Yeon"
                   width={400}
                   height={500}

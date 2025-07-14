@@ -37,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
                 <img
-                  src="/images/logo (1).png"
+                  src="/images/logo.png"
                   alt={t('church_name')}
                   className="h-10 w-auto mr-3"
                 />

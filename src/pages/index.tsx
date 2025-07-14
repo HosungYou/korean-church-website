@@ -92,7 +92,7 @@ const Home: NextPage = () => {
             <div className="mt-8 lg:mt-0">
               <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg overflow-hidden">
                 <Image
-                  src="/images/Rev.-Yeon-e1680566245164.jpg"
+                  src="/images/Paster and Family.jpg"
                   alt="Pastor photo"
                   width={600}
                   height={400}
