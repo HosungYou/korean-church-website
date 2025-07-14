@@ -7,11 +7,21 @@ import { useState } from 'react'
 const Giving: NextPage = () => {
   const { t, i18n } = useTranslation(['giving', 'common'])
   const [copiedAddress, setCopiedAddress] = useState(false)
+  const [copiedPaypal, setCopiedPaypal] = useState(false)
+  const [copiedVenmo, setCopiedVenmo] = useState(false)
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = (text: string, type: 'address' | 'paypal' | 'venmo') => {
     navigator.clipboard.writeText(text)
-    setCopiedAddress(true)
-    setTimeout(() => setCopiedAddress(false), 2000)
+    if (type === 'address') {
+      setCopiedAddress(true)
+      setTimeout(() => setCopiedAddress(false), 2000)
+    } else if (type === 'paypal') {
+      setCopiedPaypal(true)
+      setTimeout(() => setCopiedPaypal(false), 2000)
+    } else if (type === 'venmo') {
+      setCopiedVenmo(true)
+      setTimeout(() => setCopiedVenmo(false), 2000)
+    }
   }
 
   return (
@@ -101,7 +111,7 @@ const Giving: NextPage = () => {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => copyToClipboard(t('giving:payment_methods.mail.address'))}
+                  onClick={() => copyToClipboard(t('giving:payment_methods.mail.address'), 'address')}
                   className={`inline-flex items-center px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors text-sm ${
                     i18n.language === 'ko' ? 'font-korean' : 'font-english'
                   }`}
@@ -143,19 +153,17 @@ const Giving: NextPage = () => {
               <div className="bg-white rounded p-3 mb-3">
                 <p className="font-mono text-sm text-gray-800">{t('giving:payment_methods.paypal.account')}</p>
               </div>
-              <a
-                href={`https://${t('giving:payment_methods.paypal.account')}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => copyToClipboard(t('giving:payment_methods.paypal.account'), 'paypal')}
                 className={`inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors ${
                   i18n.language === 'ko' ? 'font-korean' : 'font-english'
                 }`}
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                 </svg>
-                PayPal {i18n.language === 'ko' ? '열기' : 'Open'}
-              </a>
+                {copiedPaypal ? (i18n.language === 'ko' ? '복사됨!' : 'Copied!') : (i18n.language === 'ko' ? '이메일 복사' : 'Copy Email')}
+              </button>
               <p className={`text-gray-700 mt-3 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
@@ -187,19 +195,17 @@ const Giving: NextPage = () => {
               <div className="bg-white rounded p-3 mb-3">
                 <p className="font-mono text-sm text-gray-800">{t('giving:payment_methods.venmo.account')}</p>
               </div>
-              <a
-                href={`https://${t('giving:payment_methods.venmo.account')}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => copyToClipboard(t('giving:payment_methods.venmo.account'), 'venmo')}
                 className={`inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors ${
                   i18n.language === 'ko' ? 'font-korean' : 'font-english'
                 }`}
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                 </svg>
-                Venmo {i18n.language === 'ko' ? '열기' : 'Open'}
-              </a>
+                {copiedVenmo ? (i18n.language === 'ko' ? '복사됨!' : 'Copied!') : (i18n.language === 'ko' ? '사용자명 복사' : 'Copy Username')}
+              </button>
               <p className={`text-gray-700 mt-3 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>

@@ -18,14 +18,14 @@
     "paypal": {
       "name": "PayPal",
       "description": "온라인 송금",
-      "account": "paypal.me/sckc9191!",
-      "instructions": "위 링크를 통해 PayPal로 헌금하실 수 있습니다."
+      "account": "sckc9191@gmail.com",
+      "instructions": "PayPal 앱이나 웹사이트에서 위 이메일 주소로 송금해 주세요."
     },
     "venmo": {
       "name": "Venmo",
       "description": "모바일 송금 앱",
-      "account": "venmo.com/sckc9191!",
-      "instructions": "위 링크를 통해 Venmo로 헌금하실 수 있습니다."
+      "account": "@sckc9191",
+      "instructions": "Venmo 앱에서 위 사용자명으로 송금해 주세요."
     }
   },
   "security": {

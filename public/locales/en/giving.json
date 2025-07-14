@@ -18,14 +18,14 @@
     "paypal": {
       "name": "PayPal",
       "description": "Online transfer",
-      "account": "paypal.me/sckc9191!",
-      "instructions": "You can make offerings through PayPal using the link above."
+      "account": "sckc9191@gmail.com",
+      "instructions": "Send money to the email address above using the PayPal app or website."
     },
     "venmo": {
       "name": "Venmo",
       "description": "Mobile payment app",
-      "account": "venmo.com/sckc9191!",
-      "instructions": "You can make offerings through Venmo using the link above."
+      "account": "@sckc9191",
+      "instructions": "Send money to the username above using the Venmo app."
     }
   },
   "security": {
