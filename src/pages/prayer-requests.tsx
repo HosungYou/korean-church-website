@@ -61,26 +61,24 @@ const PrayerRequests: NextPage = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log('🔄 Auth state changed - user:', !!currentUser, 'showForm:', showForm)
-      setUser(currentUser)
-      setLoading(false)
-      setAuthInitialized(true)
-    })
+      console.log('🔄 Auth state changed - user:', !!currentUser);
+      setUser(currentUser);
+      setLoading(false);
+      setAuthInitialized(true);
+    });
 
-    // Check for redirect result on page load  
     getRedirectResult(auth)
       .then((result) => {
-        if (result?.user) {
-          console.log('✅ Redirect login successful')
-          // User will be set via onAuthStateChanged
+        if (result) {
+          console.log('✅ Redirect login successful:', result.user);
         }
       })
       .catch((error) => {
-        console.error('Redirect result error:', error)
-      })
+        console.error('Redirect result error:', error);
+      });
 
-    return () => unsubscribe()
-  }, [])
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const q = query(collection(db, 'prayerRequests'), orderBy('createdAt', 'desc'))
@@ -96,43 +94,16 @@ const PrayerRequests: NextPage = () => {
   }, [])
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider()
+    const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       prompt: 'select_account'
-    })
-    
+    });
     try {
-      // Try popup first, fallback to redirect if needed
-      const result = await signInWithPopup(auth, provider)
-      if (result?.user) {
-        // Popup login successful, user state will be updated via onAuthStateChanged
-        return result
-      }
-    } catch (error: any) {
-      console.error('Popup failed:', error)
-      
-      // If user cancelled popup, reset pending form show
-      if (error?.code === 'auth/popup-closed-by-user' || error?.code === 'auth/cancelled-popup-request') {
-        setPendingFormShow(false)
-        throw error
-      }
-      
-      // Only try redirect if popup was blocked
-      if (error?.code === 'auth/popup-blocked') {
-        try {
-          // Fallback to redirect method
-          await signInWithRedirect(auth, provider)
-        } catch (redirectError) {
-          console.error('Redirect also failed:', redirectError)
-          setPendingFormShow(false)
-          throw redirectError
-        }
-      } else {
-        setPendingFormShow(false)
-        throw error
-      }
+      await signInWithRedirect(auth, provider);
+    } catch (error) {
+      console.error('Google sign-in redirect error:', error);
     }
-  }
+  };
 
   const handleSignOut = async () => {
     try {
