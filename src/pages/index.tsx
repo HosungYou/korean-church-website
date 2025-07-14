@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const Home: NextPage = () => {
   const { t, i18n } = useTranslation(['home', 'common'])
