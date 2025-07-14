@@ -369,7 +369,16 @@ const PrayerRequests: NextPage = () => {
         )}
 
         {/* Prayer Requests List */}
-        <div className="space-y-6">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          {/* Table Header */}
+          <div className="bg-church-primary text-white p-4">
+            <h2 className={`text-xl font-bold ${
+              i18n.language === 'ko' ? 'font-korean' : 'font-english'
+            }`}>
+              {t('prayer-requests:page_title')} {t('common:list')}
+            </h2>
+          </div>
+
           {requests.length === 0 ? (
             <div className="text-center py-12">
               <p className={`text-gray-500 ${
@@ -379,44 +388,206 @@ const PrayerRequests: NextPage = () => {
               </p>
             </div>
           ) : (
-            requests.map((request) => (
-              <div key={request.id} className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className={`text-xl font-bold text-gray-900 mb-2 ${
-                      i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                    }`}>
-                      {request.title}
-                    </h3>
-                    <p className={`text-sm text-gray-500 ${
-                      i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                    }`}>
-                      {request.author} • {formatDate(request.createdAt)}
-                    </p>
-                  </div>
-                  {user && canEdit(request) && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(request)}
-                        className="text-blue-600 hover:text-blue-800 text-sm"
-                      >
-                        {t('prayer-requests:edit')}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(request.id)}
-                        className="text-red-600 hover:text-red-800 text-sm"
-                      >
-                        {t('prayer-requests:delete')}
-                      </button>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b">
+                    <tr>
+                      <th className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                        i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                      }`}>
+                        {t('prayer-requests:title')}
+                      </th>
+                      <th className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                        i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                      }`}>
+                        {t('prayer-requests:author')}
+                      </th>
+                      <th className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                        i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                      }`}>
+                        {t('prayer-requests:date')}
+                      </th>
+                      <th className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                        i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                      }`}>
+                        {t('prayer-requests:replies')}
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {t('prayer-requests:actions')}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {requests.map((request, index) => (
+                      <tr key={request.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => {
+                        const element = document.getElementById(`request-${request.id}`)
+                        element?.scrollIntoView({ behavior: 'smooth' })
+                      }}>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center">
+                            <div>
+                              <div className={`text-sm font-medium text-gray-900 truncate max-w-xs ${
+                                i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                              }`}>
+                                {request.title}
+                              </div>
+                              <div className={`text-sm text-gray-500 truncate max-w-xs ${
+                                i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                              }`}>
+                                {request.content.substring(0, 50)}...
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className={`text-sm text-gray-900 ${
+                            i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                          }`}>
+                            {request.author}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className={`text-sm text-gray-500 ${
+                            i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                          }`}>
+                            {formatDate(request.createdAt)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {request.replies?.length || 0}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          {user && canEdit(request) && (
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleEdit(request)
+                                }}
+                                className="text-blue-600 hover:text-blue-800"
+                              >
+                                {t('prayer-requests:edit')}
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleDelete(request.id)
+                                }}
+                                className="text-red-600 hover:text-red-800"
+                              >
+                                {t('prayer-requests:delete')}
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden">
+                {requests.map((request) => (
+                  <div key={request.id} className="border-b border-gray-200 p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className={`font-medium text-gray-900 ${
+                        i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                      }`}>
+                        {request.title}
+                      </h3>
+                      {user && canEdit(request) && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEdit(request)}
+                            className="text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            {t('prayer-requests:edit')}
+                          </button>
+                          <button
+                            onClick={() => handleDelete(request.id)}
+                            className="text-red-600 hover:text-red-800 text-sm"
+                          >
+                            {t('prayer-requests:delete')}
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  )}
+                    <p className={`text-sm text-gray-600 mb-2 ${
+                      i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                    }`}>
+                      {request.content.substring(0, 100)}...
+                    </p>
+                    <div className="flex justify-between items-center text-sm text-gray-500">
+                      <span className={i18n.language === 'ko' ? 'font-korean' : 'font-english'}>
+                        {request.author}
+                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className={i18n.language === 'ko' ? 'font-korean' : 'font-english'}>
+                          {formatDate(request.createdAt)}
+                        </span>
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {t('prayer-requests:replies')} {request.replies?.length || 0}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Detailed Prayer Requests */}
+        {requests.length > 0 && (
+          <div className="space-y-6 mt-8">
+            <h3 className={`text-xl font-bold text-gray-900 mb-6 ${
+              i18n.language === 'ko' ? 'font-korean' : 'font-english'
+            }`}>
+              {t('prayer-requests:detailed_view')}
+            </h3>
+            {requests.map((request) => (
+            <div key={request.id} id={`request-${request.id}`} className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className={`text-xl font-bold text-gray-900 mb-2 ${
+                    i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                  }`}>
+                    {request.title}
+                  </h3>
+                  <p className={`text-sm text-gray-500 ${
+                    i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                  }`}>
+                    {request.author} • {formatDate(request.createdAt)}
+                  </p>
                 </div>
-                
-                <p className={`text-gray-700 mb-4 whitespace-pre-wrap ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {request.content}
-                </p>
+                {user && canEdit(request) && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(request)}
+                      className="text-blue-600 hover:text-blue-800 text-sm"
+                    >
+                      {t('prayer-requests:edit')}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(request.id)}
+                      className="text-red-600 hover:text-red-800 text-sm"
+                    >
+                      {t('prayer-requests:delete')}
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              <p className={`text-gray-700 mb-4 whitespace-pre-wrap ${
+                i18n.language === 'ko' ? 'font-korean' : 'font-english'
+              }`}>
+                {request.content}
+              </p>
 
                 {/* Replies */}
                 {request.replies && request.replies.length > 0 && (
@@ -491,9 +662,9 @@ const PrayerRequests: NextPage = () => {
                   </div>
                 )}
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </Layout>
   )

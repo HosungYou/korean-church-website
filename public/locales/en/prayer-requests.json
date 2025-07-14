@@ -30,5 +30,10 @@
   "success_deleted": "Prayer request deleted successfully",
   "guest_mode": "Guest Mode",
   "login_to_reply": "Please login to reply",
-  "login_to_write": "Please login with your Google account to write a prayer request"
+  "login_to_write": "Please login with your Google account to write a prayer request",
+  "title": "Title",
+  "author": "Author",
+  "date": "Date",
+  "actions": "Actions",
+  "detailed_view": "Detailed View"
 }
