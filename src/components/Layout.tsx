@@ -21,9 +21,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: t('nav.about'), href: '/about' },
     { name: t('nav.services'), href: '/services' },
     { name: t('nav.sermons'), href: '/sermons' },
-    { name: t('nav.news'), href: '/news' },
+    { name: t('nav.prayer_requests'), href: '/prayer-requests' },
     { name: t('nav.directions'), href: '/directions' },
-    { name: t('nav.new_here'), href: '/new-here' },
     { name: t('nav.giving'), href: '/giving' },
   ]
 
