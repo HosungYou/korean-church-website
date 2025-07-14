@@ -28,5 +28,6 @@
   "success_updated": "기도제목이 수정되었습니다",
   "success_deleted": "기도제목이 삭제되었습니다",
   "guest_mode": "게스트 모드",
-  "login_to_reply": "댓글을 달려면 로그인이 필요합니다"
+  "login_to_reply": "댓글을 달려면 로그인이 필요합니다",
+  "login_to_write": "기도제목을 작성하려면 Google 계정으로 로그인해주세요"
 }

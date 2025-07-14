@@ -60,54 +60,27 @@ const PrayerRequests: NextPage = () => {
   const PASTOR_EMAIL = 'KyuHongYeon@gmail.com'
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout
-
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      const previousUser = user
-      
+      console.log('🔄 Auth state changed - user:', !!currentUser, 'showForm:', showForm)
       setUser(currentUser)
       setLoading(false)
-      
-      // Only set authInitialized to true after first auth state change
-      if (!authInitialized) {
-        setAuthInitialized(true)
-      }
-      
-      // If user just logged in and we have a pending form show request
-      if (currentUser && !previousUser && pendingFormShow && authInitialized) {
-        clearTimeout(timeoutId)
-        timeoutId = setTimeout(() => {
-          setShowForm(true)
-          setEditingRequest(null)
-          setFormData({ title: '', content: '' })
-          setPendingFormShow(false)
-        }, 150)
-      }
+      setAuthInitialized(true)
     })
 
-    // Check for redirect result on page load
+    // Check for redirect result on page load  
     getRedirectResult(auth)
       .then((result) => {
         if (result?.user) {
-          // User logged in via redirect, show form
-          clearTimeout(timeoutId)
-          timeoutId = setTimeout(() => {
-            setShowForm(true)
-            setEditingRequest(null)
-            setFormData({ title: '', content: '' })
-            setPendingFormShow(false)
-          }, 150)
+          console.log('✅ Redirect login successful')
+          // User will be set via onAuthStateChanged
         }
       })
       .catch((error) => {
         console.error('Redirect result error:', error)
       })
 
-    return () => {
-      clearTimeout(timeoutId)
-      unsubscribe()
-    }
-  }, [user, pendingFormShow, authInitialized])
+    return () => unsubscribe()
+  }, [])
 
   useEffect(() => {
     const q = query(collection(db, 'prayerRequests'), orderBy('createdAt', 'desc'))
@@ -265,25 +238,15 @@ const PrayerRequests: NextPage = () => {
   }
 
   const handleWriteClick = async () => {
-    if (!user) {
-      // Set pending form show flag before attempting login
-      setPendingFormShow(true)
-      try {
-        await signInWithGoogle()
-        // Form will be shown automatically after successful login via useEffect
-        return
-      } catch (error) {
-        console.error('Login failed:', error)
-        setPendingFormShow(false) // Reset flag on login failure
-        return
-      }
-    }
+    console.log('🔥 handleWriteClick called - user:', !!user, 'showForm:', showForm)
     
-    // User is already authenticated, show form immediately
+    // Always show the form - it will handle login internally if needed
     setShowForm(true)
     setEditingRequest(null)
     setFormData({ title: '', content: '' })
     setPendingFormShow(false)
+    
+    console.log('✅ Form should now be visible (will show login prompt if no user)')
   }
 
   return (
@@ -340,15 +303,53 @@ const PrayerRequests: NextPage = () => {
           </div>
         </div>
 
-        {/* Form */}
-        {showForm && user && (
+        {/* Form - Always render when showForm is true, show login prompt if no user */}
+        {showForm && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h3 className={`text-xl font-bold mb-4 ${
-              i18n.language === 'ko' ? 'font-korean' : 'font-english'
-            }`}>
-              {editingRequest ? t('prayer-requests:edit_request') : t('prayer-requests:write_request')}
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {!user ? (
+              // Login prompt when no user but form is requested
+              <div className="text-center py-8">
+                <h3 className={`text-xl font-bold mb-4 ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {t('prayer-requests:login_required')}
+                </h3>
+                <p className={`text-gray-600 mb-6 ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {t('prayer-requests:login_to_write')}
+                </p>
+                <div className="flex justify-center gap-3">
+                  <button
+                    onClick={signInWithGoogle}
+                    className={`px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors ${
+                      i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                    }`}
+                  >
+                    Google로 로그인
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowForm(false)
+                      setPendingFormShow(false)
+                    }}
+                    className={`px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors ${
+                      i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                    }`}
+                  >
+                    {t('prayer-requests:cancel')}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // Actual form when user is authenticated
+              <>
+                <h3 className={`text-xl font-bold mb-4 ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {editingRequest ? t('prayer-requests:edit_request') : t('prayer-requests:write_request')}
+                </h3>
+                <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="text"
                 placeholder={t('prayer-requests:title_placeholder') as string}
@@ -393,7 +394,9 @@ const PrayerRequests: NextPage = () => {
                   {t('prayer-requests:cancel')}
                 </button>
               </div>
-            </form>
+                </form>
+              </>
+            )}
           </div>
         )}
 
