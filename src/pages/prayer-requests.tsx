@@ -4,7 +4,9 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import { useState, useEffect } from 'react'
 import { 
-  signInWithPopup, 
+  signInWithRedirect, 
+  signInWithPopup,
+  getRedirectResult,
   GoogleAuthProvider, 
   signOut, 
   onAuthStateChanged,
@@ -61,6 +63,21 @@ const PrayerRequests: NextPage = () => {
       setLoading(false)
     })
 
+    // Check for redirect result on page load
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          setUser(result.user)
+          // Show form after successful login
+          setShowForm(true)
+          setEditingRequest(null)
+          setFormData({ title: '', content: '' })
+        }
+      })
+      .catch((error) => {
+        console.error('Redirect result error:', error)
+      })
+
     return () => unsubscribe()
   }, [])
 
@@ -79,10 +96,21 @@ const PrayerRequests: NextPage = () => {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider()
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    })
+    
     try {
+      // Try popup first, fallback to redirect if needed
       await signInWithPopup(auth, provider)
     } catch (error) {
-      console.error('Error signing in:', error)
+      console.error('Popup failed, trying redirect:', error)
+      try {
+        // Fallback to redirect method
+        await signInWithRedirect(auth, provider)
+      } catch (redirectError) {
+        console.error('Redirect also failed:', redirectError)
+      }
     }
   }
 
