@@ -36,6 +36,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Logo */}
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
+                <img
+                  src="/images/logo (1).png"
+                  alt={t('church_name')}
+                  className="h-10 w-auto mr-3"
+                />
                 <span className={`text-2xl font-bold text-church-primary ${
                   i18n.language === 'ko' ? 'font-korean' : 'font-english'
                 }`}>

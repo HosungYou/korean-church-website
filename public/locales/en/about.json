@@ -1,0 +1,64 @@
+{
+  "page_title": "About Us",
+  "subtitle": "A community growing in God's love",
+  "vision": {
+    "title": "Vision",
+    "content": "A church that makes disciples of all nations with the love of Jesus Christ, expanding God's kingdom",
+    "scripture": "Therefore go and make disciples of all nations, baptizing them in the name of the Father and of the Son and of the Holy Spirit - Matthew 28:19"
+  },
+  "mission": {
+    "title": "Mission",
+    "worship": "Worship",
+    "worship_desc": "True worship that glorifies God",
+    "fellowship": "Fellowship",
+    "fellowship_desc": "Community of love and service",
+    "discipleship": "Discipleship",
+    "discipleship_desc": "Growing disciples through Word and prayer",
+    "evangelism": "Evangelism",
+    "evangelism_desc": "Missional life sharing the Gospel",
+    "missions": "Missions",
+    "missions_desc": "Called to mission to all nations"
+  },
+  "history": {
+    "title": "Church History",
+    "founding": "Foundation",
+    "founding_year": "1995",
+    "founding_desc": "Started as a Korean church for Korean immigrants in America",
+    "growth": "Growth",
+    "growth_year": "2000-2010",
+    "growth_desc": "Expansion of young adult and next generation ministry",
+    "present": "Present",
+    "present_year": "2010-Present",
+    "present_desc": "Growing into a multi-ethnic community serving the local area"
+  },
+  "pastor": {
+    "title": "Senior Pastor",
+    "name": "Rev. Yoon Seok Yeon",
+    "education": "Education",
+    "education_detail": "Bachelor of Theology, Chongshin University\nMaster of Divinity, Presbyterian Theological Seminary\nDoctor of Ministry, Fuller Seminary",
+    "experience": "Ministry Experience",
+    "experience_detail": "Associate Pastor, Seoul Central Church (1990-1995)\nSenior Pastor, Grace Church (1995-Present)",
+    "ministry": "Ministry Philosophy",
+    "ministry_detail": "Pursuing \"A church built on Word and prayer, a community united in love and service,\" serving so that all believers grow as disciples of Christ and become the light and salt of the world."
+  },
+  "staff": {
+    "title": "Ministry Staff",
+    "associate_pastor": "Associate Pastor",
+    "education_pastor": "Education Pastor",
+    "youth_pastor": "Youth Pastor",
+    "worship_pastor": "Worship Pastor"
+  },
+  "beliefs": {
+    "title": "Statement of Faith",
+    "trinity": "Trinity",
+    "trinity_desc": "We believe in the Triune God - Father, Son, and Holy Spirit",
+    "scripture": "Scripture",
+    "scripture_desc": "The Bible is God's Word and the sole authority for faith and practice",
+    "salvation": "Salvation",
+    "salvation_desc": "We believe in salvation through Jesus Christ's work on the cross",
+    "church": "Church",
+    "church_desc": "The church is the body of Christ and the community of believers",
+    "mission": "Mission",
+    "mission_desc": "Gospel proclamation and disciple-making is the church's mission"
+  }
+}

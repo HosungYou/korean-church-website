@@ -1,0 +1,64 @@
+{
+  "page_title": "교회 소개",
+  "subtitle": "하나님의 사랑 안에서 성장하는 공동체",
+  "vision": {
+    "title": "비전",
+    "content": "예수 그리스도의 사랑으로 모든 족속을 제자 삼아 하나님 나라를 확장하는 교회",
+    "scripture": "그러므로 너희는 가서 모든 족속으로 제자를 삼아 아버지와 아들과 성령의 이름으로 세례를 주고 - 마태복음 28:19"
+  },
+  "mission": {
+    "title": "사명",
+    "worship": "예배",
+    "worship_desc": "하나님께 영광을 돌리는 참된 예배",
+    "fellowship": "교제",
+    "fellowship_desc": "사랑과 섬김의 공동체",
+    "discipleship": "제자도",
+    "discipleship_desc": "말씀과 기도로 성장하는 제자",
+    "evangelism": "전도",
+    "evangelism_desc": "복음을 전하는 사명적 삶",
+    "missions": "선교",
+    "missions_desc": "열방을 향한 선교의 부르심"
+  },
+  "history": {
+    "title": "교회 역사",
+    "founding": "설립",
+    "founding_year": "1995년",
+    "founding_desc": "미국 이민자들을 위한 한인교회로 시작",
+    "growth": "성장",
+    "growth_year": "2000-2010년",
+    "growth_desc": "청년부와 차세대 사역의 확장",
+    "present": "현재",
+    "present_year": "2010년-현재",
+    "present_desc": "다민족 공동체로 성장하며 지역사회 섬김"
+  },
+  "pastor": {
+    "title": "담임목사 소개",
+    "name": "연윤석 목사",
+    "education": "학력",
+    "education_detail": "총신대학교 신학과 졸업\n장로회신학대학교 신학대학원 졸업\nFuller Seminary 목회학 박사",
+    "experience": "사역경력",
+    "experience_detail": "서울 중앙교회 부목사 (1990-1995)\n은혜로운 교회 담임목사 (1995-현재)",
+    "ministry": "사역철학",
+    "ministry_detail": "\"말씀과 기도로 세워지는 교회, 사랑과 섬김으로 하나되는 공동체\"를 추구하며, 모든 성도가 그리스도의 제자로 성장하고 세상의 빛과 소금이 되도록 섬기고 있습니다."
+  },
+  "staff": {
+    "title": "교역자 소개",
+    "associate_pastor": "부목사",
+    "education_pastor": "교육목사",
+    "youth_pastor": "청년목사",
+    "worship_pastor": "예배목사"
+  },
+  "beliefs": {
+    "title": "신앙고백",
+    "trinity": "삼위일체 하나님",
+    "trinity_desc": "성부, 성자, 성령의 삼위일체 하나님을 믿습니다",
+    "scripture": "성경",
+    "scripture_desc": "신구약 성경은 하나님의 말씀이며 신앙과 행위의 유일한 규범입니다",
+    "salvation": "구원",
+    "salvation_desc": "예수 그리스도의 십자가 사역을 통한 구원을 믿습니다",
+    "church": "교회",
+    "church_desc": "교회는 그리스도의 몸이며 성도들의 공동체입니다",
+    "mission": "사명",
+    "mission_desc": "복음 전파와 제자 양성이 교회의 사명입니다"
+  }
+}
