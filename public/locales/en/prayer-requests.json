@@ -26,5 +26,7 @@
   "error": "An error occurred",
   "success_posted": "Prayer request posted successfully",
   "success_updated": "Prayer request updated successfully",
-  "success_deleted": "Prayer request deleted successfully"
+  "success_deleted": "Prayer request deleted successfully",
+  "guest_mode": "Guest Mode",
+  "login_to_reply": "Please login to reply"
 }

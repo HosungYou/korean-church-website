@@ -26,5 +26,7 @@
   "error": "오류가 발생했습니다",
   "success_posted": "기도제목이 작성되었습니다",
   "success_updated": "기도제목이 수정되었습니다",
-  "success_deleted": "기도제목이 삭제되었습니다"
+  "success_deleted": "기도제목이 삭제되었습니다",
+  "guest_mode": "게스트 모드",
+  "login_to_reply": "댓글을 달려면 로그인이 필요합니다"
 }
