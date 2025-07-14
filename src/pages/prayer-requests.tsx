@@ -131,7 +131,7 @@ const PrayerRequests: NextPage = () => {
   }
 
   const handleDelete = async (requestId: string) => {
-    if (window.confirm(t('prayer-requests:delete_confirm'))) {
+    if (window.confirm(t('prayer-requests:delete_confirm') as string)) {
       try {
         await deleteDoc(doc(db, 'prayerRequests', requestId))
       } catch (error) {
