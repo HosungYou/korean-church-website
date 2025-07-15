@@ -62,17 +62,6 @@ const Directions: NextPage = () => {
                 onLoad={() => setMapLoaded(true)}
               ></iframe>
             </div>
-            
-            {/* Note about API key */}
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-              <p className={`text-sm text-yellow-800 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {i18n.language === 'ko' 
-                  ? '* Google Maps API 키가 필요합니다. YOUR_GOOGLE_MAPS_API_KEY를 실제 API 키로 교체하세요.'
-                  : '* Google Maps API key required. Replace YOUR_GOOGLE_MAPS_API_KEY with your actual API key.'}
-              </p>
-            </div>
           </div>
 
           {/* Information Section */}
