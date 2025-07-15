@@ -9,8 +9,7 @@
   },
   "service_schedule": {
     "title": "Service Times",
-    "korean_1st": "1st Korean Service",
-    "korean_2nd": "2nd Korean Service",
+    "korean_main": "Sunday Service",
     "youth": "Youth Group",
     "children": "Children's Ministry",
     "wednesday": "Wednesday Service",

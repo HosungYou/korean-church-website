@@ -3,15 +3,9 @@
   "subtitle": "Join us in worship and encounter God together",
   "sunday_services": {
     "title": "Sunday Services",
-    "korean_1st": {
-      "name": "1st Service",
-      "time": "8:00 AM",
-      "location": "Church Sanctuary",
-      "description": "Quiet and reverent worship service to start the day with God's grace."
-    },
-    "korean_2nd": {
-      "name": "2nd Service",
-      "time": "11:00 AM", 
+    "main_service": {
+      "name": "Sunday Service",
+      "time": "11:00 AM",
       "location": "Church Sanctuary",
       "description": "Community worship service with praise and word together."
     }

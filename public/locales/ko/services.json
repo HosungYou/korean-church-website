@@ -3,14 +3,8 @@
   "subtitle": "함께 예배하며 하나님을 만나는 시간",
   "sunday_services": {
     "title": "주일 예배",
-    "korean_1st": {
-      "name": "1부 예배",
-      "time": "오전 8:00",
-      "location": "교회 본당",
-      "description": "새벽 은혜로 시작하는 고요하고 경건한 예배입니다."
-    },
-    "korean_2nd": {
-      "name": "2부 예배", 
+    "main_service": {
+      "name": "주일 예배",
       "time": "오전 11:00",
       "location": "교회 본당",
       "description": "찬양과 말씀으로 함께 드리는 공동체 예배입니다."

@@ -203,68 +203,6 @@ const Directions: NextPage = () => {
           </div>
         </div>
 
-        {/* Additional Information */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Public Transportation */}
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className={`text-xl font-bold text-gray-900 mb-4 ${
-              i18n.language === 'ko' ? 'font-korean' : 'font-english'
-            }`}>
-              {t('directions:public_transport.title')}
-            </h3>
-            <div className="space-y-3">
-              <div>
-                <span className={`font-medium text-gray-700 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('directions:public_transport.subway')}:
-                </span>
-                <p className={`text-gray-600 text-sm mt-1 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('directions:public_transport.subway_detail')}
-                </p>
-              </div>
-              <div>
-                <span className={`font-medium text-gray-700 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('directions:public_transport.bus')}:
-                </span>
-                <p className={`text-gray-600 text-sm mt-1 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('directions:public_transport.bus_detail')}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Nearby Amenities */}
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className={`text-xl font-bold text-gray-900 mb-4 ${
-              i18n.language === 'ko' ? 'font-korean' : 'font-english'
-            }`}>
-              {t('directions:nearby.title')}
-            </h3>
-            <ul className={`space-y-2 text-gray-600 ${
-              i18n.language === 'ko' ? 'font-korean' : 'font-english'
-            }`}>
-              <li className="flex items-start">
-                <span className="text-church-accent mr-2">•</span>
-                {t('directions:nearby.grocery')}
-              </li>
-              <li className="flex items-start">
-                <span className="text-church-accent mr-2">•</span>
-                {t('directions:nearby.restaurant')}
-              </li>
-              <li className="flex items-start">
-                <span className="text-church-accent mr-2">•</span>
-                {t('directions:nearby.hospital')}
-              </li>
-            </ul>
-          </div>
-        </div>
       </div>
     </Layout>
   )

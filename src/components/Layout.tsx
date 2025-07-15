@@ -11,6 +11,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { t, i18n } = useTranslation('common')
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false)
 
   const changeLanguage = (lng: string) => {
     router.push(router.pathname, router.asPath, { locale: lng })
@@ -21,6 +22,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: t('nav.about'), href: '/about' },
     { name: t('nav.services'), href: '/services' },
     { name: t('nav.sermons'), href: '/sermons' },
+    { 
+      name: t('nav.resources'), 
+      href: '#',
+      dropdown: [
+        { name: t('nav.announcements'), href: '/announcements' },
+        { name: t('nav.gallery'), href: '/gallery' },
+        { name: t('nav.bulletin'), href: '/bulletin' }
+      ]
+    },
     { name: t('nav.prayer_requests'), href: '/prayer-requests' },
     { name: t('nav.directions'), href: '/directions' },
     { name: t('nav.giving'), href: '/giving' },
@@ -46,17 +56,49 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex md:space-x-8">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                    router.pathname === item.href
-                      ? 'border-b-2 border-church-primary text-gray-900'
-                      : 'text-gray-500 hover:text-gray-900'
-                  } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
-                >
-                  {item.name}
-                </Link>
+                item.dropdown ? (
+                  <div key={item.name} className="relative">
+                    <button
+                      onClick={() => setResourcesDropdownOpen(!resourcesDropdownOpen)}
+                      className={`inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900 ${
+                        i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                      }`}
+                    >
+                      {item.name}
+                      <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {resourcesDropdownOpen && (
+                      <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-48">
+                        {item.dropdown.map((dropdownItem) => (
+                          <Link
+                            key={dropdownItem.name}
+                            href={dropdownItem.href}
+                            className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ${
+                              i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                            }`}
+                            onClick={() => setResourcesDropdownOpen(false)}
+                          >
+                            {dropdownItem.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                      router.pathname === item.href
+                        ? 'border-b-2 border-church-primary text-gray-900'
+                        : 'text-gray-500 hover:text-gray-900'
+                    } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
             </div>
 
@@ -127,18 +169,40 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className={`${mobileMenuOpen ? 'block' : 'hidden'} md:hidden`}>
             <div className="space-y-1 pb-3 pt-2">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`block py-2 pl-3 pr-4 text-base font-medium ${
-                    router.pathname === item.href
-                      ? 'border-l-4 border-church-primary bg-blue-50 text-church-primary'
-                      : 'border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-900'
-                  } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                item.dropdown ? (
+                  <div key={item.name}>
+                    <div className="border-l-4 border-transparent text-gray-500 py-2 pl-3 pr-4 text-base font-medium">
+                      {item.name}
+                    </div>
+                    {item.dropdown.map((dropdownItem) => (
+                      <Link
+                        key={dropdownItem.name}
+                        href={dropdownItem.href}
+                        className={`block py-2 pl-6 pr-4 text-sm font-medium ${
+                          router.pathname === dropdownItem.href
+                            ? 'border-l-4 border-church-primary bg-blue-50 text-church-primary'
+                            : 'border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                        } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {dropdownItem.name}
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`block py-2 pl-3 pr-4 text-base font-medium ${
+                      router.pathname === item.href
+                        ? 'border-l-4 border-church-primary bg-blue-50 text-church-primary'
+                        : 'border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                    } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
             </div>
           </div>

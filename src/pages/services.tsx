@@ -33,58 +33,29 @@ const Services: NextPage = () => {
             {t('services:sunday_services.title')}
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* 1st Korean Service */}
-            <div className="bg-gray-50 rounded-lg p-6 shadow-sm">
-              <div className="text-center mb-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-church-primary rounded-full text-white text-2xl font-bold mb-4">
-                  1
-                </div>
-                <h3 className={`text-xl font-semibold text-gray-900 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('services:sunday_services.korean_1st.name')}
-                </h3>
-                <p className="text-2xl font-bold text-church-primary mt-2">
-                  {t('services:sunday_services.korean_1st.time')}
-                </p>
-                <p className={`text-gray-600 mt-1 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('services:sunday_services.korean_1st.location')}
-                </p>
+          <div className="max-w-2xl mx-auto">
+            {/* Main Sunday Service */}
+            <div className="bg-gray-50 rounded-lg p-8 shadow-sm text-center">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-church-primary rounded-full text-white text-3xl font-bold mb-6">
+                †
               </div>
-              <p className={`text-gray-700 text-sm ${
+              <h3 className={`text-2xl font-semibold text-gray-900 mb-4 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
-                {t('services:sunday_services.korean_1st.description')}
+                {t('services:sunday_services.main_service.name')}
+              </h3>
+              <p className="text-3xl font-bold text-church-primary mb-2">
+                {t('services:sunday_services.main_service.time')}
               </p>
-            </div>
-
-            {/* 2nd Korean Service */}
-            <div className="bg-gray-50 rounded-lg p-6 shadow-sm">
-              <div className="text-center mb-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-church-primary rounded-full text-white text-2xl font-bold mb-4">
-                  2
-                </div>
-                <h3 className={`text-xl font-semibold text-gray-900 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('services:sunday_services.korean_2nd.name')}
-                </h3>
-                <p className="text-2xl font-bold text-church-primary mt-2">
-                  {t('services:sunday_services.korean_2nd.time')}
-                </p>
-                <p className={`text-gray-600 mt-1 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('services:sunday_services.korean_2nd.location')}
-                </p>
-              </div>
-              <p className={`text-gray-700 text-sm ${
+              <p className={`text-lg text-gray-600 mb-4 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
-                {t('services:sunday_services.korean_2nd.description')}
+                {t('services:sunday_services.main_service.location')}
+              </p>
+              <p className={`text-gray-700 ${
+                i18n.language === 'ko' ? 'font-korean' : 'font-english'
+              }`}>
+                {t('services:sunday_services.main_service.description')}
               </p>
             </div>
           </div>

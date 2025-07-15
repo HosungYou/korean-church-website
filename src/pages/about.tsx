@@ -193,41 +193,12 @@ const About: NextPage = () => {
               </div>
             </div>
             <div className="order-1 lg:order-2">
-              <div className="space-y-6">
-                <div>
-                  <h4 className={`text-lg font-semibold text-gray-900 mb-2 ${
+              <div className="flex items-center justify-center lg:justify-start h-full">
+                <div className="text-center lg:text-left">
+                  <p className={`text-lg text-gray-700 ${
                     i18n.language === 'ko' ? 'font-korean' : 'font-english'
                   }`}>
-                    {t('about:pastor.education')}
-                  </h4>
-                  <p className={`text-gray-600 whitespace-pre-line ${
-                    i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                  }`}>
-                    {t('about:pastor.education_detail')}
-                  </p>
-                </div>
-                <div>
-                  <h4 className={`text-lg font-semibold text-gray-900 mb-2 ${
-                    i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                  }`}>
-                    {t('about:pastor.experience')}
-                  </h4>
-                  <p className={`text-gray-600 whitespace-pre-line ${
-                    i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                  }`}>
-                    {t('about:pastor.experience_detail')}
-                  </p>
-                </div>
-                <div>
-                  <h4 className={`text-lg font-semibold text-gray-900 mb-2 ${
-                    i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                  }`}>
-                    {t('about:pastor.ministry')}
-                  </h4>
-                  <p className={`text-gray-600 ${
-                    i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                  }`}>
-                    {t('about:pastor.ministry_detail')}
+                    스테이트 칼리지 한인교회의 담임목사로 섬김에 감사드립니다.
                   </p>
                 </div>
               </div>

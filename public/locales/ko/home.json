@@ -9,8 +9,7 @@
   },
   "service_schedule": {
     "title": "예배 시간 안내",
-    "korean_1st": "1부 한국어 예배",
-    "korean_2nd": "2부 한국어 예배",
+    "korean_main": "주일 예배",
     "youth": "중고등부",
     "children": "주일학교",
     "wednesday": "수요 예배",
