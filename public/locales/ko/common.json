@@ -1,6 +1,6 @@
 {
   "welcome": "환영합니다",
-  "church_name": "은혜로운 교회",
+  "church_name": "스테이트 칼리지 한인교회",
   "nav": {
     "home": "홈",
     "about": "교회 소개",
@@ -18,8 +18,11 @@
   "latest_sermons": "최신 설교",
   "contact_us": "문의하기",
   "address": "주소",
+  "full_address": "758 Glenn Rd, State College, PA 16803",
   "phone": "전화",
+  "phone_number": "814-380-9393",
   "email": "이메일",
+  "email_address": "KyuHongYeon@gmail.com",
   "sunday": "주일",
   "wednesday": "수요일",
   "language": "언어",

@@ -225,7 +225,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <p className={`text-gray-300 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
-                {t('address')}: 123 Main St, City, State ZIP
+                {t('full_address')}
               </p>
             </div>
             <div>
@@ -235,10 +235,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {t('contact_us')}
               </h3>
               <p className="text-gray-300">
-                {t('phone')}: (123) 456-7890
+                {t('phone')}: {t('phone_number')}
               </p>
               <p className="text-gray-300">
-                {t('email')}: info@koreanchurch.org
+                {t('email')}: {t('email_address')}
               </p>
             </div>
             <div>
@@ -250,12 +250,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <p className={`text-gray-300 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
-                {t('sunday')}: 8:00 AM, 11:00 AM
+                {t('sunday')}: 11:00 AM
               </p>
               <p className={`text-gray-300 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
                 {t('wednesday')}: 7:30 PM
+              </p>
+              <p className={`text-gray-300 text-sm ${
+                i18n.language === 'ko' ? 'font-korean' : 'font-english'
+              }`}>
+                {i18n.language === 'ko' ? '새벽기도: 화-금 6:30 AM (ZOOM)' : 'Dawn Prayer: Tue-Fri 6:30 AM (ZOOM)'}
               </p>
             </div>
           </div>

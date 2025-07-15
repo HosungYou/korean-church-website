@@ -1,6 +1,6 @@
 {
   "welcome": "Welcome",
-  "church_name": "Grace Church",
+  "church_name": "State College Korean Church",
   "nav": {
     "home": "Home",
     "about": "About Us",
@@ -18,8 +18,11 @@
   "latest_sermons": "Latest Sermons",
   "contact_us": "Contact Us",
   "address": "Address",
+  "full_address": "758 Glenn Rd, State College, PA 16803",
   "phone": "Phone",
+  "phone_number": "814-380-9393",
   "email": "Email",
+  "email_address": "KyuHongYeon@gmail.com",
   "sunday": "Sunday",
   "wednesday": "Wednesday",
   "language": "Language",
