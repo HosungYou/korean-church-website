@@ -33,7 +33,7 @@ const Services: NextPage = () => {
             {t('services:sunday_services.title')}
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* 1st Korean Service */}
             <div className="bg-gray-50 rounded-lg p-6 shadow-sm">
               <div className="text-center mb-4">
@@ -85,33 +85,6 @@ const Services: NextPage = () => {
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
                 {t('services:sunday_services.korean_2nd.description')}
-              </p>
-            </div>
-
-            {/* English Service */}
-            <div className="bg-gray-50 rounded-lg p-6 shadow-sm">
-              <div className="text-center mb-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-church-secondary rounded-full text-white text-xl font-bold mb-4">
-                  EN
-                </div>
-                <h3 className={`text-xl font-semibold text-gray-900 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('services:sunday_services.english.name')}
-                </h3>
-                <p className="text-2xl font-bold text-church-secondary mt-2">
-                  {t('services:sunday_services.english.time')}
-                </p>
-                <p className={`text-gray-600 mt-1 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {t('services:sunday_services.english.location')}
-                </p>
-              </div>
-              <p className={`text-gray-700 text-sm ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('services:sunday_services.english.description')}
               </p>
             </div>
           </div>
@@ -271,58 +244,48 @@ const Services: NextPage = () => {
             <h3 className={`text-2xl font-bold text-gray-900 mb-6 ${
               i18n.language === 'ko' ? 'font-korean' : 'font-english'
             }`}>
-              {t('services:special_services.title')}
+              {t('services:additional_info.title')}
             </h3>
-            <ul className={`space-y-3 text-gray-700 ${
-              i18n.language === 'ko' ? 'font-korean' : 'font-english'
-            }`}>
-              <li className="flex items-center">
-                <span className="text-church-accent mr-2">•</span>
-                {t('services:special_services.communion')}
-              </li>
-              <li className="flex items-center">
-                <span className="text-church-accent mr-2">•</span>
-                {t('services:special_services.baptism')}
-              </li>
-              <li className="flex items-center">
-                <span className="text-church-accent mr-2">•</span>
-                {t('services:special_services.revival')}
-              </li>
-            </ul>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 className={`text-lg font-semibold text-gray-900 mb-3 ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {t('services:additional_info.parking.title')}
+                </h4>
+                <p className={`text-gray-700 text-sm ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {t('services:additional_info.parking.description')}
+                </p>
+              </div>
+              
+              <div>
+                <h4 className={`text-lg font-semibold text-gray-900 mb-3 ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {t('services:additional_info.contact.title')}
+                </h4>
+                <p className={`text-gray-700 text-sm mb-2 ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {t('services:additional_info.contact.phone')}
+                </p>
+                <p className={`text-gray-700 text-sm ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {t('services:additional_info.contact.email')}
+                </p>
+              </div>
+            </div>
 
             <div className="mt-8 pt-8 border-t border-gray-200">
-              <p className={`text-sm text-gray-600 mb-2 ${
+              <p className={`text-sm text-gray-600 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
                 {t('services:timezone_notice')}
               </p>
-              <p className={`text-sm text-gray-600 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('services:parking')}
-              </p>
-            </div>
-
-            {/* Online Service */}
-            <div className="mt-8 bg-church-primary/10 rounded-lg p-6">
-              <h4 className={`text-xl font-semibold text-gray-900 mb-2 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('services:online.title')}
-              </h4>
-              <p className={`text-gray-700 mb-4 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('services:online.description')}
-              </p>
-              <a
-                href="#"
-                className={`inline-flex items-center px-4 py-2 bg-church-primary text-white rounded-md hover:bg-church-secondary transition-colors ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}
-              >
-                {t('services:online.watch_live')} →
-              </a>
             </div>
           </div>
         </div>

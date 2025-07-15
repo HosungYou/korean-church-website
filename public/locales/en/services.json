@@ -4,22 +4,16 @@
   "sunday_services": {
     "title": "Sunday Services",
     "korean_1st": {
-      "name": "1st Korean Service",
+      "name": "1st Service",
       "time": "8:00 AM",
       "location": "Church Sanctuary",
-      "description": "Traditional Korean worship service with hymns and sermon."
+      "description": "Quiet and reverent worship service to start the day with God's grace."
     },
     "korean_2nd": {
-      "name": "2nd Korean Service",
+      "name": "2nd Service",
       "time": "11:00 AM", 
       "location": "Church Sanctuary",
-      "description": "Contemporary Korean worship service with modern praise."
-    },
-    "english": {
-      "name": "English Service",
-      "time": "11:00 AM",
-      "location": "Church Sanctuary",
-      "description": "Contemporary worship service for English speakers."
+      "description": "Community worship service with praise and word together."
     }
   },
   "youth_children": {
@@ -57,17 +51,17 @@
       "link_text": "ZOOM Link"
     }
   },
-  "special_services": {
-    "title": "Special Services",
-    "communion": "Communion on 1st Sunday of each month",
-    "baptism": "Baptism quarterly",
-    "revival": "Revival meetings twice a year"
+  "additional_info": {
+    "title": "Additional Information",
+    "parking": {
+      "title": "Parking Information",
+      "description": "Free parking is available in front of the church. Street parking is also available on Sundays."
+    },
+    "contact": {
+      "title": "Contact Information",
+      "phone": "Phone: (732) 456-7890",
+      "email": "Email: info@sckc.org"
+    }
   },
-  "timezone_notice": "* All times are Eastern Standard Time (EST/EDT)",
-  "parking": "Free parking available next to the church building",
-  "online": {
-    "title": "Online Worship",
-    "description": "Dawn prayer meetings are conducted online via ZOOM.",
-    "watch_live": "Join Live Worship"
-  }
+  "timezone_notice": "* All times are Eastern Standard Time (EST/EDT)"
 }

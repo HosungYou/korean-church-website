@@ -1,35 +1,35 @@
 {
   "page_title": "교회 소개",
-  "subtitle": "하나님의 사랑 안에서 성장하는 공동체",
+  "subtitle": "스테이트 칼리지 한인교회에 오신 것을 환영합니다",
   "vision": {
-    "title": "비전",
-    "content": "예수 그리스도의 사랑으로 모든 족속을 제자 삼아 하나님 나라를 확장하는 교회",
-    "scripture": "그러므로 너희는 가서 모든 족속으로 제자를 삼아 아버지와 아들과 성령의 이름으로 세례를 주고 - 마태복음 28:19"
+    "title": "담임목사 인사말",
+    "content": "스테이트 칼리지 한인 교회는 모든 교인이 그리스도 안에서 함께 배우고 섬기는 공동체입니다.\n\n하나님을 아직 모르는 분들도 그분의 은혜 안에 들어오시기를 바라는 마음 간절합니다.\n\n사랑의 교제와 은혜로운 예배를 통해 우리를 이곳으로 인도하신 하나님의 목적을 배우며 성숙하고 풍성한 공동체를 이루어가기를 소망하면서, 바쁘고 고단한 삶 가운데 참된 안식과 기쁨을 누릴 수 있는 푸른 초장으로 여러분을 초대합니다.",
+    "scripture": "여호와는 나의 목자시니 내게 부족함이 없으리로다 - 시편 23:1"
   },
   "mission": {
-    "title": "사명",
-    "worship": "예배",
-    "worship_desc": "하나님께 영광을 돌리는 참된 예배",
-    "fellowship": "교제",
-    "fellowship_desc": "사랑과 섬김의 공동체",
-    "discipleship": "제자도",
-    "discipleship_desc": "말씀과 기도로 성장하는 제자",
-    "evangelism": "전도",
-    "evangelism_desc": "복음을 전하는 사명적 삶",
-    "missions": "선교",
-    "missions_desc": "열방을 향한 선교의 부르심"
+    "title": "교회 소개",
+    "worship": "은혜로운 예배",
+    "worship_desc": "사랑의 교제와 은혜로운 예배를 통해 하나님을 만나는 시간",
+    "fellowship": "공동체 교제",
+    "fellowship_desc": "그리스도 안에서 함께 배우고 섬기는 공동체",
+    "discipleship": "제자 양육",
+    "discipleship_desc": "말씀 중심의 교제를 통하여 섬기는 아름다운 공동체",
+    "evangelism": "전도 사역",
+    "evangelism_desc": "학원과 지역사회에 빛과 소금의 역할을 하는 사명",
+    "missions": "선교 사역",
+    "missions_desc": "차세대 리더를 세워 전 세계에 파송하는 비전"
   },
   "history": {
     "title": "교회 역사",
-    "founding": "설립",
-    "founding_year": "1995년",
-    "founding_desc": "미국 이민자들을 위한 한인교회로 시작",
-    "growth": "성장",
-    "growth_year": "2000-2010년",
-    "growth_desc": "청년부와 차세대 사역의 확장",
-    "present": "현재",
-    "present_year": "2010년-현재",
-    "present_desc": "다민족 공동체로 성장하며 지역사회 섬김"
+    "founding": "교회 설립",
+    "founding_year": "1983년 3월 6일",
+    "founding_desc": "펜스테이트에 유학하고 있는 학생들이 주축이 되어 세워졌으며, 개혁주의 신앙을 따르는 미국장로회(PCA)에 소속되어 있습니다.",
+    "growth": "성장과 발전",
+    "growth_year": "1983년-현재",
+    "growth_desc": "주로 유학생, 연구원, 교수 및 방문가정들로 구성되어 왔으며, 전도와 양육의 양대 사역을 주축으로 성장해왔습니다.",
+    "present": "현재와 비전",
+    "present_year": "현재",
+    "present_desc": "이 시대를 복음으로 살리는 사명을 가진 그리스도의 제자를 양육하고 차세대 리더를 세워 전 세계에 파송하는 비전을 갖고 있습니다."
   },
   "pastor": {
     "title": "담임목사 소개",

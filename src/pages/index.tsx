@@ -133,12 +133,6 @@ const Home: NextPage = () => {
                   </span>
                   <span className="font-medium">11:00 AM</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className={i18n.language === 'ko' ? 'font-korean' : 'font-english'}>
-                    {t('home:service_schedule.english')}
-                  </span>
-                  <span className="font-medium">11:00 AM</span>
-                </div>
               </div>
             </div>
 

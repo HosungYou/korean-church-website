@@ -1,17 +1,16 @@
 {
-  "hero_title": "A Church for Everyone",
-  "hero_subtitle": "Growing Together in the Love of Jesus Christ",
+  "hero_title": "State College Korean Church",
+  "hero_subtitle": "A community learning and serving together in Christ",
   "join_us": "Join Us for Worship",
   "about_section": {
     "title": "About Our Church",
-    "description": "Grace Church is a Korean American community where we gather to worship, grow, and serve together. We offer services in both Korean and English, providing an environment where all generations can thrive in their faith journey.",
+    "description": "State College Korean Church was founded in 1983 by Penn State international students and is affiliated with the Presbyterian Church in America (PCA), following Reformed faith. We are a community where all members learn and serve together in Christ.",
     "learn_more": "Learn More"
   },
   "service_schedule": {
     "title": "Service Times",
     "korean_1st": "1st Korean Service",
     "korean_2nd": "2nd Korean Service",
-    "english": "English Service",
     "youth": "Youth Group",
     "children": "Children's Ministry",
     "wednesday": "Wednesday Service",
