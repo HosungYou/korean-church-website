@@ -4,12 +4,15 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Play, Calendar, MapPin, Heart, Users, BookOpen, Phone, Globe, Coffee, Clock, User, Gift } from 'lucide-react'
+import { ArrowRight, Play, Calendar, MapPin, Heart, Users, BookOpen, Phone, Globe, Coffee, Clock, User, Gift, Mail, Bell } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { addEmailSubscriber } from '../utils/emailService'
 
 const Home: NextPage = () => {
   const { t, i18n } = useTranslation(['home', 'common'])
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [email, setEmail] = useState('')
+  const [isSubscribed, setIsSubscribed] = useState(false)
   
   const heroSlides = [
     {
@@ -35,6 +38,21 @@ const Home: NextPage = () => {
     }, 5000)
     return () => clearInterval(timer)
   }, [])
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+    
+    try {
+      await addEmailSubscriber(email)
+      setIsSubscribed(true)
+      setEmail('')
+      setTimeout(() => setIsSubscribed(false), 3000)
+    } catch (error) {
+      console.error('구독 오류:', error)
+      alert('구독 중 오류가 발생했습니다. 다시 시도해주세요.')
+    }
+  }
 
   const quickAccessIcons = [
     {
@@ -174,18 +192,54 @@ const Home: NextPage = () => {
         </div>
       </section>
 
+      {/* 이메일 구독 Section */}
+      <section className="bg-gray-100 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-lg p-8 shadow-sm">
+            <div className="flex items-center mb-6">
+              <div className="w-4 h-4 bg-black rounded-full mr-4"></div>
+              <h2 className="text-2xl font-bold text-black font-korean">교회 소식 구독</h2>
+            </div>
+            <div className="flex items-center mb-4">
+              <Mail className="w-6 h-6 text-gray-600 mr-3" />
+              <p className="text-gray-700 font-korean">새로운 공지사항과 교회 소식을 이메일로 받아보세요</p>
+            </div>
+            <form onSubmit={handleSubscribe} className="flex gap-3">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="이메일 주소를 입력해주세요"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent font-korean"
+                required
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-korean flex items-center"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                구독하기
+              </button>
+            </form>
+            {isSubscribed && (
+              <p className="mt-4 text-green-600 font-korean">성공적으로 구독되었습니다!</p>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* 예배/설교 Section */}
       <section className="bg-gray-50 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center mb-8">
-            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
+            <div className="w-4 h-4 bg-black rounded-full mr-4"></div>
             <h2 className="text-3xl font-bold text-black font-korean">예배/설교</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link href="/sermons/sunday" className="group block">
               <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center mb-4">
-                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
+                  <div className="w-3 h-3 bg-black rounded-full mr-3"></div>
                   <h3 className="text-xl font-semibold text-black font-korean">주일예배</h3>
                 </div>
                 <p className="text-gray-600 font-korean mb-3">매주 일요일 오전 11시</p>
@@ -198,7 +252,7 @@ const Home: NextPage = () => {
             <Link href="/sermons/wednesday" className="group block">
               <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center mb-4">
-                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
+                  <div className="w-3 h-3 bg-black rounded-full mr-3"></div>
                   <h3 className="text-xl font-semibold text-black font-korean">수요예배</h3>
                 </div>
                 <p className="text-gray-600 font-korean mb-3">매주 수요일 저녁 7시 30분</p>
@@ -211,7 +265,7 @@ const Home: NextPage = () => {
             <Link href="/sermons" className="group block">
               <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center mb-4">
-                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
+                  <div className="w-3 h-3 bg-black rounded-full mr-3"></div>
                   <h3 className="text-xl font-semibold text-black font-korean">설교 아카이브</h3>
                 </div>
                 <p className="text-gray-600 font-korean mb-3">지난 설교 다시 듣기</p>
@@ -229,7 +283,7 @@ const Home: NextPage = () => {
       <section className="bg-white py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center mb-8">
-            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
+            <div className="w-4 h-4 bg-black rounded-full mr-4"></div>
             <h2 className="text-3xl font-bold text-black font-korean">처음 오셨나요?</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -237,7 +291,7 @@ const Home: NextPage = () => {
               <Link href={card.href} key={card.title} className="group block">
                 <div className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
                   <div className="flex items-start mb-4">
-                    <div className="w-2 h-2 bg-black rounded-full mr-3 mt-2"></div>
+                    <div className="w-3 h-3 bg-black rounded-full mr-3 mt-1"></div>
                     <div>
                       <h3 className="text-lg font-semibold text-black font-korean mb-2">
                         {card.title}
