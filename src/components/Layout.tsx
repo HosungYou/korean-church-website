@@ -12,6 +12,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false)
+  const buildSha = (process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7)
 
   const changeLanguage = (lng: string) => {
     router.push(router.pathname, router.asPath, { locale: lng })
@@ -265,9 +266,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
           </div>
           <div className="mt-8 border-t border-gray-700 pt-8 text-center">
-            <p className="text-gray-400">
-              © 2024 {t('church_name')}. All rights reserved.
-            </p>
+            <p className="text-gray-400">© 2024 {t('church_name')}. All rights reserved.</p>
+            {buildSha && (
+              <p className="text-gray-500 text-xs mt-2">Build {buildSha}</p>
+            )}
           </div>
         </div>
       </footer>
