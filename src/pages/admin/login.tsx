@@ -20,6 +20,13 @@ const AdminLoginPage = () => {
     setIsLoading(true)
     setError('')
 
+    // 임시 관리자 계정 체크
+    if (email === 'newhosung@gmail.com' && password === 'admin123!') {
+      localStorage.setItem('adminLoggedIn', 'true')
+      router.push('/admin/dashboard')
+      return
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password)
       router.push('/admin/dashboard')
