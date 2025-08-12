@@ -11,25 +11,25 @@ const Home: NextPage = () => {
 
   const featureCards = [
     {
-      image: '/images/visitus.jpg',
+      image: '/images/feature-placeholder.svg',
       title: '새가족 안내',
       description: '교회에 처음 방문하시는 분들을 위한 안내입니다.',
       href: '/about',
     },
     {
-      image: '/images/sermon.jpg',
+      image: '/images/feature-placeholder.svg',
       title: '온라인 예배',
       description: '주일 예배 및 수요 예배를 온라인으로 참여하세요.',
       href: '/sermons',
     },
     {
-      image: '/images/nextgen.jpg',
+      image: '/images/feature-placeholder.svg',
       title: '교회학교',
       description: '다음 세대를 위한 교육 부서입니다.',
       href: '/services',
     },
     {
-      image: '/images/community.jpg',
+      image: '/images/feature-placeholder.svg',
       title: '소그룹 안내',
       description: '함께 교제하고 성장하는 소그룹에 참여하세요.',
       href: '/services',
@@ -42,13 +42,13 @@ const Home: NextPage = () => {
       <section className="relative h-[60vh] bg-white text-black flex items-center">
         <div className="absolute inset-0">
           <Image
-            src="/images/church-main-banner.jpg"
+            src="/images/hero-bw.svg"
             alt="Church"
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-black opacity-30"></div>
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
@@ -63,10 +63,10 @@ const Home: NextPage = () => {
       {/* Features Section */}
       <section className="bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-y-16 sm:grid-cols-2 sm:gap-x-8 lg:gap-x-16">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
             {featureCards.map((card) => (
               <Link href={card.href} key={card.title} className="group block">
-                <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden relative">
+                <div className="aspect-[16/9] rounded overflow-hidden relative border border-black/10 bg-white">
                   <Image
                     src={card.image}
                     alt={card.title}
@@ -74,14 +74,14 @@ const Home: NextPage = () => {
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <div className="mt-6">
+                <div className="mt-4 border border-black/10 p-5">
                   <h3 className="text-2xl font-bold text-black">
                     {card.title}
                   </h3>
-                  <p className="mt-2 text-base text-gray-600">
+                  <p className="mt-2 text-base text-black/70">
                     {card.description}
                   </p>
-                  <div className="mt-4 inline-flex items-center text-black font-semibold group-hover:text-gray-700">
+                  <div className="mt-4 inline-flex items-center text-black font-semibold">
                     자세히 보기
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                   </div>

@@ -37,9 +37,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white text-black">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white sticky top-0 z-50 border-b border-black/10">
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between items-center">
             {/* Logo */}
@@ -60,7 +60,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <div key={item.name} className="relative">
                     <button
                       onClick={() => setResourcesDropdownOpen(!resourcesDropdownOpen)}
-                      className={`inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900 ${
+                      className={`inline-flex items-center px-1 pt-1 text-sm font-medium text-black hover:opacity-70 ${
                         i18n.language === 'ko' ? 'font-korean' : 'font-english'
                       }`}
                     >
@@ -70,12 +70,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       </svg>
                     </button>
                     {resourcesDropdownOpen && (
-                      <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-48">
+                      <div className="absolute top-full left-0 mt-1 bg-white border border-black/20 rounded-md shadow-lg z-50 min-w-48">
                         {item.dropdown.map((dropdownItem) => (
                           <Link
                             key={dropdownItem.name}
                             href={dropdownItem.href}
-                            className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ${
+                            className={`block px-4 py-2 text-sm text-black/80 hover:bg-black/5 ${
                               i18n.language === 'ko' ? 'font-korean' : 'font-english'
                             }`}
                             onClick={() => setResourcesDropdownOpen(false)}
@@ -92,8 +92,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     href={item.href}
                     className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
                       router.pathname === item.href
-                        ? 'border-b-2 border-church-primary text-gray-900'
-                        : 'text-gray-500 hover:text-gray-900'
+                        ? 'border-b border-black text-black'
+                        : 'text-black hover:opacity-70'
                     } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
                   >
                     {item.name}
@@ -107,20 +107,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => changeLanguage('ko')}
-                  className={`px-3 py-1 text-sm font-medium rounded-md ${
+                  className={`px-3 py-1 text-sm font-medium rounded-md border ${
                     i18n.language === 'ko'
-                      ? 'bg-church-primary text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-black text-white border-black'
+                      : 'text-black border-black/20 hover:bg-black/5'
                   }`}
                 >
                   한국어
                 </button>
                 <button
                   onClick={() => changeLanguage('en')}
-                  className={`px-3 py-1 text-sm font-medium rounded-md ${
+                  className={`px-3 py-1 text-sm font-medium rounded-md border ${
                     i18n.language === 'en'
-                      ? 'bg-church-primary text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-black text-white border-black'
+                      : 'text-black border-black/20 hover:bg-black/5'
                   }`}
                 >
                   ENG
@@ -171,7 +171,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {navigation.map((item) => (
                 item.dropdown ? (
                   <div key={item.name}>
-                    <div className="border-l-4 border-transparent text-gray-500 py-2 pl-3 pr-4 text-base font-medium">
+                    <div className="border-l-4 border-transparent text-black/70 py-2 pl-3 pr-4 text-base font-medium">
                       {item.name}
                     </div>
                     {item.dropdown.map((dropdownItem) => (
@@ -180,8 +180,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         href={dropdownItem.href}
                         className={`block py-2 pl-6 pr-4 text-sm font-medium ${
                           router.pathname === dropdownItem.href
-                            ? 'border-l-4 border-church-primary bg-blue-50 text-church-primary'
-                            : 'border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                            ? 'border-l-4 border-black bg-black/5 text-black'
+                            : 'border-l-4 border-transparent text-black/70 hover:bg-black/5 hover:text-black'
                         } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
@@ -195,8 +195,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     href={item.href}
                     className={`block py-2 pl-3 pr-4 text-base font-medium ${
                       router.pathname === item.href
-                        ? 'border-l-4 border-church-primary bg-blue-50 text-church-primary'
-                        : 'border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'border-l-4 border-black bg-black/5 text-black'
+                        : 'border-l-4 border-transparent text-black/70 hover:bg-black/5 hover:text-black'
                     } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -213,7 +213,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main>{children}</main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white mt-12">
+      <footer className="bg-black text-white mt-12">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
