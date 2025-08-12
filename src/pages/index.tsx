@@ -192,47 +192,10 @@ const Home: NextPage = () => {
         </div>
       </section>
 
-      {/* 이메일 구독 Section */}
-      <section className="bg-gray-100 py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg p-8 shadow-sm">
-            <div className="flex items-center mb-6">
-              <div className="w-4 h-4 bg-black rounded-full mr-4"></div>
-              <h2 className="text-2xl font-bold text-black font-korean">교회 소식 구독</h2>
-            </div>
-            <div className="flex items-center mb-4">
-              <Mail className="w-6 h-6 text-gray-600 mr-3" />
-              <p className="text-gray-700 font-korean">새로운 공지사항과 교회 소식을 이메일로 받아보세요</p>
-            </div>
-            <form onSubmit={handleSubscribe} className="flex gap-3">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="이메일 주소를 입력해주세요"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent font-korean"
-                required
-              />
-              <button
-                type="submit"
-                className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-korean flex items-center"
-              >
-                <Bell className="w-4 h-4 mr-2" />
-                구독하기
-              </button>
-            </form>
-            {isSubscribed && (
-              <p className="mt-4 text-green-600 font-korean">성공적으로 구독되었습니다!</p>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* 예배/설교 Section */}
       <section className="bg-gray-50 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-8">
-            <div className="w-4 h-4 bg-black rounded-full mr-4"></div>
+          <div className="mb-8">
             <h2 className="text-3xl font-bold text-black font-korean">예배/설교</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -282,8 +245,7 @@ const Home: NextPage = () => {
       {/* 처음 오셨나요? Section */}
       <section className="bg-white py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-8">
-            <div className="w-4 h-4 bg-black rounded-full mr-4"></div>
+          <div className="mb-8">
             <h2 className="text-3xl font-bold text-black font-korean">처음 오셨나요?</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -308,6 +270,42 @@ const Home: NextPage = () => {
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 이메일 구독 Section */}
+      <section className="bg-gray-100 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-lg p-8 shadow-sm">
+            <div className="flex items-center mb-6">
+              <div className="w-4 h-4 bg-black rounded-full mr-4"></div>
+              <h2 className="text-2xl font-bold text-black font-korean">교회 소식 구독</h2>
+            </div>
+            <div className="flex items-center mb-4">
+              <Mail className="w-6 h-6 text-gray-600 mr-3" />
+              <p className="text-gray-700 font-korean">새로운 공지사항과 교회 소식을 이메일로 받아보세요</p>
+            </div>
+            <form onSubmit={handleSubscribe} className="flex gap-3">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="이메일 주소를 입력해주세요"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent font-korean"
+                required
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-korean flex items-center"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                구독하기
+              </button>
+            </form>
+            {isSubscribed && (
+              <p className="mt-4 text-green-600 font-korean">성공적으로 구독되었습니다!</p>
+            )}
           </div>
         </div>
       </section>
