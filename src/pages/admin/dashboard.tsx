@@ -3,8 +3,7 @@ import { useRouter } from 'next/router'
 import Layout from '../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../../../lib/firebase'
+// Firebase 비활성화 - localStorage 기반 인증 사용
 import { 
   LayoutDashboard, 
   FileText, 
@@ -20,8 +19,9 @@ import {
 import Link from 'next/link'
 
 const AdminDashboardPage = () => {
-  const [user, loading, error] = useAuthState(auth)
   const router = useRouter()
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
     totalPosts: 12,
     subscribers: 45,
@@ -30,14 +30,23 @@ const AdminDashboardPage = () => {
   })
 
   useEffect(() => {
-    if (!loading && !user) {
+    // localStorage 기반 인증 체크
+    const adminLoggedIn = localStorage.getItem('adminLoggedIn')
+    const adminUser = localStorage.getItem('adminUser')
+    
+    if (adminLoggedIn === 'true' && adminUser) {
+      setUser(JSON.parse(adminUser))
+    } else {
       router.push('/admin/login')
     }
-  }, [user, loading, router])
+    setLoading(false)
+  }, [router])
 
   const handleLogout = async () => {
     try {
-      await auth.signOut()
+      // localStorage 기반 로그아웃
+      localStorage.removeItem('adminLoggedIn')
+      localStorage.removeItem('adminUser')
       router.push('/')
     } catch (error) {
       console.error('로그아웃 오류:', error)
@@ -131,7 +140,7 @@ const AdminDashboardPage = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700 font-korean">
-                  안녕하세요, {user.email}님
+                  안녕하세요, {user?.email || user?.name}님
                 </span>
                 <button
                   onClick={handleLogout}

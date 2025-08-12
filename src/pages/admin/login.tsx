@@ -20,22 +20,22 @@ const AdminLoginPage = () => {
     setIsLoading(true)
     setError('')
 
-    // 임시 관리자 계정 체크
+    // 임시 관리자 계정 체크 (Firebase 완전 우회)
     if (email === 'newhosung@gmail.com' && password === 'admin123!') {
       localStorage.setItem('adminLoggedIn', 'true')
+      localStorage.setItem('adminUser', JSON.stringify({
+        email: 'newhosung@gmail.com',
+        name: '관리자',
+        loginTime: new Date().toISOString()
+      }))
+      setIsLoading(false)
       router.push('/admin/dashboard')
       return
     }
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password)
-      router.push('/admin/dashboard')
-    } catch (error: any) {
-      console.error('로그인 오류:', error)
-      setError('이메일 또는 비밀번호가 올바르지 않습니다.')
-    } finally {
-      setIsLoading(false)
-    }
+    // 잘못된 로그인 정보
+    setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+    setIsLoading(false)
   }
 
   const handleGoogleLogin = async () => {
