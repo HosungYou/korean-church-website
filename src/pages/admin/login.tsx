@@ -20,46 +20,29 @@ const AdminLoginPage = () => {
     setIsLoading(true)
     setError('')
 
-    try {
-      // Firebase 이메일/비밀번호 인증 시도
-      const result = await signInWithEmailAndPassword(auth, email, password)
-      console.log('✅ Firebase 로그인 성공:', result.user.email)
-      
-      // 성공 시 localStorage에도 저장 (브라우저 호환성)
+    // 로컬 계정 데이터베이스 (Firebase 대체)
+    const localAccounts = JSON.parse(localStorage.getItem('adminAccounts') || '[]')
+    const defaultAccounts = [
+      { email: 'newhosung@gmail.com', password: 'admin123!', name: '관리자' },
+      { email: 'admin@sckc.org', password: 'sckc2025!', name: '관리자' }
+    ]
+    
+    const allAccounts = [...defaultAccounts, ...localAccounts]
+    const foundAccount = allAccounts.find(acc => acc.email === email && acc.password === password)
+    
+    if (foundAccount) {
+      // 로그인 성공
       localStorage.setItem('adminLoggedIn', 'true')
       localStorage.setItem('adminUser', JSON.stringify({
-        email: result.user.email,
-        name: '관리자',
+        email: foundAccount.email,
+        name: foundAccount.name,
         loginTime: new Date().toISOString()
       }))
-      
+      setIsLoading(false)
       router.push('/admin/dashboard')
-    } catch (error: any) {
-      console.error('❌ Firebase 로그인 오류:', error)
-      
-      // Firebase 실패 시 임시 계정 체크
-      if (email === 'newhosung@gmail.com' && password === 'admin123!') {
-        localStorage.setItem('adminLoggedIn', 'true')
-        localStorage.setItem('adminUser', JSON.stringify({
-          email: 'newhosung@gmail.com',
-          name: '관리자 (임시)',
-          loginTime: new Date().toISOString()
-        }))
-        router.push('/admin/dashboard')
-        return
-      }
-      
-      // 실제 오류 처리
-      if (error.code === 'auth/user-not-found') {
-        setError('등록되지 않은 이메일입니다.')
-      } else if (error.code === 'auth/wrong-password') {
-        setError('비밀번호가 올바르지 않습니다.')
-      } else if (error.code === 'auth/too-many-requests') {
-        setError('너무 많은 시도입니다. 잠시 후 다시 시도해주세요.')
-      } else {
-        setError('로그인 중 오류가 발생했습니다.')
-      }
-    } finally {
+    } else {
+      // 로그인 실패
+      setError('이메일 또는 비밀번호가 올바르지 않습니다.')
       setIsLoading(false)
     }
   }
