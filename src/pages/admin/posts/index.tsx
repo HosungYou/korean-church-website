@@ -3,8 +3,7 @@ import { useRouter } from 'next/router'
 import Layout from '../../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../../../../lib/firebase'
+// Firebase 비활성화 - localStorage 기반 인증 사용
 import { 
   Plus, 
   Edit, 
@@ -30,8 +29,9 @@ interface Post {
 }
 
 const AdminPostsPage = () => {
-  const [user, loading, error] = useAuthState(auth)
   const router = useRouter()
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [posts, setPosts] = useState<Post[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState<string>('all')
@@ -75,10 +75,17 @@ const AdminPostsPage = () => {
   }, [])
 
   useEffect(() => {
-    if (!loading && !user) {
+    // localStorage 기반 인증 체크
+    const adminLoggedIn = localStorage.getItem('adminLoggedIn')
+    const adminUser = localStorage.getItem('adminUser')
+    
+    if (adminLoggedIn === 'true' && adminUser) {
+      setUser(JSON.parse(adminUser))
+    } else {
       router.push('/admin/login')
     }
-  }, [user, loading, router])
+    setLoading(false)
+  }, [router])
 
   const filteredPosts = posts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||

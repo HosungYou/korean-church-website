@@ -3,8 +3,7 @@ import { useRouter } from 'next/router'
 import Layout from '../../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../../../../lib/firebase'
+// Firebase 비활성화 - localStorage 기반 인증 사용
 import { 
   Save, 
   Send, 
@@ -19,9 +18,10 @@ import Link from 'next/link'
 import { sendNewsletterToSubscribers } from '../../../utils/emailService'
 
 const NewPostPage = () => {
-  const [user, loading, error] = useAuthState(auth)
   const router = useRouter()
   const { type: queryType } = router.query
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -39,10 +39,17 @@ const NewPostPage = () => {
   }, [queryType])
 
   useEffect(() => {
-    if (!loading && !user) {
+    // localStorage 기반 인증 체크
+    const adminLoggedIn = localStorage.getItem('adminLoggedIn')
+    const adminUser = localStorage.getItem('adminUser')
+    
+    if (adminLoggedIn === 'true' && adminUser) {
+      setUser(JSON.parse(adminUser))
+    } else {
       router.push('/admin/login')
     }
-  }, [user, loading, router])
+    setLoading(false)
+  }, [router])
 
   const handleSave = async (publishStatus: 'draft' | 'published' | 'scheduled') => {
     if (!title || !content) {
