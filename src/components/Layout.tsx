@@ -1,7 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, Fragment } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import { Menu, Transition } from '@headlessui/react'
+import { ChevronDownIcon, Menu as MenuIcon, X as XIcon } from 'lucide-react'
+
+interface NavItem {
+  name: string
+  href?: string
+  dropdown?: NavItem[]
+}
 
 interface LayoutProps {
   children: React.ReactNode
@@ -11,265 +19,265 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { t, i18n } = useTranslation('common')
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false)
-  const buildSha = (process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7)
+
+  const navigation: NavItem[] = [
+    {
+      name: '교회안내',
+      dropdown: [
+        { name: '인사말', href: '/about/greeting' },
+        { name: '연혁', href: '/about/history' },
+        { name: '섬기는분들', href: '/about/ministers' },
+        { name: '예배안내', href: '/about/service-info' },
+        { name: '오시는길', href: '/about/directions' },
+      ],
+    },
+    {
+      name: '말씀/찬양',
+      dropdown: [
+        { name: '주일예배', href: '/sermons/sunday' },
+        { name: '수요예배', href: '/sermons/wednesday' },
+        { name: '금요철야', href: '/sermons/friday' },
+        { name: '특별찬양', href: '/sermons/special-praise' },
+      ],
+    },
+    {
+      name: '교회학교',
+      dropdown: [
+        { name: '영아부', href: '/education/infants' },
+        { name: '유치부', href: '/education/kindergarten' },
+        { name: '초등부', href: '/education/elementary' },
+        { name: '중고등부', href: '/education/youth' },
+        { name: '청년부', href: '/education/young-adults' },
+      ],
+    },
+    {
+      name: '선교/양육',
+      dropdown: [
+        { name: '국내선교', href: '/missions/domestic' },
+        { name: '해외선교', href: '/missions/international' },
+        { name: '새가족양육', href: '/missions/new-family' },
+        { name: '제자훈련', href: '/missions/discipleship' },
+      ],
+    },
+    {
+      name: '교회소식',
+      dropdown: [
+        { name: '교회소식', href: '/news/announcements' },
+        { name: '주보', href: '/news/bulletin' },
+        { name: '행사사진', href: '/news/gallery' },
+      ],
+    },
+    { name: '온라인헌금', href: '/giving' },
+  ]
 
   const changeLanguage = (lng: string) => {
     router.push(router.pathname, router.asPath, { locale: lng })
   }
 
-  const navigation = [
-    { name: t('nav.home'), href: '/' },
-    { name: t('nav.about'), href: '/about' },
-    { name: t('nav.services'), href: '/services' },
-    { name: t('nav.sermons'), href: '/sermons' },
-    { 
-      name: t('nav.resources'), 
-      href: '#',
-      dropdown: [
-        { name: t('nav.announcements'), href: '/announcements' },
-        { name: t('nav.gallery'), href: '/gallery' },
-        { name: t('nav.bulletin'), href: '/bulletin' }
-      ]
-    },
-    { name: t('nav.prayer_requests'), href: '/prayer-requests' },
-    { name: t('nav.directions'), href: '/directions' },
-    { name: t('nav.giving'), href: '/giving' },
-  ]
-
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* Header */}
-      <header className="bg-white sticky top-0 z-50 border-b border-black/10">
-        <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between items-center">
-            {/* Logo */}
+    <div className="min-h-screen bg-white text-black font-english">
+      <header className="bg-white/70 sticky top-0 z-50 backdrop-blur-lg border-b border-black/10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-20 justify-between items-center">
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
-                <img
-                  src="/images/logo.png"
-                  alt="Church Logo"
-                  className="h-12 w-auto"
-                />
+                <img src="/images/logo-black.png" alt="Church Logo" className="h-12 w-auto" />
               </Link>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex md:space-x-8">
-              {navigation.map((item) => (
+            <div className="hidden lg:flex lg:items-center lg:space-x-8">
+              {navigation.map((item) =>
                 item.dropdown ? (
-                  <div key={item.name} className="relative">
-                    <button
-                      onClick={() => setResourcesDropdownOpen(!resourcesDropdownOpen)}
-                      className={`inline-flex items-center px-1 pt-1 text-sm font-medium text-black hover:opacity-70 ${
-                        i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                      }`}
+                  <Menu as="div" key={item.name} className="relative">
+                    <Menu.Button className="inline-flex items-center px-1 pt-1 text-base font-medium text-black hover:opacity-70 transition-opacity">
+                      <span className="font-korean">{item.name}</span>
+                      <ChevronDownIcon className="ml-1 h-5 w-5" />
+                    </Menu.Button>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="opacity-0 translate-y-1"
+                      enterTo="opacity-100 translate-y-0"
+                      leave="transition ease-in duration-150"
+                      leaveFrom="opacity-100 translate-y-0"
+                      leaveTo="opacity-0 translate-y-1"
                     >
-                      {item.name}
-                      <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    {resourcesDropdownOpen && (
-                      <div className="absolute top-full left-0 mt-1 bg-white border border-black/20 rounded-md shadow-lg z-50 min-w-48">
-                        {item.dropdown.map((dropdownItem) => (
-                          <Link
-                            key={dropdownItem.name}
-                            href={dropdownItem.href}
-                            className={`block px-4 py-2 text-sm text-black/80 hover:bg-black/5 ${
-                              i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                            }`}
-                            onClick={() => setResourcesDropdownOpen(false)}
-                          >
-                            {dropdownItem.name}
-                          </Link>
+                      <Menu.Items className="absolute -right-4 top-full mt-4 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        {item.dropdown.map((subItem) => (
+                          <Menu.Item key={subItem.name}>
+                            {({ active }) => (
+                              <Link
+                                href={subItem.href!}
+                                className={`${
+                                  active ? 'bg-black/5' : ''
+                                } block px-4 py-2 text-base text-black/80 font-korean`}
+                              >
+                                {subItem.name}
+                              </Link>
+                            )}
+                          </Menu.Item>
                         ))}
-                      </div>
-                    )}
-                  </div>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
                 ) : (
                   <Link
                     key={item.name}
-                    href={item.href}
-                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                      router.pathname === item.href
-                        ? 'border-b border-black text-black'
-                        : 'text-black hover:opacity-70'
-                    } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
+                    href={item.href!}
+                    className="px-1 pt-1 text-base font-medium text-black hover:opacity-70 transition-opacity font-korean"
                   >
                     {item.name}
                   </Link>
                 )
-              ))}
+              )}
             </div>
 
-            {/* Language Toggle */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
+            {/* Language & Mobile Menu */}
+            <div className="flex items-center">
+              <div className="hidden sm:flex items-center space-x-2 mr-4">
                 <button
                   onClick={() => changeLanguage('ko')}
-                  className={`px-3 py-1 text-sm font-medium rounded-md border ${
-                    i18n.language === 'ko'
-                      ? 'bg-black text-white border-black'
-                      : 'text-black border-black/20 hover:bg-black/5'
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md border ${
+                    i18n.language === 'ko' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
                   }`}
                 >
-                  한국어
+                  KR
                 </button>
                 <button
                   onClick={() => changeLanguage('en')}
-                  className={`px-3 py-1 text-sm font-medium rounded-md border ${
-                    i18n.language === 'en'
-                      ? 'bg-black text-white border-black'
-                      : 'text-black border-black/20 hover:bg-black/5'
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md border ${
+                    i18n.language === 'en' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
                   }`}
                 >
-                  ENG
+                  EN
                 </button>
               </div>
-
-              {/* Mobile menu button */}
-              <div className="md:hidden">
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
-                >
-                  <span className="sr-only">Open main menu</span>
-                  <svg
-                    className={`${mobileMenuOpen ? 'hidden' : 'block'} h-6 w-6`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                    />
-                  </svg>
-                  <svg
-                    className={`${mobileMenuOpen ? 'block' : 'hidden'} h-6 w-6`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+              <div className="lg:hidden">
+                <button onClick={() => setMobileMenuOpen(true)} className="p-2">
+                  <MenuIcon className="h-6 w-6" />
                 </button>
               </div>
             </div>
           </div>
-
-          {/* Mobile menu */}
-          <div className={`${mobileMenuOpen ? 'block' : 'hidden'} md:hidden`}>
-            <div className="space-y-1 pb-3 pt-2">
-              {navigation.map((item) => (
-                item.dropdown ? (
-                  <div key={item.name}>
-                    <div className="border-l-4 border-transparent text-black/70 py-2 pl-3 pr-4 text-base font-medium">
-                      {item.name}
-                    </div>
-                    {item.dropdown.map((dropdownItem) => (
-                      <Link
-                        key={dropdownItem.name}
-                        href={dropdownItem.href}
-                        className={`block py-2 pl-6 pr-4 text-sm font-medium ${
-                          router.pathname === dropdownItem.href
-                            ? 'border-l-4 border-black bg-black/5 text-black'
-                            : 'border-l-4 border-transparent text-black/70 hover:bg-black/5 hover:text-black'
-                        } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {dropdownItem.name}
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`block py-2 pl-3 pr-4 text-base font-medium ${
-                      router.pathname === item.href
-                        ? 'border-l-4 border-black bg-black/5 text-black'
-                        : 'border-l-4 border-transparent text-black/70 hover:bg-black/5 hover:text-black'
-                    } ${i18n.language === 'ko' ? 'font-korean' : 'font-english'}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                )
-              ))}
-            </div>
-          </div>
-        </nav>
+        </div>
       </header>
 
-      {/* Main Content */}
-      <main>{children}</main>
+      {/* Mobile Menu */}
+      <Transition.Root show={mobileMenuOpen} as={Fragment}>
+        <div className="lg:hidden" >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-in-out duration-500"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in-out duration-500"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-40 transition-opacity" onClick={() => setMobileMenuOpen(false)} />
+          </Transition.Child>
 
-      {/* Footer */}
-      <footer className="bg-black text-white mt-12">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <h3 className={`text-lg font-semibold mb-4 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('church_name')}
-              </h3>
-              <p className={`text-gray-300 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('full_address')}
-              </p>
+          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+            <div className="flex items-center justify-between p-4 border-b">
+              <Link href="/" onClick={() => setMobileMenuOpen(false)}>
+                <img src="/images/logo-black.png" alt="Church Logo" className="h-10 w-auto" />
+              </Link>
+              <button type="button" className="-m-2.5 rounded-md p-2.5 text-gray-700" onClick={() => setMobileMenuOpen(false)}>
+                <XIcon className="h-6 w-6" />
+              </button>
             </div>
-            <div>
-              <h3 className={`text-lg font-semibold mb-4 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('contact_us')}
-              </h3>
-              <p className="text-gray-300">
-                {t('phone')}: {t('phone_number')}
-              </p>
-              <p className="text-gray-300">
-                {t('email')}: {t('email_address')}
-              </p>
-            </div>
-            <div>
-              <h3 className={`text-lg font-semibold mb-4 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('service_times')}
-              </h3>
-              <p className={`text-gray-300 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('sunday')}: 11:00 AM
-              </p>
-              <p className={`text-gray-300 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {t('wednesday')}: 7:30 PM
-              </p>
-              <p className={`text-gray-300 text-sm ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {i18n.language === 'ko' ? '새벽기도: 화-금 6:30 AM (ZOOM)' : 'Dawn Prayer: Tue-Fri 6:30 AM (ZOOM)'}
-              </p>
+            <div className="mt-6 flow-root">
+              <div className="-my-6 divide-y divide-gray-500/10">
+                <div className="space-y-2 py-6">
+                  {navigation.map((item) => (
+                    <div key={item.name} className="px-4">
+                      {item.dropdown ? (
+                        <div>
+                          <p className="font-korean font-semibold text-lg py-2">{item.name}</p>
+                          <div className="pl-2 border-l border-black/20">
+                            {item.dropdown.map((subItem) => (
+                              <Link
+                                key={subItem.name}
+                                href={subItem.href!}
+                                className="block rounded-lg py-2 pl-4 pr-3 text-base font-korean text-black/80 hover:bg-black/5"
+                                onClick={() => setMobileMenuOpen(false)}
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <Link
+                          href={item.href!}
+                          className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-korean font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="py-6 px-4 flex items-center space-x-2">
+                  <button
+                    onClick={() => { changeLanguage('ko'); setMobileMenuOpen(false); }}
+                    className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${
+                      i18n.language === 'ko' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
+                    }`}
+                  >
+                    한국어
+                  </button>
+                  <button
+                    onClick={() => { changeLanguage('en'); setMobileMenuOpen(false); }}
+                    className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${
+                      i18n.language === 'en' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
+                    }`}
+                  >
+                    English
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="mt-8 border-t border-gray-700 pt-8 text-center">
-            <p className="text-gray-400">© 2024 {t('church_name')}. All rights reserved.</p>
-            {buildSha && (
-              <p className="text-gray-500 text-xs mt-2">Build {buildSha}</p>
-            )}
+        </div>
+      </Transition.Root>
+
+      <main>{children}</main>
+
+      <footer className="bg-white border-t">
+        <div className="mx-auto max-w-7xl px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <h3 className="text-lg font-semibold mb-4 font-korean">{t('church_name')}</h3>
+              <p className="text-black/70 font-korean">{t('full_address')}</p>
+              <p className="text-black/70 mt-2">
+                <span className="font-korean">{t('phone')}:</span> {t('phone_number')}
+              </p>
+              <p className="text-black/70">
+                <span className="font-korean">{t('email')}:</span> {t('email_address')}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4 font-korean">{t('service_times')}</h3>
+              <p className="text-black/70 font-korean">{t('sunday')}: 11:00 AM</p>
+              <p className="text-black/70 font-korean">{t('wednesday')}: 7:30 PM</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4 font-korean">바로가기</h3>
+              <div className="flex flex-col space-y-2">
+                <Link href="/about/greeting" className="text-black/70 hover:text-black font-korean">교회안내</Link>
+                <Link href="/sermons/sunday" className="text-black/70 hover:text-black font-korean">말씀/찬양</Link>
+                <Link href="/news/announcements" className="text-black/70 hover:text-black font-korean">교회소식</Link>
+                <Link href="/giving" className="text-black/70 hover:text-black font-korean">온라인헌금</Link>
+              </div>
+            </div>
+          </div>
+          <div className="mt-8 border-t border-black/10 pt-8 text-center">
+            <p className="text-black/50 text-sm">
+              © {new Date().getFullYear()} {t('church_name')}. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

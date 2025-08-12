@@ -9,6 +9,14 @@
   }
   
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-white text-black;
+  }
+}
+
+@layer utilities {
+  .bg-dotted-pattern {
+    background-color: #ffffff;
+    background-image: radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px);
+    background-size: 28px 28px;
   }
 }
