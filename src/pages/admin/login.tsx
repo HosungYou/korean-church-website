@@ -44,11 +44,30 @@ const AdminLoginPage = () => {
 
     try {
       const provider = new GoogleAuthProvider()
-      await signInWithPopup(auth, provider)
+      console.log('🔍 Google 로그인 시도 중...')
+      console.log('🔍 Auth domain:', auth.app.options.authDomain)
+      console.log('🔍 Project ID:', auth.app.options.projectId)
+      
+      const result = await signInWithPopup(auth, provider)
+      console.log('✅ Google 로그인 성공:', result.user.email)
       router.push('/admin/dashboard')
     } catch (error: any) {
-      console.error('Google 로그인 오류:', error)
-      setError('Google 로그인 중 오류가 발생했습니다.')
+      console.error('❌ Google 로그인 상세 오류:', {
+        code: error.code,
+        message: error.message,
+        details: error
+      })
+      
+      let errorMessage = 'Google 로그인 중 오류가 발생했습니다.'
+      if (error.code === 'auth/popup-blocked') {
+        errorMessage = '팝업이 차단되었습니다. 팝업 차단기를 해제해주세요.'
+      } else if (error.code === 'auth/unauthorized-domain') {
+        errorMessage = '도메인이 인증되지 않았습니다.'
+      } else if (error.code === 'auth/operation-not-allowed') {
+        errorMessage = 'Google 로그인이 비활성화되어 있습니다.'
+      }
+      
+      setError(errorMessage)
     } finally {
       setIsLoading(false)
     }
