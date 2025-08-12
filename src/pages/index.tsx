@@ -4,7 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Play, Calendar, MapPin, Heart } from 'lucide-react'
+import { ArrowRight, Play, Calendar, MapPin, Heart, Users, BookOpen, Phone, Globe, Coffee, Clock, User, Gift } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 const Home: NextPage = () => {
@@ -36,61 +36,69 @@ const Home: NextPage = () => {
     return () => clearInterval(timer)
   }, [])
 
-  const actionCards = [
+  const quickAccessIcons = [
     {
-      icon: Play,
-      title: '예배 참여하기',
-      description: '주일 예배에 함께하세요',
-      href: '/sermons/sunday',
-      primary: true
+      icon: Users,
+      title: '새가족',
+      href: '/missions/new-family'
+    },
+    {
+      icon: BookOpen,
+      title: '주보',
+      href: '/news/bulletin'
     },
     {
       icon: Calendar,
-      title: '교회 일정',
-      description: '이번 주 교회 행사를 확인하세요',
-      href: '/news/announcements',
-      primary: false
+      title: '교회소식',
+      href: '/news/announcements'
     },
     {
-      icon: MapPin,
-      title: '오시는 길',
-      description: '교회 위치와 교통정보',
-      href: '/about/directions',
-      primary: false
+      icon: Play,
+      title: '설교듣기',
+      href: '/sermons'
+    },
+    {
+      icon: Globe,
+      title: '온라인예배',
+      href: '/sermons/sunday'
     },
     {
       icon: Heart,
-      title: '온라인 헌금',
-      description: '언제든지 헌금에 참여하세요',
-      href: '/giving',
-      primary: false
+      title: '헌금안내',
+      href: '/giving'
+    },
+    {
+      icon: Phone,
+      title: '연락처',
+      href: '/about/service-info'
+    },
+    {
+      icon: MapPin,
+      title: '오시는길',
+      href: '/about/directions'
     }
   ]
 
   const featureCards = [
     {
-      image: '/images/feature-placeholder.svg',
       title: '새가족 안내',
-      description: '교회에 처음 방문하시는 분들을 위한 안내입니다.',
+      description: '교회에 처음 방문하시는 분들을 위한 안내',
       href: '/missions/new-family',
     },
     {
-      image: '/images/feature-placeholder.svg',
       title: '교회학교',
-      description: '다음 세대를 위한 교육 부서입니다.',
+      description: '다음 세대를 위한 교육 부서',
       href: '/education/elementary',
     },
     {
-      image: '/images/feature-placeholder.svg',
       title: '소그룹 안내',
-      description: '함께 교제하고 성장하는 소그룹에 참여하세요.',
+      description: '함께 교제하고 성장하는 소그룹',
       href: '/missions/discipleship',
     },
     {
-      image: '/images/feature-placeholder.svg',
-      title: '선교 사역',
-      description: '국내외 선교 활동에 참여하세요.',
-      href: '/missions/domestic',
+      title: '오시는 길',
+      description: '교회 위치와 교통 안내',
+      href: '/about/directions',
     },
   ]
 
@@ -139,67 +147,109 @@ const Home: NextPage = () => {
           ))}
         </div>
         
-        {/* Action Cards Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {actionCards.map((card) => {
-                const Icon = card.icon
-                return (
-                  <Link
-                    key={card.title}
-                    href={card.href}
-                    className={`group p-4 rounded-lg transition-all duration-300 ${
-                      card.primary
-                        ? 'bg-white text-black hover:bg-gray-100'
-                        : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
-                    }`}
-                  >
-                    <Icon className={`h-6 w-6 mb-2 ${
-                      card.primary ? 'text-black' : 'text-white'
-                    }`} />
-                    <h3 className={`font-semibold text-sm mb-1 font-korean ${
-                      card.primary ? 'text-black' : 'text-white'
-                    }`}>
-                      {card.title}
-                    </h3>
-                    <p className={`text-xs opacity-80 font-korean ${
-                      card.primary ? 'text-black/70' : 'text-white/80'
-                    }`}>
-                      {card.description}
-                    </p>
-                  </Link>
-                )
-              })}
-            </div>
+      </section>
+
+      {/* Quick Access Icons */}
+      <section className="bg-white py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-4 gap-6 md:grid-cols-8">
+            {quickAccessIcons.map((item) => {
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className="group flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center mb-3 group-hover:bg-gray-800 transition-colors">
+                    <Icon className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="text-sm font-korean text-black text-center">
+                    {item.title}
+                  </span>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="bg-white py-20 sm:py-28">
+      {/* 예배/설교 Section */}
+      <section className="bg-gray-50 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+          <div className="flex items-center mb-8">
+            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
+            <h2 className="text-3xl font-bold text-black font-korean">예배/설교</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Link href="/sermons/sunday" className="group block">
+              <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-4">
+                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
+                  <h3 className="text-xl font-semibold text-black font-korean">주일예배</h3>
+                </div>
+                <p className="text-gray-600 font-korean mb-3">매주 일요일 오전 11시</p>
+                <div className="flex items-center text-black font-korean text-sm">
+                  예배 참여하기
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </div>
+              </div>
+            </Link>
+            <Link href="/sermons/wednesday" className="group block">
+              <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-4">
+                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
+                  <h3 className="text-xl font-semibold text-black font-korean">수요예배</h3>
+                </div>
+                <p className="text-gray-600 font-korean mb-3">매주 수요일 저녁 7시 30분</p>
+                <div className="flex items-center text-black font-korean text-sm">
+                  예배 참여하기
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </div>
+              </div>
+            </Link>
+            <Link href="/sermons" className="group block">
+              <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-4">
+                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
+                  <h3 className="text-xl font-semibold text-black font-korean">설교 아카이브</h3>
+                </div>
+                <p className="text-gray-600 font-korean mb-3">지난 설교 다시 듣기</p>
+                <div className="flex items-center text-black font-korean text-sm">
+                  전체 설교 보기
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 처음 오셨나요? Section */}
+      <section className="bg-white py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center mb-8">
+            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
+            <h2 className="text-3xl font-bold text-black font-korean">처음 오셨나요?</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featureCards.map((card) => (
               <Link href={card.href} key={card.title} className="group block">
-                <div className="aspect-[16/9] rounded overflow-hidden relative border border-black/10 bg-white">
-                  <Image
-                    src={card.image}
-                    alt={card.title}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-                <div className="mt-4 border border-black/10 p-5">
-                  <h3 className="text-2xl font-bold text-black">
-                    {card.title}
-                  </h3>
-                  <p className="mt-2 text-base text-black/70">
-                    {card.description}
-                  </p>
-                  <div className="mt-4 inline-flex items-center text-black font-semibold">
+                <div className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
+                  <div className="flex items-start mb-4">
+                    <div className="w-2 h-2 bg-black rounded-full mr-3 mt-2"></div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-black font-korean mb-2">
+                        {card.title}
+                      </h3>
+                      <p className="text-gray-600 font-korean text-sm">
+                        {card.description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center text-black font-korean text-sm">
                     자세히 보기
-                    <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </div>
                 </div>
               </Link>
