@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Layout from '../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../../lib/firebase'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 
@@ -20,22 +20,48 @@ const AdminLoginPage = () => {
     setIsLoading(true)
     setError('')
 
-    // 임시 관리자 계정 체크 (Firebase 완전 우회)
-    if (email === 'newhosung@gmail.com' && password === 'admin123!') {
+    try {
+      // Firebase 이메일/비밀번호 인증 시도
+      const result = await signInWithEmailAndPassword(auth, email, password)
+      console.log('✅ Firebase 로그인 성공:', result.user.email)
+      
+      // 성공 시 localStorage에도 저장 (브라우저 호환성)
       localStorage.setItem('adminLoggedIn', 'true')
       localStorage.setItem('adminUser', JSON.stringify({
-        email: 'newhosung@gmail.com',
+        email: result.user.email,
         name: '관리자',
         loginTime: new Date().toISOString()
       }))
-      setIsLoading(false)
+      
       router.push('/admin/dashboard')
-      return
+    } catch (error: any) {
+      console.error('❌ Firebase 로그인 오류:', error)
+      
+      // Firebase 실패 시 임시 계정 체크
+      if (email === 'newhosung@gmail.com' && password === 'admin123!') {
+        localStorage.setItem('adminLoggedIn', 'true')
+        localStorage.setItem('adminUser', JSON.stringify({
+          email: 'newhosung@gmail.com',
+          name: '관리자 (임시)',
+          loginTime: new Date().toISOString()
+        }))
+        router.push('/admin/dashboard')
+        return
+      }
+      
+      // 실제 오류 처리
+      if (error.code === 'auth/user-not-found') {
+        setError('등록되지 않은 이메일입니다.')
+      } else if (error.code === 'auth/wrong-password') {
+        setError('비밀번호가 올바르지 않습니다.')
+      } else if (error.code === 'auth/too-many-requests') {
+        setError('너무 많은 시도입니다. 잠시 후 다시 시도해주세요.')
+      } else {
+        setError('로그인 중 오류가 발생했습니다.')
+      }
+    } finally {
+      setIsLoading(false)
     }
-
-    // 잘못된 로그인 정보
-    setError('이메일 또는 비밀번호가 올바르지 않습니다.')
-    setIsLoading(false)
   }
 
   const handleGoogleLogin = async () => {

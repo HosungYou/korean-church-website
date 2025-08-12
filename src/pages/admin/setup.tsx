@@ -3,7 +3,8 @@ import { useRouter } from 'next/router'
 import Layout from '../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-// Firebase 비활성화 - localStorage 기반 인증 사용
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../../../lib/firebase'
 import { UserPlus, Mail, Eye, EyeOff, Shield } from 'lucide-react'
 
 const AdminSetupPage = () => {
@@ -32,14 +33,22 @@ const AdminSetupPage = () => {
 
     setIsLoading(true)
     try {
-      // localStorage 기반 계정 생성 (실제로는 단순 안내 메시지)
+      // Firebase 이메일/비밀번호 계정 생성 시도
+      const result = await createUserWithEmailAndPassword(auth, email, password)
+      console.log('✅ Firebase 계정 생성 성공:', result.user.email)
       setSuccess(true)
       setTimeout(() => {
         router.push('/admin/login')
       }, 2000)
     } catch (error: any) {
       console.error('관리자 생성 오류:', error)
-      setError('관리자 계정 생성 중 오류가 발생했습니다.')
+      if (error.code === 'auth/email-already-in-use') {
+        setError('이미 사용 중인 이메일입니다.')
+      } else if (error.code === 'auth/weak-password') {
+        setError('비밀번호가 너무 약합니다.')
+      } else {
+        setError('관리자 계정 생성 중 오류가 발생했습니다.')
+      }
     } finally {
       setIsLoading(false)
     }
