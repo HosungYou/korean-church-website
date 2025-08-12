@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { Menu, Transition } from '@headlessui/react'
-import { ChevronDownIcon, Menu as MenuIcon, X as XIcon } from 'lucide-react'
+import { ChevronDownIcon, Menu as MenuIcon, X as XIcon, Home, ChevronRight } from 'lucide-react'
 
 interface NavItem {
   name: string
@@ -15,6 +15,59 @@ interface LayoutProps {
   children: React.ReactNode
 }
 
+interface BreadcrumbItem {
+  name: string
+  href?: string
+}
+
+const getBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
+  const segments = pathname.split('/').filter(Boolean)
+  const breadcrumbs: BreadcrumbItem[] = [{ name: 'HOME', href: '/' }]
+  
+  const pathMap: { [key: string]: string } = {
+    'about': '교회안내',
+    'greeting': '인사말',
+    'history': '연혁',
+    'ministers': '섬기는분들',
+    'service-info': '예배안내',
+    'directions': '오시는길',
+    'sermons': '설교',
+    'sunday': '주일예배',
+    'wednesday': '수요예배',
+    'friday': '금요철야',
+    'special-praise': '특별찬양',
+    'education': '교육',
+    'infants': '영아부',
+    'kindergarten': '유치부',
+    'elementary': '초등부',
+    'youth': '중고등부',
+    'young-adults': '청년부',
+    'missions': '선교',
+    'domestic': '국내선교',
+    'international': '해외선교',
+    'new-family': '새가족양육',
+    'discipleship': '제자훈련',
+    'news': '교회소식',
+    'announcements': '공지사항',
+    'bulletin': '주보',
+    'gallery': '갤러리',
+    'giving': '온라인헌금'
+  }
+  
+  let currentPath = ''
+  for (const segment of segments) {
+    currentPath += `/${segment}`
+    if (pathMap[segment]) {
+      breadcrumbs.push({ 
+        name: pathMap[segment], 
+        href: currentPath 
+      })
+    }
+  }
+  
+  return breadcrumbs
+}
+
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { t, i18n } = useTranslation('common')
   const router = useRouter()
@@ -22,52 +75,65 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navigation: NavItem[] = [
     {
-      name: '교회안내',
+      name: '예배',
       dropdown: [
-        { name: '인사말', href: '/about/greeting' },
-        { name: '연혁', href: '/about/history' },
-        { name: '섬기는분들', href: '/about/ministers' },
+        { name: '예배 LIVE', href: '/sermons/sunday' },
+        { name: '설교', href: '/sermons' },
         { name: '예배안내', href: '/about/service-info' },
-        { name: '오시는길', href: '/about/directions' },
       ],
     },
     {
-      name: '말씀/찬양',
+      name: '성장',
       dropdown: [
-        { name: '주일예배', href: '/sermons/sunday' },
-        { name: '수요예배', href: '/sermons/wednesday' },
-        { name: '금요철야', href: '/sermons/friday' },
-        { name: '특별찬양', href: '/sermons/special-praise' },
+        { name: '교회학교', href: '/education' },
+        { name: '교육/훈련', href: '/education/young-adults' },
+        { name: '강좌', href: '/education/elementary' },
       ],
     },
     {
-      name: '교회학교',
+      name: '교제',
       dropdown: [
-        { name: '영아부', href: '/education/infants' },
-        { name: '유치부', href: '/education/kindergarten' },
-        { name: '초등부', href: '/education/elementary' },
-        { name: '중고등부', href: '/education/youth' },
-        { name: '청년부', href: '/education/young-adults' },
+        { name: '소그룹', href: '/missions/discipleship' },
+        { name: '교회부서', href: '/about/ministers' },
+        { name: '선교', href: '/missions/domestic' },
+        { name: '봉사/행사', href: '/news/announcements' },
       ],
     },
     {
-      name: '선교/양육',
+      name: '선교',
       dropdown: [
-        { name: '국내선교', href: '/missions/domestic' },
-        { name: '해외선교', href: '/missions/international' },
-        { name: '새가족양육', href: '/missions/new-family' },
-        { name: '제자훈련', href: '/missions/discipleship' },
+        { name: '봈분', href: '/missions/domestic' },
+        { name: '선교', href: '/missions/international' },
+        { name: '봉사/행사', href: '/news/announcements' },
+        { name: '수망선교학니텀', href: '/missions/discipleship' },
       ],
     },
     {
-      name: '교회소식',
+      name: '미디어',
+      dropdown: [
+        { name: '영상', href: '/sermons' },
+        { name: '갤러리', href: '/news/gallery' },
+        { name: '업로드', href: '/news/gallery' },
+      ],
+    },
+    {
+      name: '소통',
       dropdown: [
         { name: '교회소식', href: '/news/announcements' },
-        { name: '주보', href: '/news/bulletin' },
-        { name: '행사사진', href: '/news/gallery' },
+        { name: '교우식', href: '/missions/new-family' },
+        { name: '행정서비스', href: '/about/service-info' },
       ],
     },
-    { name: '온라인헌금', href: '/giving' },
+    {
+      name: '교회',
+      dropdown: [
+        { name: '소망교회', href: '/about' },
+        { name: '섬기는 사람들', href: '/about/ministers' },
+        { name: '사역안내', href: '/about/history' },
+        { name: '기타시설', href: '/about/directions' },
+        { name: '주보', href: '/news/bulletin' },
+      ],
+    },
   ]
 
   const changeLanguage = (lng: string) => {
@@ -81,7 +147,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex h-20 justify-between items-center">
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
-                <img src="/images/logo-black.png" alt="Church Logo" className="h-12 w-auto" />
+                <img src="/images/logo.png" alt="Church Logo" className="h-12 w-auto" />
               </Link>
             </div>
 
@@ -181,7 +247,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between p-4 border-b">
               <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-                <img src="/images/logo-black.png" alt="Church Logo" className="h-10 w-auto" />
+                <img src="/images/logo.png" alt="Church Logo" className="h-10 w-auto" />
               </Link>
               <button type="button" className="-m-2.5 rounded-md p-2.5 text-gray-700" onClick={() => setMobileMenuOpen(false)}>
                 <XIcon className="h-6 w-6" />
@@ -244,6 +310,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </Transition.Root>
 
+      {/* Breadcrumb Navigation */}
+      {router.pathname !== '/' && (
+        <nav className="bg-gray-50 border-b border-gray-200 py-3">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center space-x-2 text-sm">
+              {getBreadcrumbs(router.pathname).map((crumb, index) => (
+                <React.Fragment key={crumb.name}>
+                  {index > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
+                  {crumb.href ? (
+                    <Link 
+                      href={crumb.href} 
+                      className="text-gray-600 hover:text-black font-korean transition-colors"
+                    >
+                      {crumb.name}
+                    </Link>
+                  ) : (
+                    <span className="text-black font-korean font-medium">{crumb.name}</span>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        </nav>
+      )}
+      
       <main>{children}</main>
 
       <footer className="bg-white border-t">

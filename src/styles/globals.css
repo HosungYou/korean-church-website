@@ -19,4 +19,12 @@
     background-image: radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px);
     background-size: 28px 28px;
   }
+  
+  .font-korean {
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  
+  .font-english {
+    font-family: 'Inter', sans-serif;
+  }
 }
