@@ -89,6 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         { name: '교회학교', href: '/education' },
         { name: '교육/훈련', href: '/education/young-adults' },
         { name: '강좌', href: '/education/elementary' },
+        { name: '새가족 양육', href: '/missions/new-family' },
       ],
     },
     {
@@ -121,7 +122,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       name: '소통',
       dropdown: [
         { name: '교회소식', href: '/news/announcements' },
-        { name: '교우식', href: '/missions/new-family' },
+        { name: '새가족 안내', href: '/new-family-guide' },
         { name: '행정서비스', href: '/about/service-info' },
       ],
     },
@@ -130,8 +131,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       dropdown: [
         { name: 'SCKC 안내', href: '/about' },
         { name: '목회철학', href: '/about/philosophy' },
-        { name: '섬기는 사람들', href: '/about/ministers' },
-        { name: '교회 연혁', href: '/about/history' },
         { name: '오시는 길', href: '/about/directions' },
         { name: '주보', href: '/news/bulletin' },
       ],

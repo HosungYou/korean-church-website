@@ -99,9 +99,9 @@ const Home: NextPage = () => {
 
   const featureCards = [
     {
-      title: '새가족 안내',
+      title: '새가족 등록',
       description: '교회에 처음 방문하시는 분들을 위한 안내',
-      href: '/missions/new-family',
+      href: '/new-family-guide',
     },
     {
       title: '교회학교',
