@@ -93,21 +93,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       ],
     },
     {
-      name: '교제',
+      name: '섬김',
       dropdown: [
-        { name: '소그룹', href: '/missions/discipleship' },
-        { name: '교회부서', href: '/about/ministers' },
         { name: '선교', href: '/missions/domestic' },
         { name: '봉사/행사', href: '/news/announcements' },
-      ],
-    },
-    {
-      name: '선교',
-      dropdown: [
-        { name: '봈분', href: '/missions/domestic' },
-        { name: '선교', href: '/missions/international' },
-        { name: '봉사/행사', href: '/news/announcements' },
-        { name: '수망선교학니텀', href: '/missions/discipleship' },
+        { name: '교회부서', href: '/church-departments' },
       ],
     },
     {
