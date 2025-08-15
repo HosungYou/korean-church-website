@@ -126,8 +126,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       ],
     },
     {
-      name: 'SCKC',
+      name: '교회안내',
       dropdown: [
+        { name: 'SCKC 안내', href: '/about' },
         { name: '목회철학', href: '/about/philosophy' },
         { name: '섬기는 사람들', href: '/about/ministers' },
         { name: '교회 연혁', href: '/about/history' },

@@ -2,8 +2,44 @@ import type { GetStaticProps, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import Link from 'next/link'
+import { useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const AboutMain: NextPage = () => {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  
+  const slides = [
+    {
+      id: 1,
+      category: "사명 선교",
+      title: "지역 안의 모든 사랑이 하나",
+      description: "스테이트 칼리지 한인교회는 교회 건물성과 지역사회를 결과 일상이 있는지에 상관없이 교회의 안전한 교회 기대 중요서 이상과 결정들을 나고 결과와 있습니다.",
+      image: "/images/mission.jpg"
+    },
+    {
+      id: 2,
+      category: "가정의 교회화",
+      title: "늘 하나의 청취, 거룩",
+      description: "가정과 교회가 하나가 될 수 있는 교육과 지속적인 활동을 통해 가족들과 함께 성장하고 있습니다. 소그룹 활동을 통해 서로를 돌보며 하나님 안에서 성장해 나갑니다.",
+      image: "/images/family.jpg"
+    },
+    {
+      id: 3,
+      category: "활음, 기아, 빈곤",
+      title: "아와 서로 한국 마음 바라시 허치",
+      description: "빈곤과 소외의 문제로 고통받는 이웃들에게 하나님의 사랑을 실천으로 전하며, 지역사회와 해외 선교지에서 필요한 도움을 제공하고 있습니다.",
+      image: "/images/outreach.jpg"
+    }
+  ]
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length)
+  }
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
+  }
+
   return (
     <Layout>
       {/* Hero Section with Church Image */}
@@ -141,7 +177,7 @@ const AboutMain: NextPage = () => {
         </div>
       </section>
 
-      {/* New Life & Community Section */}
+      {/* New Life & Community Section with Slider */}
       <section className="py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-20">
@@ -201,6 +237,62 @@ const AboutMain: NextPage = () => {
                   <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
                   <span className="w-2 h-2 bg-gray-300 rounded-full"></span>
                   <span className="w-2 h-2 bg-gray-300 rounded-full"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Additional Slider Cards Section */}
+      <section className="py-20 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="space-y-20">
+            {/* Slider Card */}
+            <div className="relative">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="order-2 lg:order-1">
+                  <div className="bg-gray-200 rounded-lg h-80 flex items-center justify-center">
+                    <p className="text-gray-500 font-korean">{slides[currentSlide].category} 이미지</p>
+                  </div>
+                </div>
+                <div className="order-1 lg:order-2 relative">
+                  <span className="inline-block px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm font-medium mb-4 font-korean">
+                    {slides[currentSlide].category}
+                  </span>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4 font-korean">
+                    {slides[currentSlide].title}
+                  </h2>
+                  <p className="text-gray-600 leading-relaxed font-korean mb-6">
+                    {slides[currentSlide].description}
+                  </p>
+                  
+                  {/* Navigation arrows */}
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={prevSlide}
+                      className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5 text-gray-600" />
+                    </button>
+                    <div className="flex space-x-2">
+                      {slides.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentSlide(index)}
+                          className={`w-2 h-2 rounded-full transition-colors ${
+                            index === currentSlide ? 'bg-purple-600' : 'bg-gray-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <button
+                      onClick={nextSlide}
+                      className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                    >
+                      <ChevronRight className="w-5 h-5 text-gray-600" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
