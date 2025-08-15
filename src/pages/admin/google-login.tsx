@@ -120,7 +120,6 @@ const AdminLoginPage = () => {
     }
   }
 
-
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -140,6 +139,12 @@ const AdminLoginPage = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            {error && (
+              <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-sm text-red-600 font-korean">{error}</p>
+              </div>
+            )}
+
             {/* Google Login Button */}
             <div className="mb-6">
               <button
@@ -167,22 +172,16 @@ const AdminLoginPage = () => {
               </button>
             </div>
 
-            <div className="relative mb-6">
+            <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500 font-korean">또는 이메일로 로그인</span>
+                <span className="px-2 bg-white text-gray-500 font-korean">또는</span>
               </div>
             </div>
 
-            <form className="space-y-6" onSubmit={handleEmailLogin}>
-              {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-sm text-red-600 font-korean">{error}</p>
-                </div>
-              )}
-
+            <form className="mt-6 space-y-6" onSubmit={handleEmailLogin}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 font-korean">
                   이메일 주소
@@ -249,37 +248,23 @@ const AdminLoginPage = () => {
                       로그인 중...
                     </>
                   ) : (
-                    '로그인'
+                    '이메일로 로그인'
                   )}
                 </button>
               </div>
             </form>
 
             <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500 font-korean">보안 안내</span>
-                </div>
-              </div>
-
-              <div className="mt-6 text-sm text-gray-600 font-korean">
-                <div className="space-y-2">
-                  <div className="flex items-start">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2 mt-2"></div>
-                    <p>관리자 계정만 접근할 수 있습니다.</p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2 mt-2"></div>
-                    <p>로그인 정보는 안전하게 암호화됩니다.</p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2 mt-2"></div>
-                    <p>문제가 있으시면 담당자에게 연락하세요.</p>
-                  </div>
-                </div>
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800 font-korean font-semibold">
+                  ✅ Google 로그인 설정 확인사항:
+                </p>
+                <ul className="mt-2 text-sm text-blue-700 font-korean space-y-1">
+                  <li>• Firebase Console에서 Google 인증 활성화</li>
+                  <li>• 승인된 도메인에 localhost:3001 및 korean-church-website.vercel.app 추가</li>
+                  <li>• OAuth 2.0 클라이언트 ID 설정</li>
+                  <li>• 관리자 이메일: newhosung@gmail.com</li>
+                </ul>
               </div>
             </div>
           </div>
