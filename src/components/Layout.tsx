@@ -126,10 +126,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       ],
     },
     {
-      name: '교회',
+      name: 'SCKC',
       dropdown: [
-        { name: '스테이트 칼리지 한인교회', href: '/about' },
-        { name: '목회 철학', href: '/about/philosophy' },
+        { name: '목회철학', href: '/about/philosophy' },
         { name: '섬기는 사람들', href: '/about/ministers' },
         { name: '교회 연혁', href: '/about/history' },
         { name: '오시는 길', href: '/about/directions' },
@@ -171,7 +170,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       leaveFrom="opacity-100 translate-y-0"
                       leaveTo="opacity-0 translate-y-1"
                     >
-                      <Menu.Items className="absolute -right-4 top-full mt-4 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="absolute -right-4 top-full mt-4 w-64 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         {item.dropdown.map((subItem) => (
                           <Menu.Item key={subItem.name}>
                             {({ active }) => (
