@@ -26,6 +26,7 @@ const getBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
   
   const pathMap: { [key: string]: string } = {
     'about': '교회안내',
+    'philosophy': '목회철학',
     'greeting': '인사말',
     'history': '연혁',
     'ministers': '섬기는분들',
@@ -127,10 +128,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     {
       name: '교회',
       dropdown: [
-        { name: '소망교회', href: '/about' },
+        { name: '스테이트 칼리지 한인교회', href: '/about' },
+        { name: '목회 철학', href: '/about/philosophy' },
         { name: '섬기는 사람들', href: '/about/ministers' },
-        { name: '사역안내', href: '/about/history' },
-        { name: '기타시설', href: '/about/directions' },
+        { name: '교회 연혁', href: '/about/history' },
+        { name: '오시는 길', href: '/about/directions' },
         { name: '주보', href: '/news/bulletin' },
       ],
     },
