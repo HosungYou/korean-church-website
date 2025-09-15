@@ -113,7 +113,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       name: '소통',
       dropdown: [
         { name: '교회소식', href: '/news/announcements' },
-        { name: '행정서비스', href: '/about/service-info' },
       ],
     },
     {
