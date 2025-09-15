@@ -8,12 +8,12 @@ interface PageHeaderProps {
 }
 
 const communityImages = [
-  '/images/community/Screenshot 2025-09-14 at 11.53.39 PM.png',
-  '/images/community/Screenshot 2025-09-14 at 11.54.05 PM.png',
-  '/images/community/Screenshot 2025-09-14 at 11.54.35 PM.png',
-  '/images/community/Screenshot 2025-09-14 at 11.55.34 PM.png',
-  '/images/community/Screenshot 2025-09-14 at 11.55.48 PM.png',
-  '/images/community/Screenshot 2025-09-14 at 11.55.59 PM.png',
+  '/images/community/community1.jpg',
+  '/images/community/community2.jpg',
+  '/images/community/community3.jpg',
+  '/images/community/community4.jpg',
+  '/images/community/community5.jpg',
+  '/images/community/community6.jpg',
 ]
 
 const PageHeader: React.FC<PageHeaderProps> = ({
