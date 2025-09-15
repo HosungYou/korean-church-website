@@ -136,16 +136,16 @@ const ChurchDepartments: NextPage = () => {
   return (
     <Layout>
       {/* Header Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-16">
+      <section className="bg-white py-16 border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4 font-korean">
               교회부서
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-korean">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-korean mb-2">
               각자의 달란트를 살려 함께하는 소망교회 가족입니다
             </p>
-            <p className="text-lg text-gray-500 mt-2 font-korean">
+            <p className="text-lg text-gray-500 font-korean">
               특별한 일을 함께하는 소망교회 가족입니다
             </p>
           </div>
@@ -159,7 +159,7 @@ const ChurchDepartments: NextPage = () => {
             {departments.map((category, categoryIndex) => (
               <div key={categoryIndex}>
                 <div className="flex items-center mb-8">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-4">
+                  <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white mr-4">
                     {category.icon}
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900 font-korean">
@@ -169,11 +169,11 @@ const ChurchDepartments: NextPage = () => {
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {category.departments.map((dept, deptIndex) => (
-                    <div key={deptIndex} className="bg-gray-50 rounded-lg p-6 hover:shadow-lg transition-shadow">
-                      <h3 className="text-xl font-bold text-gray-900 mb-3 font-korean">
+                    <div key={deptIndex} className="bg-white border border-gray-200 rounded-lg p-8 hover:shadow-lg transition-shadow">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4 font-korean">
                         {dept.name}
                       </h3>
-                      <p className="text-gray-600 mb-4 font-korean leading-relaxed">
+                      <p className="text-gray-600 mb-6 font-korean leading-relaxed">
                         {dept.description}
                       </p>
                       <div className="space-y-2 text-sm">
@@ -200,26 +200,26 @@ const ChurchDepartments: NextPage = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 bg-blue-50">
+      <section className="py-20 bg-black text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 font-korean">
+            <h2 className="text-3xl font-bold mb-4 font-korean">
               함께 섬기실 분을 찾습니다
             </h2>
-            <p className="text-lg text-gray-600 mb-8 font-korean">
+            <p className="text-lg mb-8 font-korean opacity-90">
               각 부서에서 함께 섬기실 봉사자를 모집하고 있습니다.<br />
               하나님의 일에 동참하실 분들의 많은 관심과 참여 부탁드립니다.
             </p>
             <div className="flex justify-center space-x-4">
               <a
                 href="/new-family-guide"
-                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors font-korean"
+                className="inline-flex items-center px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-gray-100 transition-colors font-korean"
               >
                 새가족 등록
               </a>
               <a
                 href="/about/directions"
-                className="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-medium rounded-lg border-2 border-blue-600 hover:bg-blue-50 transition-colors font-korean"
+                className="inline-flex items-center px-6 py-3 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-black transition-colors font-korean"
               >
                 오시는 길
               </a>

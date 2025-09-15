@@ -70,9 +70,9 @@ const NewFamilyGuide: NextPage = () => {
   if (isSubmitted) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+        <div className="min-h-screen bg-white flex items-center justify-center">
           <div className="text-center">
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <CheckCircle className="w-16 h-16 text-black mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-gray-900 mb-4 font-korean">
               등록이 완료되었습니다!
             </h1>
@@ -88,11 +88,11 @@ const NewFamilyGuide: NextPage = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-16">
+      <section className="bg-white py-16 border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4 font-korean">
-              새가족 안내
+              새가족 등록
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto font-korean">
               스테이트 칼리지 한인교회에 오신 것을 환영합니다
@@ -490,22 +490,22 @@ const NewFamilyGuide: NextPage = () => {
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 bg-blue-50">
+      <section className="py-20 bg-black text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 font-korean">
+            <h2 className="text-3xl font-bold mb-4 font-korean">
               궁금한 점이 있으시면 언제든 연락주세요
             </h2>
-            <p className="text-gray-600 mb-8 font-korean">
+            <p className="mb-8 font-korean opacity-90">
               담임목사님과 교회 가족들이 따뜻하게 맞이하겠습니다.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
               <div className="flex items-center">
-                <Phone className="w-5 h-5 text-blue-600 mr-2" />
+                <Phone className="w-5 h-5 mr-2" />
                 <span className="font-korean">(814) 380-9393</span>
               </div>
               <div className="flex items-center">
-                <Mail className="w-5 h-5 text-blue-600 mr-2" />
+                <Mail className="w-5 h-5 mr-2" />
                 <span>KyuHongYeon@gmail.com</span>
               </div>
             </div>

@@ -48,11 +48,13 @@ const getBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
     'international': '해외선교',
     'new-family': '새가족양육',
     'discipleship': '제자훈련',
+    'training': '교육/훈련',
     'news': '교회소식',
     'announcements': '공지사항',
     'bulletin': '주보',
     'gallery': '갤러리',
-    'giving': '온라인헌금'
+    'giving': '온라인헌금',
+    'korean-school': '한글학교'
   }
   
   let currentPath = ''
@@ -86,9 +88,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     {
       name: '성장',
       dropdown: [
-        { name: '교회학교', href: '/education' },
-        { name: '교육/훈련', href: '/education/young-adults' },
-        { name: '강좌', href: '/education/elementary' },
+        { name: '한글학교', href: '/education/korean-school' },
+        { name: '교육/훈련', href: '/education/training' },
         { name: '새가족 양육', href: '/missions/new-family' },
       ],
     },
@@ -96,7 +97,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       name: '섬김',
       dropdown: [
         { name: '선교', href: '/missions/domestic' },
-        { name: '봉사/행사', href: '/news/announcements' },
+        { name: '봉사/행사', href: '/volunteer-events' },
         { name: '교회부서', href: '/church-departments' },
       ],
     },
@@ -120,6 +121,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       name: '교회안내',
       dropdown: [
         { name: 'SCKC 안내', href: '/about' },
+        { name: '교회 역사', href: '/about/history' },
         { name: '목회철학', href: '/about/philosophy' },
         { name: '오시는 길', href: '/about/directions' },
         { name: '주보', href: '/news/bulletin' },

@@ -104,14 +104,14 @@ const Home: NextPage = () => {
       href: '/new-family-guide',
     },
     {
-      title: '교회학교',
-      description: '다음 세대를 위한 교육 부서',
-      href: '/education/elementary',
+      title: '한글학교',
+      description: '한국어와 한국 문화를 배우는 교육 과정',
+      href: '/education/korean-school',
     },
     {
-      title: '소그룹 안내',
-      description: '함께 교제하고 성장하는 소그룹',
-      href: '/missions/discipleship',
+      title: '교육/훈련',
+      description: '체계적인 신앙 교육과 제자 훈련',
+      href: '/education/training',
     },
     {
       title: '오시는 길',
