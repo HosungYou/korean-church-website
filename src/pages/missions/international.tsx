@@ -1,22 +1,15 @@
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import Image from 'next/image'
 
 const InternationalMissionsPage = () => {
   return (
     <Layout>
-      <div className="relative h-64 bg-black">
-        <Image
-          src="/images/missions-header.jpg"
-          alt="Missions"
-          fill
-          className="object-cover opacity-40"
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="text-4xl font-bold text-white font-korean">해외선교</h1>
-        </div>
-      </div>
+      <PageHeader
+        title="해외선교"
+        subtitle="땅끝까지 복음을 전하는 사명을 감당합니다"
+      />
       <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl font-korean">

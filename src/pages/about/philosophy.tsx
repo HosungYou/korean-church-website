@@ -1,25 +1,17 @@
 import type { GetStaticProps, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import Image from 'next/image'
 
 const Philosophy: NextPage = () => {
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-gray-50 to-white py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-korean">
-              목회 철학
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-korean">
-              스테이트 칼리지 한인교회는 하나님의 말씀을 기초로 
-              예수 그리스도의 사랑을 실천하는 교회입니다
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHeader
+        title="목회 철학"
+        subtitle="하나님의 말씀을 기초로 예수 그리스도의 사랑을 실천하는 교회"
+        height="h-72"
+      />
 
       {/* Vision Section */}
       <section className="py-16 bg-white">

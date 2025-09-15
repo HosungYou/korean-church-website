@@ -1,4 +1,5 @@
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
@@ -342,14 +343,11 @@ const HistoryPage = () => {
 
   return (
     <Layout>
-      <div className="relative h-96 bg-gradient-to-b from-black to-gray-900">
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <h1 className="text-5xl font-bold text-white font-korean mb-4">교회 역사</h1>
-          <p className="text-xl text-white/80 font-korean max-w-2xl">
-            1981년부터 현재까지, 하나님의 은혜 가운데 걸어온 우리 교회의 발자취
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="교회 역사"
+        subtitle="1981년부터 현재까지, 하나님의 은혜 가운데 걸어온 우리 교회의 발자취"
+        height="h-96"
+      />
 
       <div className="bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

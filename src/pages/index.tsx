@@ -2,6 +2,7 @@ import type { GetStaticProps, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
+import HeroSlider from '@/components/HeroSlider'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Play, Calendar, MapPin, Heart, Users, BookOpen, Phone, Globe, Coffee, Clock, User, Gift, Mail, Bell } from 'lucide-react'
@@ -10,34 +11,23 @@ import { addEmailSubscriber } from '../utils/emailService'
 
 const Home: NextPage = () => {
   const { t, i18n } = useTranslation(['home', 'common'])
-  const [currentSlide, setCurrentSlide] = useState(0)
   const [email, setEmail] = useState('')
   const [isSubscribed, setIsSubscribed] = useState(false)
-  
+
   const heroSlides = [
     {
-      image: '/images/hero-bw.svg',
       title: '하나님을 경험하는 교회',
       subtitle: '"오직 성령이 너희에게 임하시면 너희가 권능을 받고 예루살렘과 온 유대와 사마리아와 땅 끝까지 이르러 내 증인이 되리라 하시니라" (행 1:8)'
     },
     {
-      image: '/images/Paster and Family.jpg',
       title: '함께하는 믿음의 여정',
       subtitle: '하나님의 사랑 안에서 함께 성장하고 섬기는 공동체'
     },
     {
-      image: '/images/hero-bw.svg',
       title: '말씀 중심의 예배',
       subtitle: '살아있는 하나님의 말씀으로 변화되는 삶'
     }
   ]
-  
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
-    }, 5000)
-    return () => clearInterval(timer)
-  }, [])
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -122,50 +112,7 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      {/* Hero Section with Carousel */}
-      <section className="relative h-[80vh] bg-white text-black flex items-center overflow-hidden">
-        {heroSlides.map((slide, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <Image
-              src={slide.image}
-              alt={`Slide ${index + 1}`}
-              fill
-              className="object-cover"
-              priority={index === 0}
-            />
-            <div className="absolute inset-0 bg-black/40"></div>
-            <div className="relative h-full flex items-center justify-center">
-              <div className="text-center max-w-4xl px-4">
-                <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl mb-6 font-korean">
-                  {slide.title}
-                </h1>
-                <p className="max-w-3xl mx-auto text-lg text-gray-200 sm:text-xl font-korean">
-                  {slide.subtitle}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-        
-        {/* Slide indicators */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${
-                index === currentSlide ? 'bg-white' : 'bg-white/50'
-              }`}
-            />
-          ))}
-        </div>
-        
-      </section>
+      <HeroSlider slides={heroSlides} />
 
       {/* Quick Access Icons */}
       <section className="bg-white py-12">

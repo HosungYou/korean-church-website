@@ -1,4 +1,5 @@
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
@@ -14,20 +15,10 @@ const SundaySermonsPage = () => {
 
   return (
     <Layout>
-      <div className="relative h-64 bg-black">
-        <Image
-          src="/images/sermons-header.jpg"
-          alt="Sermons"
-          fill
-          className="object-cover opacity-40"
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-white rounded-full mr-4"></div>
-            <h1 className="text-4xl font-bold text-white font-korean">주일예배</h1>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="주일예배"
+        subtitle="하나님의 말씀으로 은혜받는 주일예배 설교말씀"
+      />
       <div className="bg-white">
         <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
