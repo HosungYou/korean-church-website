@@ -1,9 +1,12 @@
 import type { GetStaticProps, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import { ArrowRight, Heart, Users, BookOpen, Clock, MapPin, Phone, Mail, CheckCircle } from 'lucide-react'
+import { addNewFamilyRegistration } from '../utils/newFamilyService'
 
 const NewFamilyGuide: NextPage = () => {
   const [formData, setFormData] = useState({
@@ -36,35 +39,40 @@ const NewFamilyGuide: NextPage = () => {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // 여기에 실제 폼 제출 로직 추가
-    console.log('Form submitted:', formData)
-    setIsSubmitted(true)
-    
-    // 3초 후 폼 리셋
-    setTimeout(() => {
-      setIsSubmitted(false)
-      setFormData({
-        koreanName: '',
-        englishName: '',
-        birthDate: '',
-        baptismDate: '',
-        gender: '',
-        country: 'United States',
-        address1: '',
-        address2: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        email: '',
-        phone: '',
-        churchPosition: '',
-        previousChurch: '',
-        introduction: '',
-        familyInfo: ''
-      })
-    }, 3000)
+
+    try {
+      await addNewFamilyRegistration(formData)
+      setIsSubmitted(true)
+
+      // 3초 후 폼 리셋
+      setTimeout(() => {
+        setIsSubmitted(false)
+        setFormData({
+          koreanName: '',
+          englishName: '',
+          birthDate: '',
+          baptismDate: '',
+          gender: '',
+          country: 'United States',
+          address1: '',
+          address2: '',
+          city: '',
+          state: '',
+          zipCode: '',
+          email: '',
+          phone: '',
+          churchPosition: '',
+          previousChurch: '',
+          introduction: '',
+          familyInfo: ''
+        })
+      }, 3000)
+    } catch (error) {
+      console.error('등록 오류:', error)
+      alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.')
+    }
   }
 
   if (isSubmitted) {
@@ -87,19 +95,10 @@ const NewFamilyGuide: NextPage = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="bg-white py-16 border-b border-gray-200">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4 font-korean">
-              새가족 등록
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-korean">
-              스테이트 칼리지 한인교회에 오신 것을 환영합니다
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHeader
+        title="새가족 등록"
+        subtitle="스테이트 칼리지 한인교회에 오신 것을 환영합니다"
+      />
 
       {/* Welcome Section */}
       <section className="py-16 bg-white">
@@ -139,8 +138,13 @@ const NewFamilyGuide: NextPage = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-gray-200 rounded-lg h-80 flex items-center justify-center">
-              <p className="text-gray-500 font-korean">새가족 환영 이미지</p>
+            <div className="relative h-80 rounded-lg overflow-hidden">
+              <Image
+                src="/images/community/community4.jpg"
+                alt="새가족 환영"
+                fill
+                className="object-cover"
+              />
             </div>
           </div>
         </div>
@@ -150,7 +154,7 @@ const NewFamilyGuide: NextPage = () => {
       <section className="py-16 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12 font-korean">
-            교회 안내
+            예배 및 연락처 안내
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white rounded-lg p-6 shadow-md">
