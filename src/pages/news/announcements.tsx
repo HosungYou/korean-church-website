@@ -262,17 +262,29 @@ const AnnouncementsPage = ({ posts }: AnnouncementsPageProps) => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const announcementPosts = await getPublishedAnnouncements(30)
-  const serialized: SerializedPost[] = announcementPosts.map((post: PostRecord) => ({
-    id: post.id,
-    title: post.title,
-    type: post.type,
-    content: post.content,
-    excerpt: post.excerpt ?? null,
-    coverImageUrl: post.coverImageUrl ?? null,
-    publishedAt: post.publishedAt ? post.publishedAt.toISOString() : post.updatedAt ? post.updatedAt.toISOString() : post.createdAt ? post.createdAt.toISOString() : null,
-    createdAt: post.createdAt ? post.createdAt.toISOString() : null
-  }))
+  let serialized: SerializedPost[] = []
+
+  try {
+    const announcementPosts = await getPublishedAnnouncements(30)
+    serialized = announcementPosts.map((post: PostRecord) => ({
+      id: post.id,
+      title: post.title,
+      type: post.type,
+      content: post.content,
+      excerpt: post.excerpt ?? null,
+      coverImageUrl: post.coverImageUrl ?? null,
+      publishedAt: post.publishedAt
+        ? post.publishedAt.toISOString()
+        : post.updatedAt
+        ? post.updatedAt.toISOString()
+        : post.createdAt
+        ? post.createdAt.toISOString()
+        : null,
+      createdAt: post.createdAt ? post.createdAt.toISOString() : null
+    }))
+  } catch (error) {
+    console.error('Failed to fetch announcements during build:', error)
+  }
 
   return {
     props: {
