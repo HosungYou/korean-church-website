@@ -15,7 +15,6 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { sendNewsletterToSubscribers } from '../../../utils/emailService'
-import { createPost } from '../../../utils/postService'
 
 const NewPostPage = () => {
   const router = useRouter()
@@ -67,16 +66,30 @@ const NewPostPage = () => {
     try {
       setStatus(publishStatus)
 
-      const createdId = await createPost({
-        title,
-        content,
-        type,
-        status: publishStatus,
-        authorEmail: user?.email ?? null,
-        authorName: user?.name ?? user?.email ?? '관리자',
-        coverImageUrl,
-        scheduledFor: publishStatus === 'scheduled' ? scheduledDate : null
+      const response = await fetch('/api/admin/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          type,
+          status: publishStatus,
+          authorEmail: user?.email ?? null,
+          authorName: user?.name ?? user?.email ?? '관리자',
+          coverImageUrl,
+          scheduledFor: publishStatus === 'scheduled' ? scheduledDate : null
+        })
       })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.details || errorData.error || '게시글 생성에 실패했습니다.')
+      }
+
+      const result = await response.json()
+      const createdId = result.id
 
       if (publishStatus === 'published' && sendNewsletter) {
         await sendNewsletterToSubscribers({
@@ -92,7 +105,11 @@ const NewPostPage = () => {
       router.push('/admin/posts')
     } catch (error) {
       console.error('저장 오류:', error)
-      alert('저장 중 오류가 발생했습니다.')
+      if (error instanceof Error) {
+        alert(`저장 중 오류가 발생했습니다: ${error.message}`)
+      } else {
+        alert('저장 중 알 수 없는 오류가 발생했습니다.')
+      }
     } finally {
       setIsLoading(false)
     }
