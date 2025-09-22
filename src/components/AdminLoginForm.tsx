@@ -35,23 +35,29 @@ const AdminLoginForm = ({
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser) {
+      if (typeof window === 'undefined') {
         return
       }
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('adminLoggedIn', 'true')
-        localStorage.setItem(
-          'adminUser',
-          JSON.stringify({
-            email: currentUser.email,
-            name: currentUser.displayName || '관리자',
-            photoURL: currentUser.photoURL,
-            uid: currentUser.uid,
-            loginTime: new Date().toISOString()
-          })
-        )
+      if (!currentUser) {
+        window.localStorage.removeItem('adminLoggedIn')
+        window.localStorage.removeItem('adminUser')
+        window.dispatchEvent(new Event('admin-auth-changed'))
+        return
       }
+
+      window.localStorage.setItem('adminLoggedIn', 'true')
+      window.localStorage.setItem(
+        'adminUser',
+        JSON.stringify({
+          email: currentUser.email,
+          name: currentUser.displayName || '관리자',
+          photoURL: currentUser.photoURL,
+          uid: currentUser.uid,
+          loginTime: new Date().toISOString()
+        })
+      )
+      window.dispatchEvent(new Event('admin-auth-changed'))
 
       if (router.asPath !== onSuccessRedirect) {
         router.push(onSuccessRedirect).catch((pushError) => {
@@ -91,8 +97,8 @@ const AdminLoginForm = ({
       )
 
       if (foundAccount) {
-        localStorage.setItem('adminLoggedIn', 'true')
-        localStorage.setItem(
+        window.localStorage.setItem('adminLoggedIn', 'true')
+        window.localStorage.setItem(
           'adminUser',
           JSON.stringify({
             email: foundAccount.email,
@@ -100,6 +106,7 @@ const AdminLoginForm = ({
             loginTime: new Date().toISOString()
           })
         )
+        window.dispatchEvent(new Event('admin-auth-changed'))
 
         router.push(onSuccessRedirect).catch((pushError) => {
           console.error('Admin redirect failed:', pushError)

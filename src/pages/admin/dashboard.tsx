@@ -17,6 +17,8 @@ import {
   LogOut
 } from 'lucide-react'
 import Link from 'next/link'
+import { signOut } from 'firebase/auth'
+import { auth } from '../../lib/firebase'
 
 const AdminDashboardPage = () => {
   const router = useRouter()
@@ -44,12 +46,21 @@ const AdminDashboardPage = () => {
 
   const handleLogout = async () => {
     try {
-      // localStorage 기반 로그아웃
-      localStorage.removeItem('adminLoggedIn')
-      localStorage.removeItem('adminUser')
-      router.push('/')
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem('adminLoggedIn')
+        window.localStorage.removeItem('adminUser')
+        window.dispatchEvent(new Event('admin-auth-changed'))
+      }
+
+      setUser(null)
+
+      await signOut(auth)
     } catch (error) {
       console.error('로그아웃 오류:', error)
+    } finally {
+      router.push('/').catch((redirectError) => {
+        console.error('홈으로 이동하지 못했습니다:', redirectError)
+      })
     }
   }
 

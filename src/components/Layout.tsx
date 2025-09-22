@@ -1,10 +1,12 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState, Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon, Menu as MenuIcon, X as XIcon, Home, ChevronRight } from 'lucide-react'
+import { signOut } from 'firebase/auth'
+import { auth } from '../lib/firebase'
 
 interface NavItem {
   name: string
@@ -76,6 +78,77 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { t, i18n } = useTranslation('common')
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [adminSession, setAdminSession] = useState<{ email?: string; name?: string } | null>(null)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const syncAdminSession = () => {
+      if (typeof window === 'undefined') {
+        return
+      }
+
+      const loggedIn = window.localStorage.getItem('adminLoggedIn') === 'true'
+      if (!loggedIn) {
+        setAdminSession(null)
+        return
+      }
+
+      try {
+        const stored = window.localStorage.getItem('adminUser')
+        setAdminSession(stored ? JSON.parse(stored) : { name: '관리자' })
+      } catch (error) {
+        console.error('Failed to read admin session:', error)
+        setAdminSession({ name: '관리자' })
+      }
+    }
+
+    syncAdminSession()
+
+    const handleAuthChange = () => syncAdminSession()
+
+    window.addEventListener('storage', handleAuthChange)
+    window.addEventListener('admin-auth-changed', handleAuthChange)
+
+    return () => {
+      window.removeEventListener('storage', handleAuthChange)
+      window.removeEventListener('admin-auth-changed', handleAuthChange)
+    }
+  }, [])
+
+  const handleAdminNavigate = () => {
+    router.push(adminSession ? '/admin/dashboard' : '/admin/login')
+  }
+
+  const handleAdminLogout = async () => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('adminLoggedIn')
+      window.localStorage.removeItem('adminUser')
+      window.dispatchEvent(new Event('admin-auth-changed'))
+    }
+
+    setAdminSession(null)
+
+    try {
+      await signOut(auth)
+    } catch (error) {
+      console.error('Failed to sign out from Firebase:', error)
+    }
+
+    router.push('/').catch((error) => console.error('Failed to redirect after logout:', error))
+  }
+
+  const handleMobileAdminNavigate = () => {
+    setMobileMenuOpen(false)
+    handleAdminNavigate()
+  }
+
+  const handleMobileAdminLogout = async () => {
+    setMobileMenuOpen(false)
+    await handleAdminLogout()
+  }
 
   const navigation: NavItem[] = [
     {
@@ -200,8 +273,33 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               )}
             </div>
 
-            {/* Language & Mobile Menu */}
+            {/* Admin / Language / Mobile Menu */}
             <div className="flex items-center">
+              <div className="hidden lg:flex items-center space-x-3 mr-4">
+                {adminSession ? (
+                  <>
+                    <button
+                      onClick={handleAdminNavigate}
+                      className="px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors font-korean"
+                    >
+                      관리자 대시보드
+                    </button>
+                    <button
+                      onClick={handleAdminLogout}
+                      className="px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors font-korean"
+                    >
+                      로그아웃
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={handleAdminNavigate}
+                    className="px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors font-korean"
+                  >
+                    관리자 로그인
+                  </button>
+                )}
+              </div>
               <div className="hidden sm:flex items-center space-x-2 mr-4">
                 <button
                   onClick={() => changeLanguage('ko')}
@@ -294,6 +392,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       )}
                     </div>
                   ))}
+                </div>
+                <div className="px-4 py-6 space-y-3">
+                  {adminSession ? (
+                    <>
+                      <button
+                        onClick={handleMobileAdminNavigate}
+                        className="w-full px-4 py-2 rounded-md border border-black/20 text-left font-korean text-black hover:bg-black hover:text-white transition-colors"
+                      >
+                        관리자 대시보드
+                      </button>
+                      <button
+                        onClick={handleMobileAdminLogout}
+                        className="w-full px-4 py-2 rounded-md border border-black/20 text-left font-korean text-black hover:bg-black hover:text-white transition-colors"
+                      >
+                        로그아웃
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={handleMobileAdminNavigate}
+                      className="w-full px-4 py-2 rounded-md border border-black/20 text-left font-korean text-black hover:bg-black hover:text-white transition-colors"
+                    >
+                      관리자 로그인
+                    </button>
+                  )}
                 </div>
                 <div className="py-6 px-4 flex items-center space-x-2">
                   <button
