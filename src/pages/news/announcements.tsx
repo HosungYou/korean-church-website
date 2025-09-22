@@ -1,34 +1,86 @@
+import { useMemo, useState } from 'react'
 import Layout from '@/components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
-import { useState } from 'react'
 import { Mail, Bell, Search, Calendar } from 'lucide-react'
 import { addEmailSubscriber } from '../../utils/emailService'
+import { getPublishedAnnouncements, PostRecord } from '../../utils/postService'
 
-const AnnouncementsPage = () => {
+interface SerializedPost {
+  id: string
+  title: string
+  type: 'announcement' | 'event' | 'general'
+  content: string
+  excerpt?: string | null
+  coverImageUrl?: string | null
+  publishedAt?: string | null
+  createdAt?: string | null
+}
+
+interface AnnouncementsPageProps {
+  posts: SerializedPost[]
+}
+
+const formatDisplayDate = (iso?: string | null): string => {
+  if (!iso) {
+    return ''
+  }
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) {
+    return ''
+  }
+  const year = `${date.getFullYear()}`.slice(-2)
+  const month = `${date.getMonth() + 1}`.padStart(2, '0')
+  const day = `${date.getDate()}`.padStart(2, '0')
+  return `${year}.${month}.${day}`
+}
+
+const coverFallback = '/images/feature-placeholder.svg'
+
+const AnnouncementsPage = ({ posts }: AnnouncementsPageProps) => {
   const [email, setEmail] = useState('')
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [activeTab, setActiveTab] = useState('공지사항')
+  const [activeTab, setActiveTab] = useState<'전체' | '공지사항' | '행사' | '일반'>('전체')
 
-  const announcements = [
-    { id: 1, title: '2025년도 장로선거도 설문조사 결과', date: '25.06.05', type: '공지' },
-    { id: 2, title: '담임목사님 신간 안내', date: '25.04.18', type: '공지' },
-    { id: 3, title: '2025년 장로선거 2차 투표 결과', date: '25.04.13', type: '공지' },
-    { id: 4, title: '광복 80주년 감사예배', date: '25.08.08', type: '행사' },
-    { id: 5, title: '담임목사님 동정', date: '25.08.08', type: '공지' },
-    { id: 6, title: '주요한 목내 사람', date: '25.08.08', type: '공지' },
-    { id: 7, title: '제직회 부사, 공동회 모임', date: '25.08.08', type: '공지' },
-    { id: 8, title: '제6대선교회 국내선교', date: '25.08.08', type: '선교' },
-    { id: 9, title: '교육부 각 부서 여름 성경학교 및 수학함 일정', date: '25.08.08', type: '교육' },
-    { id: 10, title: '소망말슠나끌(주초)', date: '25.08.01', type: '공지' },
-  ]
+  const parsedPosts = useMemo(() =>
+    posts.map((post) => ({
+      ...post,
+      excerpt: post.excerpt || post.content.slice(0, 140),
+      publishedAt: post.publishedAt ?? post.createdAt ?? null
+    })),
+  [posts])
 
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email) return
-    
+  const featuredPosts = parsedPosts.slice(0, 3)
+
+  const filteredPosts = useMemo(() => {
+    const lowerSearch = searchTerm.trim().toLowerCase()
+
+    return parsedPosts.filter((post) => {
+      const typeMatch =
+        activeTab === '전체' ||
+        (activeTab === '공지사항' && post.type === 'announcement') ||
+        (activeTab === '행사' && post.type === 'event') ||
+        (activeTab === '일반' && post.type === 'general')
+
+      const searchMatch =
+        !lowerSearch ||
+        post.title.toLowerCase().includes(lowerSearch) ||
+        (post.excerpt ?? '').toLowerCase().includes(lowerSearch) ||
+        post.content.toLowerCase().includes(lowerSearch)
+
+      return typeMatch && searchMatch
+    })
+  }, [parsedPosts, activeTab, searchTerm])
+
+
+  const handleSubscribe = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!email) {
+      return
+    }
+
     try {
       await addEmailSubscriber(email)
       setIsSubscribed(true)
@@ -39,14 +91,6 @@ const AnnouncementsPage = () => {
       alert('구독 중 오류가 발생했습니다. 다시 시도해주세요.')
     }
   }
-
-  const filteredAnnouncements = announcements.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesTab = activeTab === '공지사항' || 
-                      (activeTab === '전체' && item.type === '공지') ||
-                      (activeTab === '전체')
-    return matchesSearch && matchesTab
-  })
 
   return (
     <Layout>
@@ -100,6 +144,47 @@ const AnnouncementsPage = () => {
           </div>
         </div>
 
+        {/* 대표 공지 */}
+        {featuredPosts.length > 0 && (
+          <div className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredPosts.map((post) => {
+              const backgroundImage = post.coverImageUrl || coverFallback
+              const displayDate = formatDisplayDate(post.publishedAt)
+
+              return (
+                <div key={post.id} className="relative h-80 rounded-xl overflow-hidden shadow-lg">
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage: `url(${backgroundImage})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+                  <div className="relative h-full flex flex-col justify-end p-6 text-white">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-xs bg-white/20 backdrop-blur px-2 py-1 rounded font-korean">
+                        {post.type === 'announcement' ? '공지사항' : post.type === 'event' ? '행사' : '일반'}
+                      </span>
+                      {displayDate && (
+                        <div className="flex items-center text-xs text-white/80 font-korean">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          <span>{displayDate}</span>
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="text-2xl font-bold font-korean mb-2 line-clamp-2">{post.title}</h3>
+                    <p className="text-sm text-white/80 font-korean line-clamp-2">
+                      {post.excerpt}
+                    </p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
         {/* 검색 및 필터 */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -117,9 +202,9 @@ const AnnouncementsPage = () => {
               <Search className="w-5 h-5" />
             </button>
           </div>
-          
-          <div className="flex border-b border-gray-200">
-            {['공지사항', '전체'].map((tab) => (
+
+          <div className="flex border-b border-gray-200 flex-wrap">
+            {(['전체', '공지사항', '행사', '일반'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -137,39 +222,65 @@ const AnnouncementsPage = () => {
 
         {/* 공지사항 목록 */}
         <div className="bg-white rounded-lg shadow-sm">
-          <div className="divide-y divide-gray-200">
-            {filteredAnnouncements.map((item) => (
-              <div key={item.id} className="p-6 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center flex-1">
-                    <div className="w-1.5 h-1.5 bg-black rounded-full mr-4"></div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="text-sm bg-gray-100 px-2 py-1 rounded font-korean">{item.type}</span>
-                        <h3 className="text-lg font-medium font-korean text-black hover:underline cursor-pointer">
-                          {item.title}
-                        </h3>
+          {filteredPosts.length === 0 ? (
+            <div className="p-12 text-center text-gray-500 font-korean">표시할 공지사항이 없습니다.</div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {filteredPosts.slice(3).map((post) => {
+                const displayDate = formatDisplayDate(post.publishedAt)
+                return (
+                  <div key={post.id} className="p-6 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center flex-1">
+                        <div className="w-1.5 h-1.5 bg-black rounded-full mr-4"></div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-1">
+                            <span className="text-sm bg-gray-100 px-2 py-1 rounded font-korean">
+                              {post.type === 'announcement' ? '공지사항' : post.type === 'event' ? '행사' : '일반'}
+                            </span>
+                            <h3 className="text-lg font-medium font-korean text-black">
+                              {post.title}
+                            </h3>
+                          </div>
+                          <p className="text-sm text-gray-500 font-korean line-clamp-2">{post.excerpt}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center text-gray-500">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        <span className="text-sm">{displayDate}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center text-gray-500">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    <span className="text-sm">{item.date}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
     </Layout>
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? 'ko', ['common'])),
-  },
-})
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const announcementPosts = await getPublishedAnnouncements(30)
+  const serialized: SerializedPost[] = announcementPosts.map((post: PostRecord) => ({
+    id: post.id,
+    title: post.title,
+    type: post.type,
+    content: post.content,
+    excerpt: post.excerpt ?? null,
+    coverImageUrl: post.coverImageUrl ?? null,
+    publishedAt: post.publishedAt ? post.publishedAt.toISOString() : post.updatedAt ? post.updatedAt.toISOString() : post.createdAt ? post.createdAt.toISOString() : null,
+    createdAt: post.createdAt ? post.createdAt.toISOString() : null
+  }))
+
+  return {
+    props: {
+      posts: serialized,
+      ...(await serverSideTranslations(locale ?? 'ko', ['common']))
+    },
+    revalidate: 60
+  }
+}
 
 export default AnnouncementsPage

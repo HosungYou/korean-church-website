@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '../../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-// Firebase 비활성화 - localStorage 기반 인증 사용
-import { 
-  Save, 
-  Send, 
+import {
+  Save,
+  Send,
   Calendar,
   ArrowLeft,
   Eye,
@@ -15,14 +14,23 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { sendNewsletterToSubscribers } from '../../../utils/emailService'
-import { createPost } from '../../../utils/postService'
+import { getPostById, updatePost, PostRecord } from '../../../utils/postService'
 
-const NewPostPage = () => {
+const formatDateTimeInput = (value?: Date | null): string => {
+  if (!value) {
+    return ''
+  }
+  const iso = value.toISOString()
+  return iso.slice(0, 16)
+}
+
+const PostEditPage = () => {
   const router = useRouter()
-  const { type: queryType } = router.query
+  const { id } = router.query
   const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  
+  const [authLoading, setAuthLoading] = useState(true)
+  const [loadingPost, setLoadingPost] = useState(true)
+
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [type, setType] = useState<'announcement' | 'event' | 'general'>('announcement')
@@ -32,53 +40,93 @@ const NewPostPage = () => {
   const [sendNewsletter, setSendNewsletter] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
+  const [existingPost, setExistingPost] = useState<PostRecord | null>(null)
 
   useEffect(() => {
-    if (queryType && ['announcement', 'event', 'general'].includes(queryType as string)) {
-      setType(queryType as 'announcement' | 'event' | 'general')
-    }
-  }, [queryType])
+    const adminLoggedIn = typeof window !== 'undefined' ? localStorage.getItem('adminLoggedIn') : null
+    const adminUser = typeof window !== 'undefined' ? localStorage.getItem('adminUser') : null
 
-  useEffect(() => {
-    // localStorage 기반 인증 체크
-    const adminLoggedIn = localStorage.getItem('adminLoggedIn')
-    const adminUser = localStorage.getItem('adminUser')
-    
     if (adminLoggedIn === 'true' && adminUser) {
       setUser(JSON.parse(adminUser))
     } else {
       router.push('/admin/login')
     }
-    setLoading(false)
+    setAuthLoading(false)
   }, [router])
 
-  const handleSave = async (publishStatus: 'draft' | 'published' | 'scheduled') => {
+  useEffect(() => {
+    if (!id || typeof id !== 'string') {
+      return
+    }
+
+    const fetchPost = async () => {
+      try {
+        setLoadingPost(true)
+        const post = await getPostById(id)
+        if (!post) {
+          alert('게시글을 찾을 수 없습니다.')
+          router.push('/admin/posts')
+          return
+        }
+        setExistingPost(post)
+        setTitle(post.title)
+        setContent(post.content)
+        setType(post.type)
+        setStatus(post.status)
+        setCoverImageUrl(post.coverImageUrl ?? '')
+        setScheduledDate(formatDateTimeInput(post.scheduledFor))
+      } catch (error) {
+        console.error('게시글 불러오기 오류:', error)
+        alert('게시글을 불러오는 중 오류가 발생했습니다.')
+        router.push('/admin/posts')
+      } finally {
+        setLoadingPost(false)
+      }
+    }
+
+    fetchPost()
+  }, [id, router])
+
+  const previewData = useMemo(() => ({
+    title: title || '제목 없음',
+    content: content || '내용이 없습니다.'
+  }), [title, content])
+
+  const handleSave = async (nextStatus: 'draft' | 'published' | 'scheduled') => {
     if (!title || !content) {
       alert('제목과 내용을 모두 입력해주세요.')
       return
     }
 
-    if (publishStatus === 'scheduled' && !scheduledDate) {
+    if (nextStatus === 'scheduled' && !scheduledDate) {
       alert('예약 게시를 위해서는 날짜를 선택해야 합니다.')
+      return
+    }
+
+    if (!existingPost || typeof id !== 'string') {
+      alert('게시글 정보가 로드되지 않았습니다.')
       return
     }
 
     setIsLoading(true)
     try {
-      setStatus(publishStatus)
+      setStatus(nextStatus)
 
-      const createdId = await createPost({
+      await updatePost({
+        id,
         title,
         content,
         type,
-        status: publishStatus,
-        authorEmail: user?.email ?? null,
-        authorName: user?.name ?? user?.email ?? '관리자',
+        status: nextStatus,
+        authorEmail: user?.email ?? existingPost.authorEmail ?? null,
+        authorName: user?.name ?? existingPost.authorName ?? user?.email ?? '관리자',
         coverImageUrl,
-        scheduledFor: publishStatus === 'scheduled' ? scheduledDate : null
+        scheduledFor: nextStatus === 'scheduled' ? scheduledDate : null,
+        createdAt: existingPost.createdAt ?? undefined,
+        publishedAt: existingPost.publishedAt ?? undefined
       })
 
-      if (publishStatus === 'published' && sendNewsletter) {
+      if (nextStatus === 'published' && sendNewsletter) {
         await sendNewsletterToSubscribers({
           title,
           content,
@@ -87,18 +135,17 @@ const NewPostPage = () => {
         })
       }
 
-      console.log('게시글 생성 완료:', createdId)
-      alert('게시글이 저장되었습니다.')
+      alert('게시글이 업데이트되었습니다.')
       router.push('/admin/posts')
     } catch (error) {
-      console.error('저장 오류:', error)
+      console.error('업데이트 오류:', error)
       alert('저장 중 오류가 발생했습니다.')
     } finally {
       setIsLoading(false)
     }
   }
 
-  if (loading) {
+  if (authLoading || loadingPost) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
@@ -108,7 +155,7 @@ const NewPostPage = () => {
     )
   }
 
-  if (!user) {
+  if (!user || !existingPost) {
     return null
   }
 
@@ -124,7 +171,7 @@ const NewPostPage = () => {
                   <ArrowLeft className="w-5 h-5 text-gray-600 hover:text-black transition-colors" />
                 </Link>
                 <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-                <h1 className="text-xl font-bold text-gray-900 font-korean">새 게시글 작성</h1>
+                <h1 className="text-xl font-bold text-gray-900 font-korean">게시글 편집</h1>
               </div>
               <div className="flex items-center space-x-3">
                 <button
@@ -142,13 +189,11 @@ const NewPostPage = () => {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* 메인 편집기 */}
               <div className="lg:col-span-3">
                 <div className="bg-white shadow rounded-lg">
                   <div className="px-4 py-5 sm:p-6">
                     {!previewMode ? (
                       <div className="space-y-6">
-                        {/* 제목 */}
                         <div>
                           <label htmlFor="title" className="block text-sm font-medium text-gray-700 font-korean mb-2">
                             제목
@@ -163,7 +208,6 @@ const NewPostPage = () => {
                           />
                         </div>
 
-                        {/* 표지 이미지 */}
                         <div>
                           <label htmlFor="cover-image" className="block text-sm font-medium text-gray-700 font-korean mb-2">
                             대표 이미지 URL (선택)
@@ -184,7 +228,6 @@ const NewPostPage = () => {
                           ) : null}
                         </div>
 
-                        {/* 내용 */}
                         <div>
                           <label htmlFor="content" className="block text-sm font-medium text-gray-700 font-korean mb-2">
                             내용
@@ -199,7 +242,6 @@ const NewPostPage = () => {
                           />
                         </div>
 
-                        {/* 툴바 */}
                         <div className="border-t pt-4">
                           <div className="flex items-center space-x-4">
                             <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
@@ -214,14 +256,13 @@ const NewPostPage = () => {
                         </div>
                       </div>
                     ) : (
-                      /* 미리보기 */
                       <div className="prose max-w-none">
                         <div className="flex items-center mb-6">
                           <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-                          <h1 className="text-2xl font-bold text-black font-korean m-0">{title || '제목 없음'}</h1>
+                          <h1 className="text-2xl font-bold text-black font-korean m-0">{previewData.title}</h1>
                         </div>
                         <div className="whitespace-pre-wrap text-gray-700 font-korean">
-                          {content || '내용이 없습니다.'}
+                          {previewData.content}
                         </div>
                       </div>
                     )}
@@ -229,10 +270,8 @@ const NewPostPage = () => {
                 </div>
               </div>
 
-              {/* 사이드바 */}
               <div className="lg:col-span-1">
                 <div className="space-y-6">
-                  {/* 게시 설정 */}
                   <div className="bg-white shadow rounded-lg">
                     <div className="px-4 py-5 sm:p-6">
                       <div className="flex items-center mb-4">
@@ -241,7 +280,6 @@ const NewPostPage = () => {
                       </div>
 
                       <div className="space-y-4">
-                        {/* 게시글 유형 */}
                         <div>
                           <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
                             게시글 유형
@@ -257,7 +295,6 @@ const NewPostPage = () => {
                           </select>
                         </div>
 
-                        {/* 게시 상태 */}
                         <div>
                           <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
                             게시 상태
@@ -268,12 +305,11 @@ const NewPostPage = () => {
                             className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black font-korean"
                           >
                             <option value="draft">임시저장</option>
-                            <option value="published">즉시 게시</option>
+                            <option value="published">게시됨</option>
                             <option value="scheduled">예약 게시</option>
                           </select>
                         </div>
 
-                        {/* 예약 날짜 */}
                         {status === 'scheduled' && (
                           <div>
                             <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
@@ -288,7 +324,6 @@ const NewPostPage = () => {
                           </div>
                         )}
 
-                        {/* 뉴스레터 발송 */}
                         <div className="flex items-center">
                           <input
                             id="newsletter"
@@ -305,7 +340,6 @@ const NewPostPage = () => {
                     </div>
                   </div>
 
-                  {/* 액션 버튼 */}
                   <div className="bg-white shadow rounded-lg">
                     <div className="px-4 py-5 sm:p-6">
                       <div className="space-y-3">
@@ -341,17 +375,16 @@ const NewPostPage = () => {
                     </div>
                   </div>
 
-                  {/* 도움말 */}
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-start">
                       <div className="w-2 h-2 bg-blue-600 rounded-full mr-3 mt-2"></div>
                       <div>
                         <h4 className="text-sm font-medium text-blue-900 font-korean">도움말</h4>
                         <div className="mt-2 text-sm text-blue-700 font-korean space-y-1">
-                          <p>• 임시저장: 게시하지 않고 저장만 합니다</p>
-                          <p>• 즉시 게시: 바로 웹사이트에 게시됩니다</p>
-                          <p>• 예약 게시: 지정한 시간에 자동 게시됩니다</p>
-                          <p>• 뉴스레터 발송: 구독자에게 이메일을 보냅니다</p>
+                          <p>• 임시저장: 게시하지 않고 저장만 합니다.</p>
+                          <p>• 게시됨: 즉시 웹사이트에 반영됩니다.</p>
+                          <p>• 예약 게시: 지정한 시간에 자동 게시됩니다.</p>
+                          <p>• 뉴스레터 발송: 구독자에게 이메일을 보냅니다.</p>
                         </div>
                       </div>
                     </div>
@@ -372,4 +405,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   },
 })
 
-export default NewPostPage
+export default PostEditPage
