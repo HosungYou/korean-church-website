@@ -7,7 +7,7 @@ import {
   signInWithPopup,
   signOut
 } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
+import { auth } from '../../lib/firebase'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 
 const authorizedAdminEmails = ['newhosung@gmail.com', 'admin@sckc.org']
