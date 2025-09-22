@@ -13,6 +13,7 @@ import {
   updateDoc,
   limit as limitQuery
 } from 'firebase/firestore'
+import type { DocumentData } from 'firebase/firestore'
 
 export type PostType = 'announcement' | 'event' | 'general'
 export type PostStatus = 'draft' | 'published' | 'scheduled'
@@ -101,7 +102,7 @@ const mapPostDoc = (snapshot: any): PostRecord => {
 
 export const createPost = async (input: CreatePostInput): Promise<string> => {
   const collectionRef = collection(db, POSTS_COLLECTION)
-  const payload: Record<string, unknown> = {
+  const payload: DocumentData = {
     title: input.title,
     content: input.content,
     type: input.type,
@@ -137,7 +138,7 @@ export const updatePost = async (input: UpdatePostInput): Promise<void> => {
   }
 
   const existing = mapPostDoc(existingSnapshot)
-  const payload: Record<string, unknown> = {
+  const payload: DocumentData = {
     title: input.title,
     content: input.content,
     type: input.type,
