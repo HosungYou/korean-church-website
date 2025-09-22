@@ -36,6 +36,7 @@ const getBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
     'service-info': '예배안내',
     'directions': '오시는길',
     'sermons': '설교',
+    'sermons-live': '예배 LIVE',
     'sunday': '주일예배',
     'wednesday': '수요예배',
     'friday': '금요철야',
@@ -154,7 +155,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     {
       name: '예배',
       dropdown: [
-        { name: '예배 LIVE', href: '/sermons/sunday' },
+        { name: '예배 LIVE', href: '/sermons-live' },
         { name: '설교', href: '/sermons' },
         { name: '예배안내', href: '/about/service-info' },
       ],
@@ -491,7 +492,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <h3 className="text-lg font-semibold mb-4 font-korean">바로가기</h3>
               <div className="flex flex-col space-y-2">
                 <Link href="/about/greeting" className="text-black/70 hover:text-black font-korean">교회안내</Link>
-                <Link href="/sermons/sunday" className="text-black/70 hover:text-black font-korean">말씀/찬양</Link>
+                <Link href="/sermons-live" className="text-black/70 hover:text-black font-korean">말씀/찬양</Link>
                 <Link href="/news/announcements" className="text-black/70 hover:text-black font-korean">교회소식</Link>
                 <Link href="/giving" className="text-black/70 hover:text-black font-korean">온라인헌금</Link>
               </div>
