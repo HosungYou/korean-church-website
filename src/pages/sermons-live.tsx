@@ -27,7 +27,7 @@ const SermonsLive: NextPage = () => {
     () => [
       {
         id: '1',
-        title: i18n.language === 'ko' ? '하나님의 사랑' : "God's Love",
+        title: i18n.language === 'ko' ? '하나님의 사랑' : 'God\'s Love',
         speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
         date: '2024-07-14',
         scripture: i18n.language === 'ko' ? '요한복음 3:16' : 'John 3:16',
@@ -106,7 +106,7 @@ const SermonsLive: NextPage = () => {
             <p className={`mt-2 text-lg text-gray-300 ${
               i18n.language === 'ko' ? 'font-korean' : 'font-english'
             }`}>
-              {i18n.language === 'ko' ? '하나님의 말씀으로 은혜받는 주일예배에 성교방송' : 'Join us for worship and receive God's blessing'}
+              {i18n.language === 'ko' ? '하나님의 말씀으로 은혜받는 주일예배에 성교방송' : 'Join us for worship and receive God\'s blessing'}
             </p>
           </div>
 
@@ -150,7 +150,7 @@ const SermonsLive: NextPage = () => {
             <p className={`text-gray-600 ${
               i18n.language === 'ko' ? 'font-korean' : 'font-english'
             }`}>
-              {i18n.language === 'ko' ? '하나님의 말씀으로 은혜받는 주일예배 설교말씀' : 'Sunday worship sermons filled with God's word and grace'}
+              {i18n.language === 'ko' ? '하나님의 말씀으로 은혜받는 주일예배 설교말씀' : 'Sunday worship sermons filled with God\'s word and grace'}
             </p>
           </div>
 
