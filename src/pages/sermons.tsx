@@ -23,62 +23,65 @@ const Sermons: NextPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
 
   // Sample sermon data - replace with actual data
-  const sermons: Sermon[] = [
-    {
-      id: '1',
-      title: i18n.language === 'ko' ? '하나님의 사랑' : 'God\'s Love',
-      speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
-      date: '2024-07-14',
-      scripture: i18n.language === 'ko' ? '요한복음 3:16' : 'John 3:16',
-      service: 'sunday_1st',
-      thumbnail: '/images/sermon-placeholder.jpg'
-    },
-    {
-      id: '2', 
-      title: i18n.language === 'ko' ? '믿음의 능력' : 'The Power of Faith',
-      speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
-      date: '2024-07-10',
-      scripture: i18n.language === 'ko' ? '히브리서 11:1' : 'Hebrews 11:1',
-      service: 'wednesday',
-      thumbnail: '/images/sermon-placeholder.jpg'
-    },
-    {
-      id: '3',
-      title: i18n.language === 'ko' ? '새벽기도의 축복' : 'Blessings of Dawn Prayer',
-      speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
-      date: '2024-07-08',
-      scripture: i18n.language === 'ko' ? '시편 5:3' : 'Psalm 5:3',
-      service: 'dawn',
-      thumbnail: '/images/sermon-placeholder.jpg'
-    },
-    {
-      id: '4',
-      title: i18n.language === 'ko' ? '그리스도의 십자가' : 'The Cross of Christ',
-      speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
-      date: '2024-07-07',
-      scripture: i18n.language === 'ko' ? '갈라디아서 2:20' : 'Galatians 2:20',
-      service: 'sunday_2nd',
-      thumbnail: '/images/sermon-placeholder.jpg'
-    },
-    {
-      id: '5',
-      title: i18n.language === 'ko' ? '성령의 열매' : 'Fruits of the Spirit',
-      speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
-      date: '2024-07-03',
-      scripture: i18n.language === 'ko' ? '갈라디아서 5:22-23' : 'Galatians 5:22-23',
-      service: 'wednesday',
-      thumbnail: '/images/sermon-placeholder.jpg'
-    },
-    {
-      id: '6',
-      title: i18n.language === 'ko' ? '주님의 재림' : 'The Second Coming',
-      speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
-      date: '2024-06-30',
-      scripture: i18n.language === 'ko' ? '요한계시록 22:20' : 'Revelation 22:20',
-      service: 'sunday_1st',
-      thumbnail: '/images/sermon-placeholder.jpg'
-    }
-  ]
+  const sermons = useMemo<Sermon[]>(
+    () => [
+      {
+        id: '1',
+        title: i18n.language === 'ko' ? '하나님의 사랑' : "God's Love",
+        speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
+        date: '2024-07-14',
+        scripture: i18n.language === 'ko' ? '요한복음 3:16' : 'John 3:16',
+        service: 'sunday_1st',
+        thumbnail: '/images/sermon-placeholder.jpg'
+      },
+      {
+        id: '2',
+        title: i18n.language === 'ko' ? '믿음의 능력' : 'The Power of Faith',
+        speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
+        date: '2024-07-10',
+        scripture: i18n.language === 'ko' ? '히브리서 11:1' : 'Hebrews 11:1',
+        service: 'wednesday',
+        thumbnail: '/images/sermon-placeholder.jpg'
+      },
+      {
+        id: '3',
+        title: i18n.language === 'ko' ? '새벽기도의 축복' : 'Blessings of Dawn Prayer',
+        speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
+        date: '2024-07-08',
+        scripture: i18n.language === 'ko' ? '시편 5:3' : 'Psalm 5:3',
+        service: 'dawn',
+        thumbnail: '/images/sermon-placeholder.jpg'
+      },
+      {
+        id: '4',
+        title: i18n.language === 'ko' ? '그리스도의 십자가' : 'The Cross of Christ',
+        speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
+        date: '2024-07-07',
+        scripture: i18n.language === 'ko' ? '갈라디아서 2:20' : 'Galatians 2:20',
+        service: 'sunday_2nd',
+        thumbnail: '/images/sermon-placeholder.jpg'
+      },
+      {
+        id: '5',
+        title: i18n.language === 'ko' ? '성령의 열매' : 'Fruits of the Spirit',
+        speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
+        date: '2024-07-03',
+        scripture: i18n.language === 'ko' ? '갈라디아서 5:22-23' : 'Galatians 5:22-23',
+        service: 'wednesday',
+        thumbnail: '/images/sermon-placeholder.jpg'
+      },
+      {
+        id: '6',
+        title: i18n.language === 'ko' ? '주님의 재림' : 'The Second Coming',
+        speaker: i18n.language === 'ko' ? '연규홍 목사' : 'Pastor Kyu Hong Yeon',
+        date: '2024-06-30',
+        scripture: i18n.language === 'ko' ? '요한계시록 22:20' : 'Revelation 22:20',
+        service: 'sunday_1st',
+        thumbnail: '/images/sermon-placeholder.jpg'
+      }
+    ],
+    [i18n.language]
+  )
 
   const filteredSermons = useMemo(() => {
     let filtered = sermons

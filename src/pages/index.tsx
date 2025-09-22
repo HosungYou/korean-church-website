@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import HeroSlider from '@/components/HeroSlider'
+import AdminLoginForm from '@/components/AdminLoginForm'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Play, Calendar, MapPin, Heart, Users, BookOpen, Phone, Globe, Coffee, Clock, User, Gift, Mail, Bell } from 'lucide-react'
@@ -217,6 +218,45 @@ const Home: NextPage = () => {
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 관리자 CMS 로그인 */}
+      <section className="bg-gray-50 py-16 border-t border-gray-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div>
+              <div className="flex items-center mb-6">
+                <div className="w-3 h-3 bg-black rounded-full mr-3"></div>
+                <h2 className="text-3xl font-bold text-black font-korean">관리자 시스템 로그인</h2>
+              </div>
+              <p className="text-lg text-gray-700 font-korean leading-relaxed mb-6">
+                교회 웹사이트의 공지, 교육자료, 콘텐츠 업데이트는 관리자 전용 CMS에서 처리됩니다. 
+                권한이 있는 사역자와 스태프는 아래 로그인 패널을 통해 바로 접속할 수 있습니다.
+              </p>
+              <ul className="space-y-3 text-gray-600 font-korean text-sm">
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black rounded-full mt-2 mr-3"></span>
+                  Google 계정 로그인은 등록된 관리자 이메일만 허용됩니다.
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black rounded-full mt-2 mr-3"></span>
+                  이메일/비밀번호 로그인은 예비용 계정 또는 발급받은 계정 정보를 사용해주세요.
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black rounded-full mt-2 mr-3"></span>
+                  접근 권한이 필요하시면 교육부 행정 담당자에게 계정 생성을 요청해주세요.
+                </li>
+              </ul>
+            </div>
+            <div className="w-full max-w-lg ml-auto">
+              <AdminLoginForm
+                showHeader={false}
+                className="w-full"
+                cardClassName="border border-gray-200 shadow-md sm:px-8"
+              />
+            </div>
           </div>
         </div>
       </section>

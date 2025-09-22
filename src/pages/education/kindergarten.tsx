@@ -19,7 +19,7 @@ const KindergartenPage = () => {
       </div>
       <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <p className="text-lg font-semibold text-black font-korean">"말씀을 배우는 어린이"</p>
+          <p className="text-lg font-semibold text-black font-korean">&ldquo;말씀을 배우는 어린이&rdquo;</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl font-korean">
             유치부 (4-7세)
           </h2>

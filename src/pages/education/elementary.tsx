@@ -28,7 +28,7 @@ const ElementaryPage = () => {
               <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
               <h2 className="text-3xl font-bold text-black font-korean">초등부 비전</h2>
             </div>
-            <p className="text-2xl font-semibold text-black font-korean mb-4">"세상을 이기는 믿음의 용사"</p>
+            <p className="text-2xl font-semibold text-black font-korean mb-4">&ldquo;세상을 이기는 믿음의 용사&rdquo;</p>
             <p className="text-lg text-gray-600 font-korean">8-13세 학생들이 하나님을 인격적으로 만나는 공간</p>
           </div>
 

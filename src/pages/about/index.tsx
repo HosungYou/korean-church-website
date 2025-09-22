@@ -196,7 +196,7 @@ const AboutMain: NextPage = () => {
                   뉴 노멀의 예배
                 </h2>
                 <p className="text-2xl text-gray-700 mb-6 font-korean">
-                  "선함과 사랑이 우리하는 담긴의 대비!"
+                  &ldquo;선함과 사랑이 우리하는 담긴의 대비!&rdquo;
                 </p>
                 <p className="text-gray-600 leading-relaxed font-korean">
                   뉴 노멀 시대에는 온라인 예배를 천는 성도들이 요구는 계속될 것입니다. 스테이트 칼리지 한인교회는<br />
@@ -226,7 +226,7 @@ const AboutMain: NextPage = () => {
                   구역모임
                 </h2>
                 <p className="text-2xl text-gray-700 mb-6 font-korean">
-                  "기동 구어나 담아 박옥과 고화"
+                  &ldquo;기동 구어나 담아 박옥과 고화&rdquo;
                 </p>
                 <p className="text-gray-600 leading-relaxed font-korean">
                   지구 담임목사는 주일찬교를 비롯으로 한 구역예배 활성화, 대성양 및 전인사양을 지<br />

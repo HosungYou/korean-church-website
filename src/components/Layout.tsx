@@ -1,5 +1,6 @@
 import React, { useState, Fragment } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { Menu, Transition } from '@headlessui/react'
@@ -138,7 +139,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex h-20 justify-between items-center">
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
-                <img src="/images/logo.png" alt="Church Logo" className="h-12 w-auto" />
+                <div className="relative h-12 w-32">
+                  <Image
+                    src="/images/logo.png"
+                    alt="Church Logo"
+                    fill
+                    priority
+                    className="object-contain"
+                    sizes="128px"
+                  />
+                </div>
               </Link>
             </div>
 
@@ -238,7 +248,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between p-4 border-b">
               <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-                <img src="/images/logo.png" alt="Church Logo" className="h-10 w-auto" />
+                <div className="relative h-10 w-28">
+                  <Image
+                    src="/images/logo.png"
+                    alt="Church Logo"
+                    fill
+                    className="object-contain"
+                    sizes="112px"
+                  />
+                </div>
               </Link>
               <button type="button" className="-m-2.5 rounded-md p-2.5 text-gray-700" onClick={() => setMobileMenuOpen(false)}>
                 <XIcon className="h-6 w-6" />

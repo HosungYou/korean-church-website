@@ -30,7 +30,7 @@ const GreetingPage = () => {
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-black font-korean leading-relaxed">
-                "하나님을 경험하는 교회, 세상을 변화시키는 교회"
+                &ldquo;하나님을 경험하는 교회, 세상을 변화시키는 교회&rdquo;
               </p>
               <p className="mt-4 text-lg text-gray-700 font-korean">
                 우리 교회에 오신 여러분을 진심으로 환영합니다.

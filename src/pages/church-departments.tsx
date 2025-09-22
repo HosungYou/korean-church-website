@@ -2,6 +2,7 @@ import type { GetStaticProps, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import { Users, Heart, BookOpen, Music, Baby, School, GraduationCap, Home, Globe, Flower2 } from 'lucide-react'
+import Link from 'next/link'
 
 const ChurchDepartments: NextPage = () => {
   const departments = [
@@ -211,18 +212,18 @@ const ChurchDepartments: NextPage = () => {
               하나님의 일에 동참하실 분들의 많은 관심과 참여 부탁드립니다.
             </p>
             <div className="flex justify-center space-x-4">
-              <a
+              <Link
                 href="/new-family-guide"
                 className="inline-flex items-center px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-gray-100 transition-colors font-korean"
               >
                 새가족 등록
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/about/directions"
                 className="inline-flex items-center px-6 py-3 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-black transition-colors font-korean"
               >
                 오시는 길
-              </a>
+              </Link>
             </div>
           </div>
         </div>

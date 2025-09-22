@@ -26,7 +26,7 @@ const Philosophy: NextPage = () => {
             
             <div className="bg-blue-50 rounded-xl p-8 mb-8">
               <p className="text-2xl font-semibold text-blue-900 text-center leading-relaxed font-korean">
-                "복음의 생명으로 세상을 아름답게 하는 성령의 교회"
+                &ldquo;복음의 생명으로 세상을 아름답게 하는 성령의 교회&rdquo;
               </p>
               <p className="text-lg text-blue-700 text-center mt-4 font-korean">
                 A Spirit-filled church that beautifies the world with the life of the Gospel

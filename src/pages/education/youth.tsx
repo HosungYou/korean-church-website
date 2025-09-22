@@ -19,7 +19,7 @@ const YouthPage = () => {
       </div>
       <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <p className="text-lg font-semibold text-black font-korean">"비전으로 세상을 품는 청소년"</p>
+          <p className="text-lg font-semibold text-black font-korean">&ldquo;비전으로 세상을 품는 청소년&rdquo;</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl font-korean">
             중고등부 (14-19세)
           </h2>
