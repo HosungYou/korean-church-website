@@ -6,7 +6,7 @@ import { useTranslation } from 'next-i18next'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon, Menu as MenuIcon, X as XIcon, Home, ChevronRight } from 'lucide-react'
 import { signOut } from 'firebase/auth'
-import { auth } from '../lib/firebase'
+import { auth } from '../../lib/firebase'
 
 interface NavItem {
   name: string
