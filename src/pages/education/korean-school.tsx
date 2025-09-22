@@ -32,13 +32,6 @@ const KoreanSchool: NextPage = () => {
       description: '한국어 독해와 작문 실력을 향상시키고, 한국 문학과 현대 문화를 탐구합니다.',
       schedule: '매주 일요일 1:00 PM - 2:30 PM',
       teacher: '정선생님'
-    },
-    {
-      name: '성인반',
-      age: '18세 이상',
-      description: '한국어를 배우고 싶은 성인들을 위한 반으로, 기초부터 실용 회화까지 단계별로 학습합니다.',
-      schedule: '매주 일요일 1:00 PM - 2:30 PM',
-      teacher: '최선생님'
     }
   ]
 
@@ -84,7 +77,7 @@ const KoreanSchool: NextPage = () => {
               </div>
               <div className="flex items-center">
                 <Users className="w-5 h-5 mr-2" />
-                <span className="font-korean">5개 반 운영</span>
+                <span className="font-korean">4개 반 운영</span>
               </div>
               <div className="flex items-center">
                 <Award className="w-5 h-5 mr-2" />
