@@ -20,6 +20,7 @@
     "@types/react-dom": "^18.3.7",
     "autoprefixer": "^10.4.21",
     "firebase": "^11.10.0",
+    "firebase-admin": "^13.5.0",
     "i18next": "^22.5.1",
     "lucide-react": "^0.303.0",
     "next": "^14.2.30",
