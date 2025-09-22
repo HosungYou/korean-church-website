@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { signOut } from 'firebase/auth'
-import { auth } from '../../lib/firebase'
+import { auth } from '../../../lib/firebase'
 
 const AdminDashboardPage = () => {
   const router = useRouter()
