@@ -187,7 +187,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     {
       name: '소통',
       dropdown: [
-        { name: '교회소식', href: '/news/announcements' },
+        { name: '공지사항', href: '/news/announcements' },
       ],
     },
     {
@@ -485,16 +485,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
             <div>
               <h3 className="text-lg font-semibold mb-4 font-korean">{t('service_times')}</h3>
-              <p className="text-black/70 font-korean">{t('sunday')}: 11:00 AM</p>
-              <p className="text-black/70 font-korean">{t('wednesday')}: 7:30 PM</p>
+              <p className="text-black/70 font-korean">{t('sunday')}: {t('sunday_time')}</p>
+              <p className="text-black/70 font-korean">{t('wednesday')}: {t('wednesday_time')}</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4 font-korean">바로가기</h3>
+              <h3 className="text-lg font-semibold mb-4 font-korean">{t('quick_links')}</h3>
               <div className="flex flex-col space-y-2">
-                <Link href="/about/greeting" className="text-black/70 hover:text-black font-korean">교회안내</Link>
-                <Link href="/sermons-live" className="text-black/70 hover:text-black font-korean">말씀/찬양</Link>
-                <Link href="/news/announcements" className="text-black/70 hover:text-black font-korean">교회소식</Link>
-                <Link href="/giving" className="text-black/70 hover:text-black font-korean">온라인헌금</Link>
+                <Link href="/about/greeting" className="text-black/70 hover:text-black font-korean">{t('church_guide')}</Link>
+                <Link href="/sermons-live" className="text-black/70 hover:text-black font-korean">{t('sermons_praise')}</Link>
+                <Link href="/news/announcements" className="text-black/70 hover:text-black font-korean">{t('nav.announcements')}</Link>
+                <Link href="/giving" className="text-black/70 hover:text-black font-korean">{t('online_giving')}</Link>
               </div>
             </div>
           </div>

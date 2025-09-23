@@ -25,6 +25,12 @@
   "email_address": "KyuHongYeon@gmail.com",
   "sunday": "Sunday",
   "wednesday": "Wednesday",
+  "sunday_time": "11:00 AM",
+  "wednesday_time": "7:30 PM",
+  "quick_links": "Quick Links",
+  "church_guide": "Church Info",
+  "sermons_praise": "Sermons/Praise",
+  "online_giving": "Online Giving",
   "language": "Language",
   "list": "List"
 }

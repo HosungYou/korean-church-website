@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/Layout'
 import { GetServerSideProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { ArrowLeft, Calendar, User, Share2, Facebook, Twitter, Link as LinkIcon } from 'lucide-react'
+import { ArrowLeft, Calendar, User } from 'lucide-react'
 import Link from 'next/link'
 import { getPostById, PostRecord } from '../../../utils/postService'
 
@@ -38,7 +37,6 @@ const formatDisplayDate = (iso?: string | null): string => {
 
 const PostDetailPage = ({ post }: PostDetailPageProps) => {
   const router = useRouter()
-  const [isSharing, setIsSharing] = useState(false)
 
   if (router.isFallback) {
     return (
@@ -66,34 +64,6 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
   }
 
   const displayDate = formatDisplayDate(post.publishedAt || post.createdAt)
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
-
-  const handleShare = async (platform: string) => {
-    setIsSharing(true)
-    const shareUrl = currentUrl
-    const shareText = post.title
-
-    try {
-      if (platform === 'native' && navigator.share) {
-        await navigator.share({
-          title: post.title,
-          text: post.excerpt || '교회 소식을 확인해보세요',
-          url: shareUrl
-        })
-      } else if (platform === 'copy') {
-        await navigator.clipboard.writeText(shareUrl)
-        alert('링크가 클립보드에 복사되었습니다.')
-      } else if (platform === 'facebook') {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')
-      } else if (platform === 'twitter') {
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank')
-      }
-    } catch (error) {
-      console.error('공유 실패:', error)
-    } finally {
-      setIsSharing(false)
-    }
-  }
 
   return (
     <Layout>
@@ -135,11 +105,11 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           {/* Cover Image */}
           {post.coverImageUrl && (
-            <div className="w-full h-64 md:h-80 relative">
+            <div className="w-full h-64 md:h-96 relative">
               <img
                 src={post.coverImageUrl}
                 alt={post.title}
@@ -149,52 +119,17 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
           )}
 
           {/* Article Content */}
-          <div className="p-8 md:p-12">
-            <div className="prose prose-lg max-w-none font-korean">
+          <div className="p-8 md:p-16 lg:p-20">
+            <div className="prose prose-xl max-w-none font-korean">
               <div
-                className="text-gray-800 leading-relaxed whitespace-pre-wrap"
-                style={{ lineHeight: '1.8' }}
+                className="text-gray-800 leading-relaxed whitespace-pre-wrap text-lg md:text-xl"
+                style={{ lineHeight: '2', letterSpacing: '0.02em' }}
               >
                 {post.content}
               </div>
             </div>
           </div>
 
-          {/* Share Section */}
-          <div className="border-t border-gray-100 p-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
-                <h3 className="text-lg font-semibold text-gray-900 font-korean">공유하기</h3>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => handleShare('copy')}
-                  disabled={isSharing}
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors font-korean"
-                >
-                  <LinkIcon className="w-4 h-4 mr-2" />
-                  링크 복사
-                </button>
-                <button
-                  onClick={() => handleShare('facebook')}
-                  disabled={isSharing}
-                  className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors font-korean"
-                >
-                  <Facebook className="w-4 h-4 mr-2" />
-                  페이스북
-                </button>
-                <button
-                  onClick={() => handleShare('twitter')}
-                  disabled={isSharing}
-                  className="inline-flex items-center px-3 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors font-korean"
-                >
-                  <Twitter className="w-4 h-4 mr-2" />
-                  트위터
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Navigation */}
