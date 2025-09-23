@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Layout from '@/components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -36,6 +37,7 @@ const formatDisplayDate = (iso?: string | null): string => {
 }
 
 const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
+  const router = useRouter()
   const [posts, setPosts] = useState<SerializedPost[]>(initialPosts)
   const [email, setEmail] = useState('')
   const [isSubscribed, setIsSubscribed] = useState(false)
@@ -104,6 +106,10 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
       console.error('구독 오류:', error)
       alert('구독 중 오류가 발생했습니다. 다시 시도해주세요.')
     }
+  }
+
+  const handlePostClick = (postId: string) => {
+    router.push(`/news/posts/${postId}`)
   }
 
   return (
@@ -197,7 +203,11 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
               {filteredPosts.map((post) => {
                 const displayDate = formatDisplayDate(post.publishedAt)
                 return (
-                  <div key={post.id} className="p-6 hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div
+                    key={post.id}
+                    className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => handlePostClick(post.id)}
+                  >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
