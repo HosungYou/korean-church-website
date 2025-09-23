@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -38,11 +38,30 @@ const formatDisplayDate = (iso?: string | null): string => {
 
 const coverFallback = '/images/feature-placeholder.svg'
 
-const AnnouncementsPage = ({ posts }: AnnouncementsPageProps) => {
+const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
+  const [posts, setPosts] = useState<SerializedPost[]>(initialPosts)
   const [email, setEmail] = useState('')
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<'전체' | '공지사항' | '행사' | '일반'>('전체')
+
+  // 클라이언트 사이드에서 최신 데이터 가져오기
+  useEffect(() => {
+    const fetchLatestPosts = async () => {
+      try {
+        const response = await fetch('/api/posts/announcements')
+        if (response.ok) {
+          const data = await response.json()
+          setPosts(data.posts)
+        }
+      } catch (error) {
+        console.error('최신 게시글 가져오기 실패:', error)
+      }
+    }
+
+    // 페이지 로드 후 최신 데이터 가져오기
+    fetchLatestPosts()
+  }, [])
 
   const parsedPosts = useMemo(() =>
     posts.map((post) => ({
@@ -291,7 +310,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       posts: serialized,
       ...(await serverSideTranslations(locale ?? 'ko', ['common']))
     },
-    revalidate: 60
+    revalidate: 10 // 10초마다 재생성하여 더 빠른 업데이트
   }
 }
 
