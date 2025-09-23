@@ -1,0 +1,33 @@
+{
+  "announcements": {
+    "title": "교회소식",
+    "subscribe": {
+      "title": "교회 소식 구독",
+      "description": "새로운 공지사항을 이메일로 받아보세요",
+      "placeholder": "이메일 주소를 입력해주세요",
+      "button": "구독하기",
+      "success": "성공적으로 구독되었습니다!",
+      "error": "구독 중 오류가 발생했습니다. 다시 시도해주세요."
+    },
+    "search": {
+      "placeholder": "검색어를 입력해주세요",
+      "button_label": "공지사항 검색"
+    },
+    "tabs": {
+      "all": "전체",
+      "announcement": "공지사항",
+      "event": "행사",
+      "general": "일반"
+    },
+    "empty": "표시할 공지사항이 없습니다."
+  },
+  "post_types": {
+    "announcement": "공지사항",
+    "event": "행사",
+    "general": "일반"
+  },
+  "post_detail": {
+    "back_to_list": "교회소식으로 돌아가기",
+    "not_found_title": "게시글을 찾을 수 없습니다"
+  }
+}

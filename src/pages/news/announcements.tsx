@@ -6,6 +6,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Mail, Bell, Search, Calendar } from 'lucide-react'
 import { addEmailSubscriber } from '../../utils/emailService'
 import { getPublishedAnnouncements, PostRecord } from '../../utils/postService'
+import { useTranslation } from 'next-i18next'
 
 interface SerializedPost {
   id: string
@@ -22,7 +23,9 @@ interface AnnouncementsPageProps {
   posts: SerializedPost[]
 }
 
-const formatDisplayDate = (iso?: string | null): string => {
+type AnnouncementTab = 'all' | 'announcement' | 'event' | 'general'
+
+const formatDisplayDate = (iso?: string | null, locale: string = 'ko'): string => {
   if (!iso) {
     return ''
   }
@@ -30,19 +33,30 @@ const formatDisplayDate = (iso?: string | null): string => {
   if (Number.isNaN(date.getTime())) {
     return ''
   }
-  const year = `${date.getFullYear()}`.slice(-2)
-  const month = `${date.getMonth() + 1}`.padStart(2, '0')
-  const day = `${date.getDate()}`.padStart(2, '0')
-  return `${year}.${month}.${day}`
+
+  if (locale === 'ko') {
+    const year = `${date.getFullYear()}`.slice(-2)
+    const month = `${date.getMonth() + 1}`.padStart(2, '0')
+    const day = `${date.getDate()}`.padStart(2, '0')
+    return `${year}.${month}.${day}`
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  }).format(date)
 }
 
 const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
+  const { t, i18n } = useTranslation(['news', 'common'])
+  const fontClass = i18n.language === 'ko' ? 'font-korean' : 'font-english'
   const router = useRouter()
   const [posts, setPosts] = useState<SerializedPost[]>(initialPosts)
   const [email, setEmail] = useState('')
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [activeTab, setActiveTab] = useState<'전체' | '공지사항' | '행사' | '일반'>('전체')
+  const [activeTab, setActiveTab] = useState<AnnouncementTab>('all')
 
   // 클라이언트 사이드에서 최신 데이터 가져오기
   useEffect(() => {
@@ -54,11 +68,11 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
           setPosts(data.posts)
         }
       } catch (error) {
-        console.error('최신 게시글 가져오기 실패:', error)
+        console.error('Failed to fetch latest announcements:', error)
       }
     }
 
-    // 페이지 로드 후 최신 데이터 가져오기
+    // Fetch newest data after page load
     fetchLatestPosts()
   }, [])
 
@@ -75,10 +89,10 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
 
     return parsedPosts.filter((post) => {
       const typeMatch =
-        activeTab === '전체' ||
-        (activeTab === '공지사항' && post.type === 'announcement') ||
-        (activeTab === '행사' && post.type === 'event') ||
-        (activeTab === '일반' && post.type === 'general')
+        activeTab === 'all' ||
+        (activeTab === 'announcement' && post.type === 'announcement') ||
+        (activeTab === 'event' && post.type === 'event') ||
+        (activeTab === 'general' && post.type === 'general')
 
       const searchMatch =
         !lowerSearch ||
@@ -103,8 +117,8 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
       setEmail('')
       setTimeout(() => setIsSubscribed(false), 3000)
     } catch (error) {
-      console.error('구독 오류:', error)
-      alert('구독 중 오류가 발생했습니다. 다시 시도해주세요.')
+      console.error('Subscription error:', error)
+      alert(t('news:announcements.subscribe.error'))
     }
   }
 
@@ -112,83 +126,102 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
     router.push(`/news/posts/${postId}`)
   }
 
+  const tabOptions: { key: AnnouncementTab; label: string }[] = [
+    { key: 'all', label: t('news:announcements.tabs.all') },
+    { key: 'announcement', label: t('news:announcements.tabs.announcement') },
+    { key: 'event', label: t('news:announcements.tabs.event') },
+    { key: 'general', label: t('news:announcements.tabs.general') }
+  ]
+
   return (
     <Layout>
       <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-white rounded-full mr-4"></div>
-            <h1 className="text-4xl font-bold text-white font-korean">교회소식</h1>
+            <h1 className={`text-4xl font-bold text-white ${fontClass}`}>
+              {t('news:announcements.title')}
+            </h1>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        {/* 이메일 구독 섹션 */}
+        {/* Email subscription section */}
         <div className="mb-12 bg-gray-50 rounded-lg p-8">
           <div className="flex items-center mb-6">
             <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-            <h2 className="text-2xl font-bold text-black font-korean">교회 소식 구독</h2>
+            <h2 className={`text-2xl font-bold text-black ${fontClass}`}>
+              {t('news:announcements.subscribe.title')}
+            </h2>
           </div>
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center mb-4">
               <Mail className="w-6 h-6 text-gray-600 mr-3" />
-              <p className="text-gray-700 font-korean">새로운 공지사항을 이메일로 받아보세요</p>
+              <p className={`text-gray-700 ${fontClass}`}>
+                {t('news:announcements.subscribe.description')}
+              </p>
             </div>
             <form onSubmit={handleSubscribe} className="flex gap-3">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="이메일 주소를 입력해주세요"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent font-korean"
+                placeholder={t('news:announcements.subscribe.placeholder') as string}
+                className={`flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent ${fontClass}`}
                 required
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-korean flex items-center"
+                className={`px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center ${fontClass}`}
               >
                 <Bell className="w-4 h-4 mr-2" />
-                구독하기
+                {t('news:announcements.subscribe.button')}
               </button>
             </form>
             {isSubscribed && (
-              <p className="mt-4 text-green-600 font-korean">성공적으로 구독되었습니다!</p>
+              <p className={`mt-4 text-green-600 ${fontClass}`}>
+                {t('news:announcements.subscribe.success')}
+              </p>
             )}
           </div>
         </div>
 
 
-        {/* 검색 및 필터 */}
+        {/* Search and filter */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="검색어를 입력해주세요"
+                placeholder={t('news:announcements.search.placeholder') as string}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent font-korean"
+                className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent ${fontClass}`}
               />
             </div>
-            <button className="px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
+            <button
+              className="px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+              type="button"
+              aria-label={t('news:announcements.search.button_label') as string}
+            >
               <Search className="w-5 h-5" />
             </button>
           </div>
 
           <div className="flex border-b border-gray-200 flex-wrap">
-            {(['전체', '공지사항', '행사', '일반'] as const).map((tab) => (
+            {tabOptions.map((tab) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 font-korean font-medium transition-colors ${
-                  activeTab === tab
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-6 py-3 ${fontClass} font-medium transition-colors ${
+                  activeTab === tab.key
                     ? 'text-black border-b-2 border-black'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                {tab}
+                {tab.label}
               </button>
             ))}
           </div>
@@ -197,11 +230,14 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
         {/* 공지사항 목록 */}
         <div className="bg-white rounded-lg shadow-sm">
           {filteredPosts.length === 0 ? (
-            <div className="p-12 text-center text-gray-500 font-korean">표시할 공지사항이 없습니다.</div>
+            <div className={`p-12 text-center text-gray-500 ${fontClass}`}>
+              {t('news:announcements.empty')}
+            </div>
           ) : (
             <div className="divide-y divide-gray-200">
               {filteredPosts.map((post) => {
-                const displayDate = formatDisplayDate(post.publishedAt)
+                const displayDate = formatDisplayDate(post.publishedAt, i18n.language)
+                const typeLabel = t(`news:post_types.${post.type}`)
                 return (
                   <div
                     key={post.id}
@@ -211,24 +247,24 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className={`text-xs px-2 py-1 rounded font-korean ${
+                          <span className={`text-xs px-2 py-1 rounded ${fontClass} ${
                             post.type === 'announcement' ? 'bg-blue-100 text-blue-700' :
                             post.type === 'event' ? 'bg-green-100 text-green-700' :
                             'bg-gray-100 text-gray-700'
                           }`}>
-                            {post.type === 'announcement' ? '공지사항' : post.type === 'event' ? '행사' : '일반'}
+                            {typeLabel}
                           </span>
                           {displayDate && (
-                            <div className="flex items-center text-sm text-gray-500 font-korean">
+                            <div className={`flex items-center text-sm text-gray-500 ${fontClass}`}>
                               <Calendar className="w-4 h-4 mr-1" />
                               <span>{displayDate}</span>
                             </div>
                           )}
                         </div>
-                        <h3 className="text-lg font-semibold font-korean text-gray-900 mb-1">
+                        <h3 className={`text-lg font-semibold text-gray-900 mb-1 ${fontClass}`}>
                           {post.title}
                         </h3>
-                        <p className="text-sm text-gray-600 font-korean line-clamp-2">{post.excerpt}</p>
+                        <p className={`text-sm text-gray-600 line-clamp-2 ${fontClass}`}>{post.excerpt}</p>
                       </div>
                     </div>
                   </div>
@@ -270,9 +306,9 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       posts: serialized,
-      ...(await serverSideTranslations(locale ?? 'ko', ['common']))
+      ...(await serverSideTranslations(locale ?? 'ko', ['common', 'news']))
     },
-    revalidate: 10 // 10초마다 재생성하여 더 빠른 업데이트
+    revalidate: 10 // Revalidate every 10 seconds for fresh data
   }
 }
 

@@ -8,6 +8,7 @@ interface HeroSlide {
 
 interface HeroSliderProps {
   slides: HeroSlide[]
+  fontClass?: string
 }
 
 const communityImages = [
@@ -19,7 +20,7 @@ const communityImages = [
   '/images/community/community6.jpg',
 ]
 
-const HeroSlider: React.FC<HeroSliderProps> = ({ slides }) => {
+const HeroSlider: React.FC<HeroSliderProps> = ({ slides, fontClass }) => {
   const [currentSlide, setCurrentSlide] = useState(0)
 
   // Select random images for slides
@@ -58,10 +59,10 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ slides }) => {
 
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center text-white px-4 max-w-4xl">
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 font-korean">
+              <h1 className={`text-5xl md:text-6xl font-bold mb-6 ${fontClass ?? ''}`}>
                 {slide.title}
               </h1>
-              <p className="text-xl md:text-2xl font-light max-w-3xl mx-auto font-korean">
+              <p className={`text-xl md:text-2xl font-light max-w-3xl mx-auto ${fontClass ?? ''}`}>
                 {slide.subtitle}
               </p>
             </div>

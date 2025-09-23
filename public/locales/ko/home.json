@@ -2,6 +2,80 @@
   "hero_title": "스테이트 칼리지 한인교회",
   "hero_subtitle": "그리스도 안에서 함께 배우고 섬기는 공동체",
   "join_us": "함께 예배드려요",
+  "hero_slides": [
+    {
+      "title": "하나님을 경험하는 교회",
+      "subtitle": "\"오직 성령이 너희에게 임하시면 너희가 권능을 받고 예루살렘과 온 유대와 사마리아와 땅 끝까지 이르러 내 증인이 되리라 하시니라\" (행 1:8)"
+    },
+    {
+      "title": "함께하는 믿음의 여정",
+      "subtitle": "하나님의 사랑 안에서 함께 성장하고 섬기는 공동체"
+    },
+    {
+      "title": "말씀 중심의 예배",
+      "subtitle": "살아있는 하나님의 말씀으로 변화되는 삶"
+    }
+  ],
+  "quick_access": {
+    "new_family": "새가족",
+    "bulletin": "주보",
+    "announcements": "교회소식",
+    "sermons": "설교듣기",
+    "online_worship": "온라인예배",
+    "giving": "헌금안내",
+    "contact": "연락처",
+    "directions": "오시는길"
+  },
+  "worship_section": {
+    "title": "예배/설교",
+    "cards": {
+      "sunday": {
+        "title": "주일예배",
+        "description": "매주 일요일 오전 11시",
+        "cta": "예배 참여하기"
+      },
+      "wednesday": {
+        "title": "수요예배",
+        "description": "매주 수요일 저녁 7시 30분",
+        "cta": "예배 참여하기"
+      },
+      "archive": {
+        "title": "설교 아카이브",
+        "description": "지난 설교 다시 듣기",
+        "cta": "전체 설교 보기"
+      }
+    }
+  },
+  "first_time_section": {
+    "title": "처음 오셨나요?",
+    "cta": "자세히 보기",
+    "cards": {
+      "new_family": {
+        "title": "새가족 등록",
+        "description": "교회에 처음 방문하시는 분들을 위한 안내"
+      },
+      "korean_school": {
+        "title": "한글학교",
+        "description": "한국어와 한국 문화를 배우는 교육 과정"
+      },
+      "training": {
+        "title": "교육/훈련",
+        "description": "체계적인 신앙 교육과 제자 훈련"
+      },
+      "directions": {
+        "title": "오시는 길",
+        "description": "교회 위치와 교통 안내"
+      }
+    }
+  },
+  "subscribe_section": {
+    "title": "교회 소식 구독",
+    "description": "새로운 공지사항과 교회 소식을 이메일로 받아보세요",
+    "placeholder": "이메일 주소를 입력해주세요",
+    "button": "구독하기",
+    "success": "성공적으로 구독되었습니다!",
+    "error": "구독 중 오류가 발생했습니다. 다시 시도해주세요."
+  },
   "about_section": {
     "title": "우리 교회를 소개합니다",
     "description": "스테이트 칼리지 한인교회는 1983년 펜스테이트 유학생들이 주축이 되어 세워진 개혁주의 신앙을 따르는 미국장로회(PCA) 소속 교회입니다. 모든 교인이 그리스도 안에서 함께 배우고 섬기는 공동체를 이루어가고 있습니다.",

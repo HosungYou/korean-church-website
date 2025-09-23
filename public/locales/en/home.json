@@ -2,6 +2,80 @@
   "hero_title": "State College Korean Church",
   "hero_subtitle": "A community learning and serving together in Christ",
   "join_us": "Join Us for Worship",
+  "hero_slides": [
+    {
+      "title": "Experience God Together",
+      "subtitle": "\"But you will receive power when the Holy Spirit comes on you; and you will be my witnesses...\" (Acts 1:8)"
+    },
+    {
+      "title": "Journey of Faith",
+      "subtitle": "Growing together as a community in the love of Christ"
+    },
+    {
+      "title": "Word-Centered Worship",
+      "subtitle": "Lives transformed by the living Word of God"
+    }
+  ],
+  "quick_access": {
+    "new_family": "New Family",
+    "bulletin": "Bulletin",
+    "announcements": "Announcements",
+    "sermons": "Sermons",
+    "online_worship": "Online Worship",
+    "giving": "Giving",
+    "contact": "Contact",
+    "directions": "Directions"
+  },
+  "worship_section": {
+    "title": "Worship & Sermons",
+    "cards": {
+      "sunday": {
+        "title": "Sunday Service",
+        "description": "Every Sunday at 11:00 AM",
+        "cta": "Join Service"
+      },
+      "wednesday": {
+        "title": "Wednesday Service",
+        "description": "Every Wednesday at 7:30 PM",
+        "cta": "Join Service"
+      },
+      "archive": {
+        "title": "Sermon Archive",
+        "description": "Revisit past sermons",
+        "cta": "View All Sermons"
+      }
+    }
+  },
+  "first_time_section": {
+    "title": "New Here?",
+    "cta": "Learn More",
+    "cards": {
+      "new_family": {
+        "title": "New Family Guide",
+        "description": "Helpful information for first-time visitors"
+      },
+      "korean_school": {
+        "title": "Korean School",
+        "description": "Language and culture education for children"
+      },
+      "training": {
+        "title": "Education & Training",
+        "description": "Discipleship classes and faith formation"
+      },
+      "directions": {
+        "title": "Directions",
+        "description": "Find our campus and parking information"
+      }
+    }
+  },
+  "subscribe_section": {
+    "title": "Subscribe for Updates",
+    "description": "Receive church announcements and news by email",
+    "placeholder": "Enter your email address",
+    "button": "Subscribe",
+    "success": "You have subscribed successfully!",
+    "error": "We could not complete the subscription. Please try again."
+  },
   "about_section": {
     "title": "About Our Church",
     "description": "State College Korean Church was founded in 1983 by Penn State international students and is affiliated with the Presbyterian Church in America (PCA), following Reformed faith. We are a community where all members learn and serve together in Christ.",

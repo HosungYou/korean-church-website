@@ -1,0 +1,33 @@
+{
+  "announcements": {
+    "title": "Church News",
+    "subscribe": {
+      "title": "Subscribe for Updates",
+      "description": "Receive new announcements by email",
+      "placeholder": "Enter your email address",
+      "button": "Subscribe",
+      "success": "Subscription completed successfully!",
+      "error": "We couldn't complete your subscription. Please try again."
+    },
+    "search": {
+      "placeholder": "Search announcements",
+      "button_label": "Search announcements"
+    },
+    "tabs": {
+      "all": "All",
+      "announcement": "Announcements",
+      "event": "Events",
+      "general": "General"
+    },
+    "empty": "No announcements to display."
+  },
+  "post_types": {
+    "announcement": "Announcement",
+    "event": "Event",
+    "general": "General"
+  },
+  "post_detail": {
+    "back_to_list": "Back to News",
+    "not_found_title": "We couldn't find that post"
+  }
+}

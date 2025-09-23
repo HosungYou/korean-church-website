@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from 'react'
+import React, { useState, Fragment, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -9,7 +9,7 @@ import { signOut } from 'firebase/auth'
 import { auth } from '../../lib/firebase'
 
 interface NavItem {
-  name: string
+  labelKey: string
   href?: string
   dropdown?: NavItem[]
 }
@@ -23,50 +23,50 @@ interface BreadcrumbItem {
   href?: string
 }
 
-const getBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
+const getBreadcrumbs = (pathname: string, translate: (key: string) => string): BreadcrumbItem[] => {
   const segments = pathname.split('/').filter(Boolean)
-  const breadcrumbs: BreadcrumbItem[] = [{ name: 'HOME', href: '/' }]
-  
+  const breadcrumbs: BreadcrumbItem[] = [{ name: translate('breadcrumbs.home'), href: '/' }]
+
   const pathMap: { [key: string]: string } = {
-    'about': '교회안내',
-    'philosophy': '목회철학',
-    'greeting': '인사말',
-    'history': '연혁',
-    'ministers': '섬기는분들',
-    'service-info': '예배안내',
-    'directions': '오시는길',
-    'sermons': '설교',
-    'sermons-live': '예배 LIVE',
-    'sunday': '주일예배',
-    'wednesday': '수요예배',
-    'friday': '금요철야',
-    'special-praise': '특별찬양',
-    'education': '교육',
-    'infants': '영아부',
-    'kindergarten': '유치부',
-    'elementary': '초등부',
-    'youth': '중고등부',
-    'young-adults': '청년부',
-    'missions': '선교',
-    'domestic': '국내선교',
-    'international': '해외선교',
-    'new-family': '새가족양육',
-    'discipleship': '제자훈련',
-    'training': '교육/훈련',
-    'news': '교회소식',
-    'announcements': '공지사항',
-    'bulletin': '주보',
-    'gallery': '갤러리',
-    'giving': '온라인헌금',
-    'korean-school': '한글학교'
+    'about': 'about',
+    'philosophy': 'philosophy',
+    'greeting': 'greeting',
+    'history': 'history',
+    'ministers': 'ministers',
+    'service-info': 'service_info',
+    'directions': 'directions',
+    'sermons': 'sermons',
+    'sermons-live': 'sermons_live',
+    'sunday': 'sunday',
+    'wednesday': 'wednesday',
+    'friday': 'friday',
+    'special-praise': 'special_praise',
+    'education': 'education',
+    'infants': 'infants',
+    'kindergarten': 'kindergarten',
+    'elementary': 'elementary',
+    'youth': 'youth',
+    'young-adults': 'young_adults',
+    'missions': 'missions',
+    'domestic': 'domestic',
+    'international': 'international',
+    'new-family': 'new_family',
+    'discipleship': 'discipleship',
+    'training': 'training',
+    'news': 'news',
+    'announcements': 'announcements',
+    'bulletin': 'bulletin',
+    'gallery': 'gallery',
+    'giving': 'giving',
+    'korean-school': 'korean_school'
   }
-  
+
   let currentPath = ''
   for (const segment of segments) {
     currentPath += `/${segment}`
     if (pathMap[segment]) {
       breadcrumbs.push({ 
-        name: pathMap[segment], 
+        name: translate(`breadcrumbs.${pathMap[segment]}`), 
         href: currentPath 
       })
     }
@@ -75,11 +75,74 @@ const getBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
   return breadcrumbs
 }
 
+const navigationConfig: NavItem[] = [
+  {
+    labelKey: 'nav_groups.worship',
+    dropdown: [
+      { labelKey: 'nav_links.sermons_live', href: '/sermons-live' },
+      { labelKey: 'nav_links.sermons', href: '/sermons' },
+      { labelKey: 'nav_links.service_info', href: '/about/service-info' },
+    ],
+  },
+  {
+    labelKey: 'nav_groups.growth',
+    dropdown: [
+      { labelKey: 'nav_links.korean_school', href: '/education/korean-school' },
+      { labelKey: 'nav_links.training', href: '/education/training' },
+      { labelKey: 'nav_links.new_family', href: '/new-family-guide' },
+    ],
+  },
+  {
+    labelKey: 'nav_groups.serving',
+    dropdown: [
+      { labelKey: 'nav_links.missions', href: '/missions/domestic' },
+      { labelKey: 'nav_links.volunteer_events', href: '/volunteer-events' },
+      { labelKey: 'nav_links.departments', href: '/church-departments' },
+    ],
+  },
+  {
+    labelKey: 'nav_groups.media',
+    dropdown: [
+      { labelKey: 'nav_links.videos', href: '/sermons' },
+      { labelKey: 'nav_links.gallery', href: '/news/gallery' },
+      { labelKey: 'nav_links.upload', href: '/news/gallery' },
+    ],
+  },
+  {
+    labelKey: 'nav_groups.community',
+    dropdown: [
+      { labelKey: 'nav_links.announcements', href: '/news/announcements' },
+    ],
+  },
+  {
+    labelKey: 'nav_groups.about',
+    dropdown: [
+      { labelKey: 'nav_links.about', href: '/about' },
+      { labelKey: 'nav_links.history', href: '/about/history' },
+      { labelKey: 'nav_links.philosophy', href: '/about/philosophy' },
+      { labelKey: 'nav_links.directions', href: '/about/directions' },
+      { labelKey: 'nav_links.bulletin', href: '/news/bulletin' },
+    ],
+  },
+]
+
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { t, i18n } = useTranslation('common')
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [adminSession, setAdminSession] = useState<{ email?: string; name?: string } | null>(null)
+  const fontClass = i18n.language === 'ko' ? 'font-korean' : 'font-english'
+  const languageShortLabels: Record<string, string> = {
+    ko: t('language.short_ko'),
+    en: t('language.short_en'),
+  }
+  const languageFullLabels: Record<string, string> = {
+    ko: t('language.full_ko'),
+    en: t('language.full_en'),
+  }
+  const defaultAdminName = t('admin.default_name')
+  const navigationItems = navigationConfig
+  const breadcrumbs = useMemo(() => getBreadcrumbs(router.pathname, t), [router.pathname, t])
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -99,10 +162,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       try {
         const stored = window.localStorage.getItem('adminUser')
-        setAdminSession(stored ? JSON.parse(stored) : { name: '관리자' })
+        setAdminSession(stored ? JSON.parse(stored) : { name: defaultAdminName })
       } catch (error) {
         console.error('Failed to read admin session:', error)
-        setAdminSession({ name: '관리자' })
+        setAdminSession({ name: defaultAdminName })
       }
     }
 
@@ -117,7 +180,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       window.removeEventListener('storage', handleAuthChange)
       window.removeEventListener('admin-auth-changed', handleAuthChange)
     }
-  }, [])
+  }, [defaultAdminName])
 
   const handleAdminNavigate = () => {
     router.push(adminSession ? '/admin/dashboard' : '/admin/login')
@@ -151,57 +214,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     await handleAdminLogout()
   }
 
-  const navigation: NavItem[] = [
-    {
-      name: '예배',
-      dropdown: [
-        { name: '예배 LIVE', href: '/sermons-live' },
-        { name: '설교', href: '/sermons' },
-        { name: '예배안내', href: '/about/service-info' },
-      ],
-    },
-    {
-      name: '성장',
-      dropdown: [
-        { name: '한글학교', href: '/education/korean-school' },
-        { name: '교육/훈련', href: '/education/training' },
-        { name: '새가족 등록', href: '/new-family-guide' },
-      ],
-    },
-    {
-      name: '섬김',
-      dropdown: [
-        { name: '선교', href: '/missions/domestic' },
-        { name: '봉사/행사', href: '/volunteer-events' },
-        { name: '교회부서', href: '/church-departments' },
-      ],
-    },
-    {
-      name: '미디어',
-      dropdown: [
-        { name: '영상', href: '/sermons' },
-        { name: '갤러리', href: '/news/gallery' },
-        { name: '업로드', href: '/news/gallery' },
-      ],
-    },
-    {
-      name: '소통',
-      dropdown: [
-        { name: '공지사항', href: '/news/announcements' },
-      ],
-    },
-    {
-      name: '교회안내',
-      dropdown: [
-        { name: 'SCKC 안내', href: '/about' },
-        { name: '교회 역사', href: '/about/history' },
-        { name: '목회철학', href: '/about/philosophy' },
-        { name: '오시는 길', href: '/about/directions' },
-        { name: '주보', href: '/news/bulletin' },
-      ],
-    },
-  ]
-
   const changeLanguage = (lng: string) => {
     router.push(router.pathname, router.asPath, { locale: lng })
   }
@@ -228,11 +240,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex lg:items-center lg:space-x-8">
-              {navigation.map((item) =>
+              {navigationItems.map((item) =>
                 item.dropdown ? (
-                  <Menu as="div" key={item.name} className="relative">
-                    <Menu.Button className="inline-flex items-center px-1 pt-1 text-base font-medium text-black hover:opacity-70 transition-opacity">
-                      <span className="font-korean">{item.name}</span>
+                  <Menu as="div" key={item.labelKey} className="relative">
+                    <Menu.Button className={`inline-flex items-center px-1 pt-1 text-base font-medium text-black hover:opacity-70 transition-opacity ${fontClass}`}>
+                      <span>{t(item.labelKey)}</span>
                       <ChevronDownIcon className="ml-1 h-5 w-5" />
                     </Menu.Button>
                     <Transition
@@ -246,15 +258,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     >
                       <Menu.Items className="absolute -right-4 top-full mt-4 w-64 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         {item.dropdown.map((subItem) => (
-                          <Menu.Item key={subItem.name}>
+                          <Menu.Item key={subItem.labelKey}>
                             {({ active }) => (
                               <Link
                                 href={subItem.href!}
                                 className={`${
                                   active ? 'bg-black/5' : ''
-                                } block px-4 py-2 text-base text-black/80 font-korean`}
+                                } block px-4 py-2 text-base text-black/80 ${fontClass}`}
                               >
-                                {subItem.name}
+                                {t(subItem.labelKey)}
                               </Link>
                             )}
                           </Menu.Item>
@@ -264,11 +276,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </Menu>
                 ) : (
                   <Link
-                    key={item.name}
+                    key={item.labelKey}
                     href={item.href!}
-                    className="px-1 pt-1 text-base font-medium text-black hover:opacity-70 transition-opacity font-korean"
+                    className={`px-1 pt-1 text-base font-medium text-black hover:opacity-70 transition-opacity ${fontClass}`}
                   >
-                    {item.name}
+                    {t(item.labelKey)}
                   </Link>
                 )
               )}
@@ -281,23 +293,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <>
                     <button
                       onClick={handleAdminNavigate}
-                      className="px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors font-korean"
+                      className={`px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors ${fontClass}`}
                     >
-                      관리자 대시보드
+                      {t('admin.dashboard')}
                     </button>
                     <button
                       onClick={handleAdminLogout}
-                      className="px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors font-korean"
+                      className={`px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors ${fontClass}`}
                     >
-                      로그아웃
+                      {t('admin.logout')}
                     </button>
                   </>
                 ) : (
                   <button
                     onClick={handleAdminNavigate}
-                    className="px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors font-korean"
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors ${fontClass}`}
                   >
-                    관리자 로그인
+                    {t('admin.login')}
                   </button>
                 )}
               </div>
@@ -306,17 +318,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   onClick={() => changeLanguage('ko')}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md border ${
                     i18n.language === 'ko' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
-                  }`}
+                  } ${fontClass}`}
                 >
-                  KR
+                  {languageShortLabels.ko}
                 </button>
                 <button
                   onClick={() => changeLanguage('en')}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md border ${
                     i18n.language === 'en' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
-                  }`}
+                  } ${fontClass}`}
                 >
-                  EN
+                  {languageShortLabels.en}
                 </button>
               </div>
               <div className="lg:hidden">
@@ -364,20 +376,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-gray-500/10">
                 <div className="space-y-2 py-6">
-                  {navigation.map((item) => (
-                    <div key={item.name} className="px-4">
+                  {navigationItems.map((item) => (
+                    <div key={item.labelKey} className="px-4">
                       {item.dropdown ? (
                         <div>
-                          <p className="font-korean font-semibold text-lg py-2">{item.name}</p>
+                          <p className={`${fontClass} font-semibold text-lg py-2`}>{t(item.labelKey)}</p>
                           <div className="pl-2 border-l border-black/20">
                             {item.dropdown.map((subItem) => (
                               <Link
-                                key={subItem.name}
+                                key={subItem.labelKey}
                                 href={subItem.href!}
-                                className="block rounded-lg py-2 pl-4 pr-3 text-base font-korean text-black/80 hover:bg-black/5"
+                                className={`block rounded-lg py-2 pl-4 pr-3 text-base ${fontClass} text-black/80 hover:bg-black/5`}
                                 onClick={() => setMobileMenuOpen(false)}
                               >
-                                {subItem.name}
+                                {t(subItem.labelKey)}
                               </Link>
                             ))}
                           </div>
@@ -385,10 +397,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       ) : (
                         <Link
                           href={item.href!}
-                          className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-korean font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                          className={`-mx-3 block rounded-lg px-3 py-2.5 text-base ${fontClass} font-semibold leading-7 text-gray-900 hover:bg-gray-50`}
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          {item.name}
+                          {t(item.labelKey)}
                         </Link>
                       )}
                     </div>
@@ -399,23 +411,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <>
                       <button
                         onClick={handleMobileAdminNavigate}
-                        className="w-full px-4 py-2 rounded-md border border-black/20 text-left font-korean text-black hover:bg-black hover:text-white transition-colors"
+                        className={`w-full px-4 py-2 rounded-md border border-black/20 text-left ${fontClass} text-black hover:bg-black hover:text-white transition-colors`}
                       >
-                        관리자 대시보드
+                        {t('admin.dashboard')}
                       </button>
                       <button
                         onClick={handleMobileAdminLogout}
-                        className="w-full px-4 py-2 rounded-md border border-black/20 text-left font-korean text-black hover:bg-black hover:text-white transition-colors"
+                        className={`w-full px-4 py-2 rounded-md border border-black/20 text-left ${fontClass} text-black hover:bg-black hover:text-white transition-colors`}
                       >
-                        로그아웃
+                        {t('admin.logout')}
                       </button>
                     </>
                   ) : (
                     <button
                       onClick={handleMobileAdminNavigate}
-                      className="w-full px-4 py-2 rounded-md border border-black/20 text-left font-korean text-black hover:bg-black hover:text-white transition-colors"
+                      className={`w-full px-4 py-2 rounded-md border border-black/20 text-left ${fontClass} text-black hover:bg-black hover:text-white transition-colors`}
                     >
-                      관리자 로그인
+                      {t('admin.login')}
                     </button>
                   )}
                 </div>
@@ -424,17 +436,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     onClick={() => { changeLanguage('ko'); setMobileMenuOpen(false); }}
                     className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${
                       i18n.language === 'ko' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
-                    }`}
+                    } ${fontClass}`}
                   >
-                    한국어
+                    {languageFullLabels.ko}
                   </button>
                   <button
                     onClick={() => { changeLanguage('en'); setMobileMenuOpen(false); }}
                     className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${
                       i18n.language === 'en' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
-                    }`}
+                    } ${fontClass}`}
                   >
-                    English
+                    {languageFullLabels.en}
                   </button>
                 </div>
               </div>
@@ -448,18 +460,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <nav className="bg-gray-50 border-b border-gray-200 py-3">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-center space-x-2 text-sm">
-              {getBreadcrumbs(router.pathname).map((crumb, index) => (
+              {breadcrumbs.map((crumb, index) => (
                 <React.Fragment key={crumb.name}>
                   {index > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
                   {crumb.href ? (
                     <Link 
                       href={crumb.href} 
-                      className="text-gray-600 hover:text-black font-korean transition-colors"
+                      className={`text-gray-600 hover:text-black transition-colors ${fontClass}`}
                     >
                       {crumb.name}
                     </Link>
                   ) : (
-                    <span className="text-black font-korean font-medium">{crumb.name}</span>
+                    <span className={`text-black font-medium ${fontClass}`}>{crumb.name}</span>
                   )}
                 </React.Fragment>
               ))}
@@ -474,32 +486,32 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="mx-auto max-w-7xl px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
-              <h3 className="text-lg font-semibold mb-4 font-korean">{t('church_name')}</h3>
-              <p className="text-black/70 font-korean">{t('full_address')}</p>
-              <p className="text-black/70 mt-2">
-                <span className="font-korean">{t('phone')}:</span> {t('phone_number')}
+              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('church_name')}</h3>
+              <p className={`text-black/70 ${fontClass}`}>{t('full_address')}</p>
+              <p className={`text-black/70 mt-2 ${fontClass}`}>
+                <span className="font-semibold">{t('phone')}:</span> {t('phone_number')}
               </p>
-              <p className="text-black/70">
-                <span className="font-korean">{t('email')}:</span> {t('email_address')}
+              <p className={`text-black/70 ${fontClass}`}>
+                <span className="font-semibold">{t('email')}:</span> {t('email_address')}
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4 font-korean">{t('service_times')}</h3>
-              <p className="text-black/70 font-korean">{t('sunday')}: {t('sunday_time')}</p>
-              <p className="text-black/70 font-korean">{t('wednesday')}: {t('wednesday_time')}</p>
+              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('service_times')}</h3>
+              <p className={`text-black/70 ${fontClass}`}>{t('sunday')}: {t('sunday_time')}</p>
+              <p className={`text-black/70 ${fontClass}`}>{t('wednesday')}: {t('wednesday_time')}</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4 font-korean">{t('quick_links')}</h3>
+              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('quick_links')}</h3>
               <div className="flex flex-col space-y-2">
-                <Link href="/about/greeting" className="text-black/70 hover:text-black font-korean">{t('church_guide')}</Link>
-                <Link href="/sermons-live" className="text-black/70 hover:text-black font-korean">{t('sermons_praise')}</Link>
-                <Link href="/news/announcements" className="text-black/70 hover:text-black font-korean">{t('nav.announcements')}</Link>
-                <Link href="/giving" className="text-black/70 hover:text-black font-korean">{t('online_giving')}</Link>
+                <Link href="/about/greeting" className={`text-black/70 hover:text-black ${fontClass}`}>{t('church_guide')}</Link>
+                <Link href="/sermons-live" className={`text-black/70 hover:text-black ${fontClass}`}>{t('sermons_praise')}</Link>
+                <Link href="/news/announcements" className={`text-black/70 hover:text-black ${fontClass}`}>{t('nav_links.announcements')}</Link>
+                <Link href="/giving" className={`text-black/70 hover:text-black ${fontClass}`}>{t('online_giving')}</Link>
               </div>
             </div>
           </div>
           <div className="mt-8 border-t border-black/10 pt-8 text-center">
-            <p className="text-black/50 text-sm">
+            <p className={`text-black/50 text-sm ${fontClass}`}>
               © {new Date().getFullYear()} {t('church_name')}. All rights reserved.
             </p>
           </div>

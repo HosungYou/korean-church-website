@@ -4,7 +4,8 @@ import { GetServerSideProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { ArrowLeft, Calendar, User } from 'lucide-react'
 import Link from 'next/link'
-import { getPostById, PostRecord } from '../../../utils/postService'
+import { getPostById } from '../../../utils/postService'
+import { useTranslation } from 'next-i18next'
 
 interface SerializedPost {
   id: string
@@ -22,20 +23,23 @@ interface PostDetailPageProps {
   post: SerializedPost | null
 }
 
-const formatDisplayDate = (iso?: string | null): string => {
+const formatDisplayDate = (iso?: string | null, locale: string = 'ko'): string => {
   if (!iso) return ''
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return ''
 
-  return date.toLocaleDateString('ko-KR', {
+  const formatter = new Intl.DateTimeFormat(locale === 'ko' ? 'ko-KR' : 'en-US', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric',
-    weekday: 'long'
+    day: 'numeric'
   })
+
+  return formatter.format(date)
 }
 
 const PostDetailPage = ({ post }: PostDetailPageProps) => {
+  const { t, i18n } = useTranslation(['news', 'common'])
+  const fontClass = i18n.language === 'ko' ? 'font-korean' : 'font-english'
   const router = useRouter()
 
   if (router.isFallback) {
@@ -53,9 +57,11 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
       <Layout>
         <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 font-korean mb-4">게시글을 찾을 수 없습니다</h1>
-            <Link href="/news/announcements" className="text-blue-600 hover:text-blue-800 font-korean">
-              교회소식으로 돌아가기
+            <h1 className={`text-2xl font-bold text-gray-900 mb-4 ${fontClass}`}>
+              {t('news:post_detail.not_found_title')}
+            </h1>
+            <Link href="/news/announcements" className={`text-blue-600 hover:text-blue-800 ${fontClass}`}>
+              {t('news:post_detail.back_to_list')}
             </Link>
           </div>
         </div>
@@ -63,31 +69,31 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
     )
   }
 
-  const displayDate = formatDisplayDate(post.publishedAt || post.createdAt)
+  const displayDate = formatDisplayDate(post.publishedAt || post.createdAt, i18n.language)
 
   return (
     <Layout>
       {/* Header */}
       <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/news/announcements" className="inline-flex items-center text-white/80 hover:text-white transition-colors mb-6 font-korean">
+          <Link href="/news/announcements" className={`inline-flex items-center text-white/80 hover:text-white transition-colors mb-6 ${fontClass}`}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            교회소식으로 돌아가기
+            {t('news:post_detail.back_to_list')}
           </Link>
 
           <div className="flex items-center gap-3 mb-4">
-            <span className={`text-xs px-3 py-1 rounded-full font-korean ${
+            <span className={`text-xs px-3 py-1 rounded-full ${fontClass} ${
               post.type === 'announcement' ? 'bg-blue-500/20 text-blue-200' :
               post.type === 'event' ? 'bg-green-500/20 text-green-200' :
               'bg-gray-500/20 text-gray-200'
             }`}>
-              {post.type === 'announcement' ? '공지사항' : post.type === 'event' ? '행사' : '일반'}
+              {t(`news:post_types.${post.type}`)}
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-white font-korean mb-6">{post.title}</h1>
+          <h1 className={`text-3xl md:text-4xl font-bold text-white mb-6 ${fontClass}`}>{post.title}</h1>
 
-          <div className="flex flex-wrap items-center gap-6 text-white/80 text-sm font-korean">
+          <div className={`flex flex-wrap items-center gap-6 text-white/80 text-sm ${fontClass}`}>
             {post.authorName && (
               <div className="flex items-center">
                 <User className="w-4 h-4 mr-1" />
@@ -120,7 +126,7 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
 
           {/* Article Content */}
           <div className="p-8 md:p-16 lg:p-20">
-            <div className="prose prose-xl max-w-none font-korean">
+            <div className={`prose prose-xl max-w-none ${fontClass}`}>
               <div
                 className="text-gray-800 leading-relaxed whitespace-pre-wrap text-lg md:text-xl"
                 style={{ lineHeight: '2', letterSpacing: '0.02em' }}
@@ -136,10 +142,10 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
         <div className="mt-8 flex justify-center">
           <Link
             href="/news/announcements"
-            className="inline-flex items-center px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-korean"
+            className={`inline-flex items-center px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors ${fontClass}`}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            목록으로 돌아가기
+            {t('news:post_detail.back_to_list')}
           </Link>
         </div>
       </div>
@@ -180,7 +186,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
     return {
       props: {
         post: serializedPost,
-        ...(await serverSideTranslations(locale ?? 'ko', ['common']))
+        ...(await serverSideTranslations(locale ?? 'ko', ['common', 'news']))
       }
     }
   } catch (error) {
