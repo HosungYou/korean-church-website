@@ -1,18 +1,25 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getFirestore, collection, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore'
-import { initializeApp } from 'firebase/app'
+import { getFirestore, FieldValue } from 'firebase-admin/firestore'
+import { initializeApp, getApps, cert } from 'firebase-admin/app'
 
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+// Firebase Admin SDK 초기화
+if (getApps().length === 0) {
+  try {
+    const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n')
+
+    initializeApp({
+      credential: cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+        privateKey: privateKey,
+      }),
+    })
+  } catch (error) {
+    console.error('Firebase Admin 초기화 오류:', error)
+  }
 }
 
-const app = initializeApp(firebaseConfig, 'admin-posts')
-const db = getFirestore(app)
+const db = getFirestore()
 
 const createExcerpt = (raw: string, maxLength = 140): string => {
   if (!raw) {
@@ -55,22 +62,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       authorName: authorName || '관리자',
       coverImageUrl: coverImageUrl?.trim() || null,
       excerpt: createExcerpt(content),
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
       publishedAt: null,
       scheduledFor: null
     }
 
     if (status === 'published') {
-      payload.publishedAt = serverTimestamp()
+      payload.publishedAt = FieldValue.serverTimestamp()
     }
 
     if (status === 'scheduled' && scheduledFor) {
       const scheduledDate = new Date(scheduledFor)
-      payload.scheduledFor = Timestamp.fromDate(scheduledDate)
+      payload.scheduledFor = scheduledDate
     }
 
-    const docRef = await addDoc(collection(db, 'posts'), payload)
+    const docRef = await db.collection('posts').add(payload)
 
     res.status(201).json({
       success: true,
