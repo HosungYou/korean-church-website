@@ -2,7 +2,6 @@ import { useMemo, useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import Image from 'next/image'
 import { Mail, Bell, Search, Calendar } from 'lucide-react'
 import { addEmailSubscriber } from '../../utils/emailService'
 import { getPublishedAnnouncements, PostRecord } from '../../utils/postService'
@@ -36,8 +35,6 @@ const formatDisplayDate = (iso?: string | null): string => {
   return `${year}.${month}.${day}`
 }
 
-const coverFallback = '/images/feature-placeholder.svg'
-
 const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
   const [posts, setPosts] = useState<SerializedPost[]>(initialPosts)
   const [email, setEmail] = useState('')
@@ -70,8 +67,6 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
       publishedAt: post.publishedAt ?? post.createdAt ?? null
     })),
   [posts])
-
-  const featuredPosts = parsedPosts.slice(0, 3)
 
   const filteredPosts = useMemo(() => {
     const lowerSearch = searchTerm.trim().toLowerCase()
@@ -113,14 +108,8 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
 
   return (
     <Layout>
-      <div className="relative h-64 bg-black">
-        <Image
-          src="/images/news-header.jpg"
-          alt="News"
-          fill
-          className="object-cover opacity-40"
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-white rounded-full mr-4"></div>
             <h1 className="text-4xl font-bold text-white font-korean">교회소식</h1>
@@ -163,46 +152,6 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
           </div>
         </div>
 
-        {/* 대표 공지 */}
-        {featuredPosts.length > 0 && (
-          <div className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredPosts.map((post) => {
-              const backgroundImage = post.coverImageUrl || coverFallback
-              const displayDate = formatDisplayDate(post.publishedAt)
-
-              return (
-                <div key={post.id} className="relative h-80 rounded-xl overflow-hidden shadow-lg">
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      backgroundImage: `url(${backgroundImage})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-                  <div className="relative h-full flex flex-col justify-end p-6 text-white">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xs bg-white/20 backdrop-blur px-2 py-1 rounded font-korean">
-                        {post.type === 'announcement' ? '공지사항' : post.type === 'event' ? '행사' : '일반'}
-                      </span>
-                      {displayDate && (
-                        <div className="flex items-center text-xs text-white/80 font-korean">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          <span>{displayDate}</span>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="text-2xl font-bold font-korean mb-2 line-clamp-2">{post.title}</h3>
-                    <p className="text-sm text-white/80 font-korean line-clamp-2">
-                      {post.excerpt}
-                    </p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
 
         {/* 검색 및 필터 */}
         <div className="mb-8">
@@ -245,28 +194,31 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
             <div className="p-12 text-center text-gray-500 font-korean">표시할 공지사항이 없습니다.</div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {filteredPosts.slice(3).map((post) => {
+              {filteredPosts.map((post) => {
                 const displayDate = formatDisplayDate(post.publishedAt)
                 return (
-                  <div key={post.id} className="p-6 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center flex-1">
-                        <div className="w-1.5 h-1.5 bg-black rounded-full mr-4"></div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-1">
-                            <span className="text-sm bg-gray-100 px-2 py-1 rounded font-korean">
-                              {post.type === 'announcement' ? '공지사항' : post.type === 'event' ? '행사' : '일반'}
-                            </span>
-                            <h3 className="text-lg font-medium font-korean text-black">
-                              {post.title}
-                            </h3>
-                          </div>
-                          <p className="text-sm text-gray-500 font-korean line-clamp-2">{post.excerpt}</p>
+                  <div key={post.id} className="p-6 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className={`text-xs px-2 py-1 rounded font-korean ${
+                            post.type === 'announcement' ? 'bg-blue-100 text-blue-700' :
+                            post.type === 'event' ? 'bg-green-100 text-green-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {post.type === 'announcement' ? '공지사항' : post.type === 'event' ? '행사' : '일반'}
+                          </span>
+                          {displayDate && (
+                            <div className="flex items-center text-sm text-gray-500 font-korean">
+                              <Calendar className="w-4 h-4 mr-1" />
+                              <span>{displayDate}</span>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                      <div className="flex items-center text-gray-500">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        <span className="text-sm">{displayDate}</span>
+                        <h3 className="text-lg font-semibold font-korean text-gray-900 mb-1">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 font-korean line-clamp-2">{post.excerpt}</p>
                       </div>
                     </div>
                   </div>
