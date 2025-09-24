@@ -4,17 +4,19 @@ import Layout from '../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 // Firebase 비활성화 - localStorage 기반 인증 사용
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Mail, 
-  Users, 
-  Settings, 
+import {
+  LayoutDashboard,
+  FileText,
+  Mail,
+  Users,
+  Settings,
   Plus,
   TrendingUp,
   Calendar,
   MessageSquare,
-  LogOut
+  LogOut,
+  BookOpen,
+  Megaphone
 } from 'lucide-react'
 import Link from 'next/link'
 import { signOut } from 'firebase/auth'
@@ -119,21 +121,27 @@ const AdminDashboardPage = () => {
 
   const quickActions = [
     {
-      name: '새 공지사항 작성',
-      href: '/admin/posts/new?type=announcement',
-      icon: Plus,
+      name: '공지사항 작성',
+      href: '/admin/posts/new?category=general',
+      icon: Megaphone,
       color: 'bg-blue-600 hover:bg-blue-700'
     },
     {
-      name: '새 행사 등록',
-      href: '/admin/posts/new?type=event',
+      name: '수요예배 자료',
+      href: '/admin/posts/new?category=wednesday',
       icon: Calendar,
       color: 'bg-green-600 hover:bg-green-700'
     },
     {
-      name: '뉴스레터 발송',
-      href: '/admin/newsletter',
-      icon: Mail,
+      name: '주일예배 자료',
+      href: '/admin/posts/new?category=sunday',
+      icon: FileText,
+      color: 'bg-orange-600 hover:bg-orange-700'
+    },
+    {
+      name: '성경통독 자료',
+      href: '/admin/posts/new?category=bible',
+      icon: BookOpen,
       color: 'bg-purple-600 hover:bg-purple-700'
     }
   ]

@@ -111,7 +111,8 @@ const navigationConfig: NavItem[] = [
   {
     labelKey: 'nav_groups.community',
     dropdown: [
-      { labelKey: 'nav_links.announcements', href: '/news/announcements' },
+      { labelKey: 'nav_links.announcements', href: '/announcements' },
+      { labelKey: 'nav_links.resources', href: '/resources' },
     ],
   },
   {

@@ -36,10 +36,16 @@ const NewPostPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
+    const { type: queryType, category: queryCategory } = router.query
+
     if (queryType && ['announcement', 'event', 'general'].includes(queryType as string)) {
       setType(queryType as 'announcement' | 'event' | 'general')
     }
-  }, [queryType])
+
+    if (queryCategory && ['general', 'wednesday', 'sunday', 'bible'].includes(queryCategory as string)) {
+      setCategory(queryCategory as 'general' | 'wednesday' | 'sunday' | 'bible')
+    }
+  }, [router.query])
 
   useEffect(() => {
     // localStorage 기반 인증 체크
