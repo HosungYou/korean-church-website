@@ -27,10 +27,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Firestore에서 published 상태의 공지사항 가져오기
+    const { category } = req.query
+
+    // Firestore에서 published 상태의 게시글 가져오기
     const postsRef = db.collection('posts')
-    const snapshot = await postsRef
-      .where('status', '==', 'published')
+    let query = postsRef.where('status', '==', 'published')
+
+    // 카테고리 필터링
+    if (category && category !== 'all') {
+      query = query.where('category', '==', category)
+    }
+
+    const snapshot = await query
       .orderBy('createdAt', 'desc')
       .limit(30)
       .get()
@@ -42,8 +50,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         title: data.title,
         content: data.content,
         type: data.type,
+        category: data.category || 'general',
         excerpt: data.excerpt,
         coverImageUrl: data.coverImageUrl,
+        attachments: data.attachments || [],
+        important: data.type === 'announcement' && data.important,
         publishedAt: data.publishedAt?.toDate?.()?.toISOString() ||
                      data.createdAt?.toDate?.()?.toISOString() ||
                      new Date().toISOString(),

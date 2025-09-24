@@ -42,10 +42,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       title,
       content,
       type,
+      category,
       status,
       authorEmail,
       authorName,
       coverImageUrl,
+      attachments,
       scheduledFor
     } = req.body
 
@@ -57,10 +59,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       title,
       content,
       type: type || 'announcement',
+      category: category || 'general',
       status: status || 'draft',
       authorEmail: authorEmail || null,
       authorName: authorName || '관리자',
       coverImageUrl: coverImageUrl?.trim() || null,
+      attachments: attachments || [],
       excerpt: createExcerpt(content),
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),

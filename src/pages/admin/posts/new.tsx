@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '../../../components/Layout'
 import { GetStaticProps } from 'next'
@@ -25,12 +25,15 @@ const NewPostPage = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [type, setType] = useState<'announcement' | 'event' | 'general'>('announcement')
+  const [category, setCategory] = useState<'general' | 'wednesday' | 'sunday' | 'bible'>('general')
   const [status, setStatus] = useState<'draft' | 'published' | 'scheduled'>('draft')
   const [scheduledDate, setScheduledDate] = useState('')
   const [coverImageUrl, setCoverImageUrl] = useState('')
+  const [attachments, setAttachments] = useState<Array<{name: string, url: string, size: string}>>([])
   const [sendNewsletter, setSendNewsletter] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (queryType && ['announcement', 'event', 'general'].includes(queryType as string)) {
@@ -50,6 +53,23 @@ const NewPostPage = () => {
     }
     setLoading(false)
   }, [router])
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files) return
+
+    const newAttachments = Array.from(files).map(file => ({
+      name: file.name,
+      url: URL.createObjectURL(file), // 실제 구현시 Firebase Storage 또는 서버에 업로드
+      size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+    }))
+
+    setAttachments([...attachments, ...newAttachments])
+  }
+
+  const removeAttachment = (index: number) => {
+    setAttachments(attachments.filter((_, i) => i !== index))
+  }
 
   const handleSave = async (publishStatus: 'draft' | 'published' | 'scheduled') => {
     if (!title || !content) {
@@ -75,10 +95,12 @@ const NewPostPage = () => {
           title,
           content,
           type,
+          category,
           status: publishStatus,
           authorEmail: user?.email ?? null,
           authorName: user?.name ?? user?.email ?? '관리자',
           coverImageUrl,
+          attachments,
           scheduledFor: publishStatus === 'scheduled' ? scheduledDate : null
         })
       })
@@ -216,17 +238,59 @@ const NewPostPage = () => {
                           />
                         </div>
 
+                        {/* 첨부파일 목록 */}
+                        {attachments.length > 0 && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
+                              첨부파일
+                            </label>
+                            <div className="space-y-2">
+                              {attachments.map((file, index) => (
+                                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                                  <div className="flex items-center">
+                                    <Upload className="w-4 h-4 text-gray-500 mr-2" />
+                                    <span className="text-sm text-gray-700 font-korean">{file.name}</span>
+                                    <span className="ml-2 text-xs text-gray-500">({file.size})</span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeAttachment(index)}
+                                    className="text-red-600 hover:text-red-800 text-sm font-korean"
+                                  >
+                                    삭제
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         {/* 툴바 */}
                         <div className="border-t pt-4">
                           <div className="flex items-center space-x-4">
-                            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            <button
+                              type="button"
+                              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                            >
                               <ImageIcon className="w-4 h-4 mr-2" />
                               <span className="font-korean">이미지 추가</span>
                             </button>
-                            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            <button
+                              type="button"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                            >
                               <Upload className="w-4 h-4 mr-2" />
                               <span className="font-korean">파일 첨부</span>
                             </button>
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              multiple
+                              onChange={handleFileUpload}
+                              className="hidden"
+                              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
+                            />
                           </div>
                         </div>
                       </div>
@@ -258,6 +322,23 @@ const NewPostPage = () => {
                       </div>
 
                       <div className="space-y-4">
+                        {/* 게시글 카테고리 */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
+                            카테고리
+                          </label>
+                          <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value as 'general' | 'wednesday' | 'sunday' | 'bible')}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black font-korean"
+                          >
+                            <option value="general">공지사항</option>
+                            <option value="wednesday">수요예배 자료</option>
+                            <option value="sunday">주일예배 자료</option>
+                            <option value="bible">성경통독 자료</option>
+                          </select>
+                        </div>
+
                         {/* 게시글 유형 */}
                         <div>
                           <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
