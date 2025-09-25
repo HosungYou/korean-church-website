@@ -33,9 +33,41 @@ const createExcerpt = (raw: string, maxLength = 140): string => {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
+  if (req.method === 'POST') {
+    return handleCreatePost(req, res)
+  } else if (req.method === 'DELETE') {
+    return handleDeletePost(req, res)
+  } else {
     return res.status(405).json({ error: 'Method not allowed' })
   }
+}
+
+async function handleDeletePost(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const { id } = req.query
+
+    if (!id || typeof id !== 'string') {
+      return res.status(400).json({ error: '게시글 ID가 필요합니다.' })
+    }
+
+    // 게시글 삭제
+    const docRef = db.collection('posts').doc(id)
+    await docRef.delete()
+
+    res.status(200).json({
+      success: true,
+      message: '게시글이 성공적으로 삭제되었습니다.'
+    })
+  } catch (error) {
+    console.error('게시글 삭제 오류:', error)
+    res.status(500).json({
+      error: '게시글 삭제 중 오류가 발생했습니다.',
+      details: error instanceof Error ? error.message : '알 수 없는 오류'
+    })
+  }
+}
+
+async function handleCreatePost(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const {

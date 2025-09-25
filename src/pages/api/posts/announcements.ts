@@ -33,24 +33,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const postsRef = db.collection('posts')
     let query = postsRef.where('status', '==', 'published')
 
-    // 카테고리 필터링
-    if (category && category !== 'all') {
-      query = query.where('category', '==', category)
-    }
-
     const snapshot = await query
       .orderBy('createdAt', 'desc')
-      .limit(30)
+      .limit(50)
       .get()
 
-    const posts = snapshot.docs.map(doc => {
+    let posts = snapshot.docs.map(doc => {
       const data = doc.data()
       return {
         id: doc.id,
         title: data.title,
         content: data.content,
         type: data.type,
-        category: data.category || 'general',
+        category: data.category || 'general', // 기본값으로 'general' 설정
         excerpt: data.excerpt,
         coverImageUrl: data.coverImageUrl,
         attachments: data.attachments || [],
@@ -61,6 +56,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
       }
     })
+
+    // 카테고리 필터링 (클라이언트 측에서)
+    if (category && category !== 'all') {
+      posts = posts.filter(post => post.category === category)
+    }
 
     res.status(200).json({ posts })
   } catch (error) {

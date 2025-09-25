@@ -81,11 +81,23 @@ const AdminPostsPage = () => {
     }
 
     try {
-      await deletePost(id)
+      const response = await fetch(`/api/admin/posts?id=${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.details || errorData.error || '게시글 삭제에 실패했습니다.')
+      }
+
       setPosts((prev) => prev.filter((post) => post.id !== id))
+      alert('게시글이 성공적으로 삭제되었습니다.')
     } catch (error) {
       console.error('삭제 오류:', error)
-      alert('삭제 중 오류가 발생했습니다.')
+      alert(error instanceof Error ? error.message : '삭제 중 오류가 발생했습니다.')
     }
   }
 
