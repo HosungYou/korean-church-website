@@ -1,49 +1,92 @@
-import type { GetStaticProps, NextPage } from 'next'
+import type { GetStaticProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import { useState, useEffect } from 'react'
-import { Download } from 'lucide-react'
+import { Download, Calendar, Search } from 'lucide-react'
+import { useRouter } from 'next/router'
+import { getPublishedAnnouncements, PostRecord } from '../utils/postService'
 
-interface Post {
+interface SerializedPost {
   id: string
   title: string
   content: string
-  type: string
-  category: string
-  excerpt?: string
-  coverImageUrl?: string
+  type: 'announcement' | 'event' | 'general'
+  category?: string
+  excerpt?: string | null
+  coverImageUrl?: string | null
   attachments?: Array<{name: string, url: string, size: string}>
   important?: boolean
-  publishedAt: string
-  createdAt: string
+  publishedAt?: string | null
+  createdAt?: string | null
 }
 
-const Announcements: NextPage = () => {
+interface AnnouncementsPageProps {
+  posts: SerializedPost[]
+}
+
+const formatDisplayDate = (iso?: string | null, locale: string = 'ko'): string => {
+  if (!iso) {
+    return ''
+  }
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) {
+    return ''
+  }
+
+  if (locale === 'ko') {
+    const year = `${date.getFullYear()}`.slice(-2)
+    const month = `${date.getMonth() + 1}`.padStart(2, '0')
+    const day = `${date.getDate()}`.padStart(2, '0')
+    return `${year}.${month}.${day}`
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  }).format(date)
+}
+
+const Announcements = ({ posts: initialPosts }: AnnouncementsPageProps) => {
   const { t, i18n } = useTranslation(['common'])
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  const [posts, setPosts] = useState<SerializedPost[]>(initialPosts)
+  const [loading, setLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
 
+  // 클라이언트 사이드에서 최신 데이터 가져오기
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchLatestPosts = async () => {
       try {
-        setLoading(true)
-        const response = await fetch(`/api/posts/announcements?category=general`)
-        const data = await response.json()
-        setPosts(data.posts || [])
+        const response = await fetch('/api/posts/announcements?category=general')
+        if (response.ok) {
+          const data = await response.json()
+          setPosts(data.posts || [])
+        }
       } catch (error) {
-        console.error('Failed to fetch posts:', error)
-        setPosts([])
-      } finally {
-        setLoading(false)
+        console.error('Failed to fetch latest announcements:', error)
       }
     }
 
-    fetchPosts()
+    fetchLatestPosts()
   }, [])
 
-  const currentAnnouncements = posts
+  const filteredPosts = posts.filter((post) => {
+    const lowerSearch = searchTerm.trim().toLowerCase()
+    if (!lowerSearch) return true
+
+    return (
+      post.title.toLowerCase().includes(lowerSearch) ||
+      (post.excerpt ?? '').toLowerCase().includes(lowerSearch) ||
+      post.content.toLowerCase().includes(lowerSearch)
+    )
+  })
+
+  const handlePostClick = (postId: string) => {
+    router.push(`/news/posts/${postId}`)
+  }
 
   return (
     <Layout>
@@ -64,10 +107,31 @@ const Announcements: NextPage = () => {
       </section>
 
 
+      {/* Search bar */}
+      <section className="py-8 bg-white border-b">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder={i18n.language === 'ko' ? '공지사항 검색...' : 'Search announcements...'}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Announcements List */}
       <section className="py-16 bg-gray-50">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          {loading ? (
+          <div className="bg-white rounded-lg shadow-sm">
+            {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-church-primary mx-auto"></div>
               <p className={`mt-2 text-gray-500 ${
@@ -76,80 +140,85 @@ const Announcements: NextPage = () => {
                 {i18n.language === 'ko' ? '로딩 중...' : 'Loading...'}
               </p>
             </div>
-          ) : currentAnnouncements.length === 0 ? (
-            <div className="text-center py-12">
-              <p className={`text-gray-500 ${
+            ) : filteredPosts.length === 0 ? (
+              <div className={`p-12 text-center text-gray-500 ${
                 i18n.language === 'ko' ? 'font-korean' : 'font-english'
               }`}>
                 {i18n.language === 'ko' ? '등록된 공지사항이 없습니다.' : 'No announcements available.'}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {currentAnnouncements.map((announcement) => (
-              <div
-                key={announcement.id}
-                className={`bg-white rounded-lg shadow-md border-l-4 p-6 ${
-                  announcement.important 
-                    ? 'border-red-500 bg-red-50' 
-                    : 'border-church-primary'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className={`text-xl font-semibold text-gray-900 ${
-                    i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                  }`}>
-                    {announcement.title}
-                    {announcement.important && (
-                      <span className="ml-2 px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
-                        {i18n.language === 'ko' ? '중요' : 'Important'}
-                      </span>
-                    )}
-                  </h2>
-                  <span className="text-sm text-gray-500">
-                    {new Date(announcement.publishedAt).toLocaleDateString(i18n.language === 'ko' ? 'ko-KR' : 'en-US')}
-                  </span>
-                </div>
-                <p className={`text-gray-700 ${
-                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                }`}>
-                  {announcement.excerpt || announcement.content.slice(0, 200) + (announcement.content.length > 200 ? '...' : '')}
-                </p>
-
-                {/* File Attachments */}
-                {announcement.attachments && announcement.attachments.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className={`text-sm font-medium text-gray-700 mb-2 ${
-                      i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                    }`}>
-                      {i18n.language === 'ko' ? '첨부파일' : 'Attachments'}
-                    </p>
-                    <div className="space-y-2">
-                      {announcement.attachments.map((file, index) => (
-                        <a
-                          key={index}
-                          href={file.url}
-                          className="flex items-center justify-between p-2 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-                          download
-                        >
-                          <div className="flex items-center">
-                            <Download className="w-4 h-4 text-gray-500 mr-2" />
-                            <span className={`text-sm text-gray-700 ${
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200">
+                {filteredPosts.map((post) => {
+                  const displayDate = formatDisplayDate(post.publishedAt, i18n.language)
+                  return (
+                  <div
+                    key={post.id}
+                    className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => handlePostClick(post.id)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className={`text-xs px-2 py-1 rounded ${
+                            i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                          } ${
+                            post.type === 'announcement' ? 'bg-blue-100 text-blue-700' :
+                            post.type === 'event' ? 'bg-green-100 text-green-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {post.type === 'announcement' ? (i18n.language === 'ko' ? '공지' : 'Notice') :
+                             post.type === 'event' ? (i18n.language === 'ko' ? '행사' : 'Event') :
+                             (i18n.language === 'ko' ? '일반' : 'General')}
+                          </span>
+                          {displayDate && (
+                            <div className={`flex items-center text-sm text-gray-500 ${
                               i18n.language === 'ko' ? 'font-korean' : 'font-english'
                             }`}>
-                              {file.name}
-                            </span>
+                              <Calendar className="w-4 h-4 mr-1" />
+                              <span>{displayDate}</span>
+                            </div>
+                          )}
+                        </div>
+                        <h3 className={`text-lg font-semibold text-gray-900 mb-1 ${
+                          i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                        }`}>
+                          {post.title}
+                        </h3>
+                        <p className={`text-sm text-gray-600 line-clamp-2 ${
+                          i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                        }`}>
+                          {post.excerpt || post.content.slice(0, 140)}
+                        </p>
+
+                        {/* File Attachments */}
+                        {post.attachments && post.attachments.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {post.attachments.map((file, index) => (
+                              <a
+                                key={index}
+                                href={file.url}
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center px-2 py-1 bg-gray-100 rounded text-xs hover:bg-gray-200 transition-colors"
+                                download
+                              >
+                                <Download className="w-3 h-3 mr-1" />
+                                <span className={`${
+                                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                                }`}>
+                                  {file.name}
+                                </span>
+                              </a>
+                            ))}
                           </div>
-                          <span className="text-xs text-gray-500">{file.size}</span>
-                        </a>
-                      ))}
+                        )}
+                      </div>
                     </div>
                   </div>
-                )}
+                )
+                })}
               </div>
-              ))}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </section>
     </Layout>
@@ -157,10 +226,38 @@ const Announcements: NextPage = () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  let serialized: SerializedPost[] = []
+
+  try {
+    const announcementPosts = await getPublishedAnnouncements(30)
+    serialized = announcementPosts.map((post: PostRecord) => ({
+      id: post.id,
+      title: post.title,
+      type: post.type,
+      category: 'general',
+      content: post.content,
+      excerpt: post.excerpt ?? null,
+      coverImageUrl: post.coverImageUrl ?? null,
+      attachments: [],
+      publishedAt: post.publishedAt
+        ? post.publishedAt.toISOString()
+        : post.updatedAt
+        ? post.updatedAt.toISOString()
+        : post.createdAt
+        ? post.createdAt.toISOString()
+        : null,
+      createdAt: post.createdAt ? post.createdAt.toISOString() : null
+    }))
+  } catch (error) {
+    console.error('Failed to fetch announcements during build:', error)
+  }
+
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? 'ko', ['common'])),
+      posts: serialized,
+      ...(await serverSideTranslations(locale ?? 'ko', ['common']))
     },
+    revalidate: 10
   }
 }
 
