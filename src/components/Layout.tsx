@@ -134,14 +134,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [adminSession, setAdminSession] = useState<{ email?: string; name?: string } | null>(null)
-  const fontClass = i18n.language === 'ko' ? 'font-korean' : 'font-english'
+
+  // 기본 언어를 한국어로 강제 설정
+  const currentLanguage = i18n.language || 'ko'
+  const fontClass = currentLanguage === 'ko' ? 'font-korean' : 'font-english'
+
+  // 언어가 영어로 설정되어 있으면 한국어로 변경
+  useEffect(() => {
+    if (i18n.language === 'en') {
+      i18n.changeLanguage('ko')
+    }
+  }, [i18n])
   const languageShortLabels: Record<string, string> = {
-    ko: t('language.short_ko'),
-    en: t('language.short_en'),
+    ko: t('language.short_ko', { defaultValue: '한' }),
+    en: t('language.short_en', { defaultValue: 'EN' }),
   }
   const languageFullLabels: Record<string, string> = {
-    ko: t('language.full_ko'),
-    en: t('language.full_en'),
+    ko: t('language.full_ko', { defaultValue: '한국어' }),
+    en: t('language.full_en', { defaultValue: 'English' }),
   }
   const defaultAdminName = t('admin.default_name')
   const navigationItems = navigationConfig
@@ -489,27 +499,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="mx-auto max-w-7xl px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
-              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('church_name')}</h3>
-              <p className={`text-black/70 ${fontClass}`}>{t('full_address')}</p>
+              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('church_name', { defaultValue: '스테이트 칼리지 한인교회' })}</h3>
+              <p className={`text-black/70 ${fontClass}`}>{t('full_address', { defaultValue: '758 Glenn Rd, State College, PA 16803' })}</p>
               <p className={`text-black/70 mt-2 ${fontClass}`}>
-                <span className="font-semibold">{t('phone')}:</span> {t('phone_number')}
+                <span className="font-semibold">{t('phone', { defaultValue: '전화' })}:</span> {t('phone_number', { defaultValue: '814-380-9393' })}
               </p>
               <p className={`text-black/70 ${fontClass}`}>
-                <span className="font-semibold">{t('email')}:</span> {t('email_address')}
+                <span className="font-semibold">{t('email', { defaultValue: '이메일' })}:</span> {t('email_address', { defaultValue: 'KyuHongYeon@gmail.com' })}
               </p>
             </div>
             <div>
-              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('service_times')}</h3>
-              <p className={`text-black/70 ${fontClass}`}>{t('sunday')}: {t('sunday_time')}</p>
-              <p className={`text-black/70 ${fontClass}`}>{t('wednesday')}: {t('wednesday_time')}</p>
+              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('service_times', { defaultValue: '예배 시간' })}</h3>
+              <p className={`text-black/70 ${fontClass}`}>{t('sunday', { defaultValue: '주일' })}: {t('sunday_time', { defaultValue: '오전 11:00' })}</p>
+              <p className={`text-black/70 ${fontClass}`}>{t('wednesday', { defaultValue: '수요일' })}: {t('wednesday_time', { defaultValue: '오후 7:30' })}</p>
             </div>
             <div>
-              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('quick_links')}</h3>
+              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('quick_links', { defaultValue: '바로가기' })}</h3>
               <div className="flex flex-col space-y-2">
-                <Link href="/about/greeting" className={`text-black/70 hover:text-black ${fontClass}`}>{t('church_guide')}</Link>
-                <Link href="/sermons-live" className={`text-black/70 hover:text-black ${fontClass}`}>{t('sermons_praise')}</Link>
-                <Link href="/news/announcements" className={`text-black/70 hover:text-black ${fontClass}`}>{t('nav_links.announcements')}</Link>
-                <Link href="/giving" className={`text-black/70 hover:text-black ${fontClass}`}>{t('online_giving')}</Link>
+                <Link href="/about/greeting" className={`text-black/70 hover:text-black ${fontClass}`}>{t('church_guide', { defaultValue: '교회안내' })}</Link>
+                <Link href="/sermons-live" className={`text-black/70 hover:text-black ${fontClass}`}>{t('sermons_praise', { defaultValue: '설교/찬양' })}</Link>
+                <Link href="/news/announcements" className={`text-black/70 hover:text-black ${fontClass}`}>{t('nav_links.announcements', { defaultValue: '공지사항' })}</Link>
+                <Link href="/giving" className={`text-black/70 hover:text-black ${fontClass}`}>{t('online_giving', { defaultValue: '온라인헌금' })}</Link>
               </div>
             </div>
           </div>

@@ -154,6 +154,8 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params, locale }) => {
+  // 기본 언어를 한국어로 설정
+  const currentLocale = locale || 'ko'
   const id = params?.id as string
 
   if (!id) {
@@ -186,7 +188,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
     return {
       props: {
         post: serializedPost,
-        ...(await serverSideTranslations(locale ?? 'ko', ['common', 'news']))
+        ...(await serverSideTranslations(currentLocale, ['common', 'news']))
       }
     }
   } catch (error) {
