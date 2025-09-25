@@ -54,6 +54,21 @@ const Announcements = ({ posts: initialPosts }: AnnouncementsPageProps) => {
   const [posts, setPosts] = useState<SerializedPost[]>(initialPosts)
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [backgroundImage, setBackgroundImage] = useState('')
+
+  // 랜덤 배경 이미지 선택
+  useEffect(() => {
+    const images = [
+      '/images/community/community1.jpg',
+      '/images/community/community2.jpg',
+      '/images/community/community3.jpg',
+      '/images/community/community4.jpg',
+      '/images/community/community5.jpg',
+      '/images/community/community6.jpg'
+    ]
+    const randomImage = images[Math.floor(Math.random() * images.length)]
+    setBackgroundImage(randomImage)
+  }, [])
 
 
   // 클라이언트 사이드에서 최신 데이터 가져오기
@@ -90,19 +105,28 @@ const Announcements = ({ posts: initialPosts }: AnnouncementsPageProps) => {
 
   return (
     <Layout>
-      {/* Header Section */}
-      <section className="bg-church-primary py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h1 className={`text-4xl font-bold text-white text-center ${
-            i18n.language === 'ko' ? 'font-korean' : 'font-english'
-          }`}>
-            {i18n.language === 'ko' ? '공지사항' : 'Announcements'}
-          </h1>
-          <p className={`mt-4 text-xl text-gray-100 text-center ${
-            i18n.language === 'ko' ? 'font-korean' : 'font-english'
-          }`}>
-            {i18n.language === 'ko' ? '교회 공지사항을 확인하세요' : 'Check our church announcements'}
-          </p>
+      {/* Header Section with Background */}
+      <section className="relative h-64 bg-gray-900 overflow-hidden">
+        {backgroundImage && (
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-60"
+            style={{backgroundImage: `url(${backgroundImage})`}}
+          ></div>
+        )}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-center h-full">
+          <div className="text-center">
+            <h1 className={`text-4xl md:text-5xl font-bold text-white mb-4 ${
+              i18n.language === 'ko' ? 'font-korean' : 'font-english'
+            }`}>
+              {i18n.language === 'ko' ? '공지사항' : 'Announcements'}
+            </h1>
+            <p className={`text-xl text-gray-100 ${
+              i18n.language === 'ko' ? 'font-korean' : 'font-english'
+            }`}>
+              {i18n.language === 'ko' ? '교회 공지사항을 확인하세요' : 'Check our church announcements'}
+            </p>
+          </div>
         </div>
       </section>
 
@@ -128,9 +152,9 @@ const Announcements = ({ posts: initialPosts }: AnnouncementsPageProps) => {
       </section>
 
       {/* Announcements List */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-8 sm:py-12 lg:py-16 bg-gray-50 min-h-screen">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg shadow-sm">
+          <div className="bg-white rounded-lg shadow-lg border border-gray-200">
             {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-church-primary mx-auto"></div>
@@ -141,10 +165,20 @@ const Announcements = ({ posts: initialPosts }: AnnouncementsPageProps) => {
               </p>
             </div>
             ) : filteredPosts.length === 0 ? (
-              <div className={`p-12 text-center text-gray-500 ${
-                i18n.language === 'ko' ? 'font-korean' : 'font-english'
-              }`}>
-                {i18n.language === 'ko' ? '등록된 공지사항이 없습니다.' : 'No announcements available.'}
+              <div className="p-12 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className={`text-lg text-gray-900 mb-2 ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {i18n.language === 'ko' ? '등록된 공지사항이 없습니다.' : 'No announcements available.'}
+                </p>
+                <p className={`text-sm text-gray-500 ${
+                  i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                }`}>
+                  {i18n.language === 'ko' ? '새로운 공지사항을 기다려주세요.' : 'Please wait for new announcements.'}
+                </p>
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
@@ -153,7 +187,7 @@ const Announcements = ({ posts: initialPosts }: AnnouncementsPageProps) => {
                   return (
                   <div
                     key={post.id}
-                    className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="p-4 sm:p-6 hover:bg-gray-50 transition-colors cursor-pointer"
                     onClick={() => handlePostClick(post.id)}
                   >
                     <div className="flex items-start justify-between">
