@@ -60,17 +60,44 @@ const NewPostPage = () => {
     setLoading(false)
   }, [router])
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
     if (!files) return
 
-    const newAttachments = Array.from(files).map(file => ({
-      name: file.name,
-      url: URL.createObjectURL(file), // 실제 구현시 Firebase Storage 또는 서버에 업로드
-      size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
-    }))
+    setIsLoading(true)
+    const newAttachments: Array<{name: string, url: string, size: string}> = []
+
+    for (const file of Array.from(files)) {
+      try {
+        const reader = new FileReader()
+        const fileDataPromise = new Promise<string>((resolve) => {
+          reader.onload = (e) => resolve(e.target?.result as string)
+        })
+        reader.readAsDataURL(file)
+        const fileData = await fileDataPromise
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName: file.name,
+            fileData,
+            fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+          })
+        })
+
+        if (response.ok) {
+          const { file: uploadedFile } = await response.json()
+          newAttachments.push(uploadedFile)
+        }
+      } catch (error) {
+        console.error('File upload error:', error)
+        alert(`파일 업로드 실패: ${file.name}`)
+      }
+    }
 
     setAttachments([...attachments, ...newAttachments])
+    setIsLoading(false)
   }
 
   const removeAttachment = (index: number) => {

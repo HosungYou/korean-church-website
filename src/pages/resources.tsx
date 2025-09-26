@@ -44,15 +44,23 @@ const Resources: NextPage = () => {
     { id: 'wednesday', name: i18n.language === 'ko' ? '수요예배 자료' : 'Wednesday Service', icon: Calendar },
     { id: 'sunday', name: i18n.language === 'ko' ? '주일예배 자료' : 'Sunday Service', icon: FileText },
     { id: 'bible', name: i18n.language === 'ko' ? '성경통독 자료' : 'Bible Reading', icon: BookOpen },
+    { id: 'general', name: i18n.language === 'ko' ? '공지사항' : 'Announcements', icon: FileText },
   ]
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/posts/announcements?category=${activeTab}`)
+        const response = await fetch(`/api/posts/announcements`)
         const data = await response.json()
-        setPosts(data.posts || [])
+        // 클라이언트 사이드에서 카테고리 필터링
+        const filteredPosts = (data.posts || []).filter((post: Post) => {
+          if (activeTab === 'general') {
+            return post.category === 'general' || !post.category
+          }
+          return post.category === activeTab
+        })
+        setPosts(filteredPosts)
       } catch (error) {
         console.error('Failed to fetch posts:', error)
         setPosts([])
