@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { sendNewsletterToSubscribers } from '../../../utils/emailService'
-import { getPostById, updatePost, PostRecord } from '../../../utils/postService'
+import { getPostById, updatePost, PostRecord, PostCategory } from '../../../utils/postService'
 
 const formatDateTimeInput = (value?: Date | null): string => {
   if (!value) {
@@ -34,9 +34,12 @@ const PostEditPage = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [type, setType] = useState<'announcement' | 'event' | 'general'>('announcement')
+  const [category, setCategory] = useState<PostCategory>('general')
   const [status, setStatus] = useState<'draft' | 'published' | 'scheduled'>('draft')
   const [scheduledDate, setScheduledDate] = useState('')
   const [coverImageUrl, setCoverImageUrl] = useState('')
+  const [attachmentUrl, setAttachmentUrl] = useState('')
+  const [attachmentName, setAttachmentName] = useState('')
   const [sendNewsletter, setSendNewsletter] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
@@ -72,8 +75,11 @@ const PostEditPage = () => {
         setTitle(post.title)
         setContent(post.content)
         setType(post.type)
+        setCategory(post.category ?? 'general')
         setStatus(post.status)
         setCoverImageUrl(post.coverImageUrl ?? '')
+        setAttachmentUrl(post.attachmentUrl ?? '')
+        setAttachmentName(post.attachmentName ?? '')
         setScheduledDate(formatDateTimeInput(post.scheduledFor))
       } catch (error) {
         console.error('게시글 불러오기 오류:', error)
@@ -117,10 +123,13 @@ const PostEditPage = () => {
         title,
         content,
         type,
+        category,
         status: nextStatus,
         authorEmail: user?.email ?? existingPost.authorEmail ?? null,
         authorName: user?.name ?? existingPost.authorName ?? user?.email ?? '관리자',
         coverImageUrl,
+        attachmentUrl,
+        attachmentName,
         scheduledFor: nextStatus === 'scheduled' ? scheduledDate : null,
         createdAt: existingPost.createdAt ?? undefined,
         publishedAt: existingPost.publishedAt ?? undefined
@@ -229,6 +238,34 @@ const PostEditPage = () => {
                         </div>
 
                         <div>
+                          <label htmlFor="attachmentUrl" className="block text-sm font-medium text-gray-700 font-korean mb-2">
+                            <Upload className="inline-block w-4 h-4 mr-1" />
+                            첨부파일 URL
+                          </label>
+                          <input
+                            type="text"
+                            id="attachmentUrl"
+                            value={attachmentUrl}
+                            onChange={(e) => setAttachmentUrl(e.target.value)}
+                            placeholder="https://example.com/document.pdf"
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black font-korean"
+                          />
+                          <input
+                            type="text"
+                            id="attachmentName"
+                            value={attachmentName}
+                            onChange={(e) => setAttachmentName(e.target.value)}
+                            placeholder="파일 이름 (예: 0924 수요성경공부.pdf)"
+                            className="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black font-korean"
+                          />
+                          {attachmentUrl && attachmentName && (
+                            <div className="mt-2 text-sm text-gray-600 font-korean">
+                              첨부파일: <a href={attachmentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{attachmentName}</a>
+                            </div>
+                          )}
+                        </div>
+
+                        <div>
                           <label htmlFor="content" className="block text-sm font-medium text-gray-700 font-korean mb-2">
                             내용
                           </label>
@@ -280,6 +317,22 @@ const PostEditPage = () => {
                       </div>
 
                       <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
+                            게시판 카테고리
+                          </label>
+                          <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value as PostCategory)}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black font-korean"
+                          >
+                            <option value="general">일반</option>
+                            <option value="wednesday">수요성경공부</option>
+                            <option value="sunday">주일예배</option>
+                            <option value="bible">성경공부</option>
+                          </select>
+                        </div>
+
                         <div>
                           <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
                             게시글 유형

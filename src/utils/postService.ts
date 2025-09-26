@@ -17,12 +17,14 @@ import type { DocumentData } from 'firebase/firestore'
 
 export type PostType = 'announcement' | 'event' | 'general'
 export type PostStatus = 'draft' | 'published' | 'scheduled'
+export type PostCategory = 'general' | 'wednesday' | 'sunday' | 'bible'
 
 export interface PostRecord {
   id: string
   title: string
   content: string
   type: PostType
+  category?: PostCategory
   status: PostStatus
   authorEmail: string | null
   authorName: string | null
@@ -32,17 +34,22 @@ export interface PostRecord {
   updatedAt?: Date | null
   publishedAt?: Date | null
   scheduledFor?: Date | null
+  attachmentUrl?: string | null
+  attachmentName?: string | null
 }
 
 export interface CreatePostInput {
   title: string
   content: string
   type: PostType
+  category?: PostCategory
   status: PostStatus
   authorEmail?: string | null
   authorName?: string | null
   coverImageUrl?: string | null
   scheduledFor?: string | Date | null
+  attachmentUrl?: string | null
+  attachmentName?: string | null
 }
 
 export interface UpdatePostInput extends CreatePostInput {
@@ -88,10 +95,13 @@ const mapPostDoc = (snapshot: any): PostRecord => {
     title: data.title ?? '',
     content: data.content ?? '',
     type: (data.type ?? 'announcement') as PostType,
+    category: (data.category ?? 'general') as PostCategory,
     status: (data.status ?? 'draft') as PostStatus,
     authorEmail: data.authorEmail ?? null,
     authorName: data.authorName ?? null,
     coverImageUrl: data.coverImageUrl ?? null,
+    attachmentUrl: data.attachmentUrl ?? null,
+    attachmentName: data.attachmentName ?? null,
     excerpt: data.excerpt ?? null,
     createdAt: toDate(data.createdAt),
     updatedAt: toDate(data.updatedAt),
@@ -106,10 +116,13 @@ export const createPost = async (input: CreatePostInput): Promise<string> => {
     title: input.title,
     content: input.content,
     type: input.type,
+    category: input.category ?? 'general',
     status: input.status,
     authorEmail: input.authorEmail ?? null,
     authorName: input.authorName ?? null,
     coverImageUrl: input.coverImageUrl?.trim() || null,
+    attachmentUrl: input.attachmentUrl?.trim() || null,
+    attachmentName: input.attachmentName?.trim() || null,
     excerpt: createExcerpt(input.content),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -142,10 +155,13 @@ export const updatePost = async (input: UpdatePostInput): Promise<void> => {
     title: input.title,
     content: input.content,
     type: input.type,
+    category: input.category ?? existing.category ?? 'general',
     status: input.status,
     authorEmail: input.authorEmail ?? existing.authorEmail ?? null,
     authorName: input.authorName ?? existing.authorName ?? null,
     coverImageUrl: input.coverImageUrl?.trim() || null,
+    attachmentUrl: input.attachmentUrl?.trim() || null,
+    attachmentName: input.attachmentName?.trim() || null,
     excerpt: createExcerpt(input.content),
     updatedAt: serverTimestamp(),
     publishedAt: existing.publishedAt ? Timestamp.fromDate(existing.publishedAt) : null,
