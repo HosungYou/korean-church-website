@@ -106,7 +106,7 @@ const Resources: NextPage = () => {
                   className={`flex items-center px-4 py-3 text-sm font-medium rounded-t-lg transition-colors ${
                     activeTab === category.id
                       ? 'bg-church-primary text-white'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      : 'text-gray-700 hover:bg-gray-50'
                   } ${
                     i18n.language === 'ko' ? 'font-korean' : 'font-english'
                   }`}
@@ -184,7 +184,7 @@ const Resources: NextPage = () => {
                         <a
                           key={index}
                           href={file.url}
-                          className="flex items-center justify-between p-2 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+                          className="flex items-center justify-between p-2 bg-gray-50 rounded-md hover:bg-gray-100 transition-all"
                           download
                         >
                           <div className="flex items-center">
