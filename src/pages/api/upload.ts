@@ -1,4 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import fs from 'fs'
+import path from 'path'
 
 export const config = {
   api: {
@@ -14,17 +16,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Base64로 인코딩된 파일 데이터를 받아서 처리
-    // 실제 프로덕션에서는 Firebase Storage나 AWS S3 사용 권장
     const { fileName, fileData, fileSize } = req.body
 
-    // 간단한 시뮬레이션 - 실제로는 스토리지에 저장
-    const mockUrl = `https://storage.example.com/${Date.now()}_${fileName}`
+    if (!fileName || !fileData || !fileSize) {
+      return res.status(400).json({ error: 'Missing required fields' })
+    }
+
+    // public/uploads 디렉토리 확인/생성
+    const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true })
+    }
+
+    // Base64 데이터에서 실제 파일 데이터 추출
+    const base64Data = fileData.replace(/^data:[^;]+;base64,/, '')
+    const buffer = Buffer.from(base64Data, 'base64')
+
+    // 파일명 중복 방지를 위한 타임스탬프 추가
+    const timestamp = Date.now()
+    const fileExtension = path.extname(fileName)
+    const baseName = path.basename(fileName, fileExtension)
+    const uniqueFileName = `${timestamp}_${baseName}${fileExtension}`
+
+    const filePath = path.join(uploadsDir, uniqueFileName)
+
+    // 파일 저장
+    fs.writeFileSync(filePath, buffer)
+
+    const fileUrl = `/uploads/${uniqueFileName}`
 
     res.status(200).json({
       file: {
         name: fileName,
-        url: mockUrl,
+        url: fileUrl,
         size: fileSize
       }
     })

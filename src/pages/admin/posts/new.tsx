@@ -67,37 +67,49 @@ const NewPostPage = () => {
     setIsLoading(true)
     const newAttachments: Array<{name: string, url: string, size: string}> = []
 
-    for (const file of Array.from(files)) {
-      try {
-        const reader = new FileReader()
-        const fileDataPromise = new Promise<string>((resolve) => {
-          reader.onload = (e) => resolve(e.target?.result as string)
-        })
-        reader.readAsDataURL(file)
-        const fileData = await fileDataPromise
-
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            fileName: file.name,
-            fileData,
-            fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+    try {
+      for (const file of Array.from(files)) {
+        try {
+          const reader = new FileReader()
+          const fileDataPromise = new Promise<string>((resolve, reject) => {
+            reader.onload = (e) => resolve(e.target?.result as string)
+            reader.onerror = () => reject(new Error('파일 읽기 실패'))
           })
-        })
+          reader.readAsDataURL(file)
+          const fileData = await fileDataPromise
 
-        if (response.ok) {
-          const { file: uploadedFile } = await response.json()
-          newAttachments.push(uploadedFile)
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fileName: file.name,
+              fileData,
+              fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+            })
+          })
+
+          if (response.ok) {
+            const { file: uploadedFile } = await response.json()
+            newAttachments.push(uploadedFile)
+          } else {
+            const error = await response.json()
+            console.error('Upload API error:', error)
+            alert(`파일 업로드 실패: ${file.name} - ${error.error}`)
+          }
+        } catch (error) {
+          console.error('File upload error:', error)
+          alert(`파일 업로드 실패: ${file.name}`)
         }
-      } catch (error) {
-        console.error('File upload error:', error)
-        alert(`파일 업로드 실패: ${file.name}`)
       }
-    }
 
-    setAttachments([...attachments, ...newAttachments])
-    setIsLoading(false)
+      setAttachments([...attachments, ...newAttachments])
+
+      if (newAttachments.length > 0) {
+        alert(`${newAttachments.length}개 파일 업로드 완료`)
+      }
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const removeAttachment = (index: number) => {

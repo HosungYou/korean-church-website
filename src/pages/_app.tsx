@@ -9,8 +9,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // 기본 언어를 한국어로 강제 설정
   useEffect(() => {
-    // 현재 locale이 설정되지 않았거나 영어인 경우 한국어로 리다이렉트
-    if (!router.locale || router.locale === 'default') {
+    // 모든 경우에 한국어로 강제 설정
+    if (router.locale !== 'ko') {
       const currentPath = router.asPath
       router.replace(currentPath, currentPath, { locale: 'ko' })
     }
