@@ -50,13 +50,9 @@ const Resources: NextPage = () => {
     const fetchPosts = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/posts/announcements`)
+        const response = await fetch(`/api/posts/resources?category=${activeTab}`)
         const data = await response.json()
-        // 클라이언트 사이드에서 카테고리 필터링 (자료실 카테고리만)
-        const filteredPosts = (data.posts || []).filter((post: Post) => {
-          return post.category === activeTab && ['wednesday', 'sunday', 'bible'].includes(post.category)
-        })
-        setPosts(filteredPosts)
+        setPosts(data.posts || [])
       } catch (error) {
         console.error('Failed to fetch posts:', error)
         setPosts([])

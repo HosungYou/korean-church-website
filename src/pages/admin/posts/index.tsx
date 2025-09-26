@@ -42,6 +42,7 @@ const AdminPostsPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState<'all' | PostType>('all')
   const [filterStatus, setFilterStatus] = useState<'all' | PostStatus>('all')
+  const [filterCategory, setFilterCategory] = useState<'all' | 'general' | 'wednesday' | 'sunday' | 'bible'>('all')
 
   useEffect(() => {
     const adminLoggedIn = typeof window !== 'undefined' ? localStorage.getItem('adminLoggedIn') : null
@@ -113,10 +114,11 @@ const AdminPostsPage = () => {
 
       const matchesType = filterType === 'all' || post.type === filterType
       const matchesStatus = filterStatus === 'all' || post.status === filterStatus
+      const matchesCategory = filterCategory === 'all' || post.category === filterCategory
 
-      return matchesSearch && matchesType && matchesStatus
+      return matchesSearch && matchesType && matchesStatus && matchesCategory
     })
-  }, [posts, searchTerm, filterType, filterStatus])
+  }, [posts, searchTerm, filterType, filterStatus, filterCategory])
 
   const stats = useMemo(() => {
     const total = posts.length
@@ -242,7 +244,7 @@ const AdminPostsPage = () => {
 
             {/* 검색 및 필터 */}
             <div className="bg-white shadow rounded-lg p-6 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="md:col-span-2">
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -265,6 +267,19 @@ const AdminPostsPage = () => {
                     <option value="announcement">공지사항</option>
                     <option value="event">행사</option>
                     <option value="general">일반</option>
+                  </select>
+                </div>
+                <div>
+                  <select
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value as 'all' | 'general' | 'wednesday' | 'sunday' | 'bible')}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black font-korean"
+                  >
+                    <option value="all">모든 카테고리</option>
+                    <option value="general">공지사항</option>
+                    <option value="wednesday">수요예배 자료</option>
+                    <option value="sunday">주일예배 자료</option>
+                    <option value="bible">성경통독 자료</option>
                   </select>
                 </div>
                 <div>

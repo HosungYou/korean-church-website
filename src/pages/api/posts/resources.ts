@@ -29,25 +29,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { category } = req.query
 
-    // Firestore에서 공지사항 카테고리만 가져오기
+    // Firestore에서 자료실 카테고리만 가져오기
     const postsRef = db.collection('posts')
     let query = postsRef
       .where('status', '==', 'published')
-      .where('category', 'in', ['general']) // 공지사항 카테고리만
+      .where('category', 'in', ['wednesday', 'sunday', 'bible']) // 자료실 카테고리만
 
     const snapshot = await query
       .orderBy('createdAt', 'desc')
       .limit(50)
       .get()
 
-    const posts = snapshot.docs.map(doc => {
+    let posts = snapshot.docs.map(doc => {
       const data = doc.data()
       return {
         id: doc.id,
         title: data.title,
         content: data.content,
         type: data.type,
-        category: data.category || 'general',
+        category: data.category,
         excerpt: data.excerpt,
         coverImageUrl: data.coverImageUrl,
         attachments: data.attachments || [],
@@ -59,11 +59,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     })
 
+    // 클라이언트에서 요청한 특정 카테고리 필터링
+    if (category && category !== 'all') {
+      posts = posts.filter(post => post.category === category)
+    }
+
     res.status(200).json({ posts })
   } catch (error) {
-    console.error('게시글 조회 오류:', error)
+    console.error('자료실 게시글 조회 오류:', error)
     res.status(500).json({
-      error: '게시글을 가져오는 중 오류가 발생했습니다.',
+      error: '자료실을 가져오는 중 오류가 발생했습니다.',
       details: error instanceof Error ? error.message : '알 수 없는 오류'
     })
   }
