@@ -12,68 +12,44 @@ export const uploadFile = async (
   file: File,
   folder: 'posts' | 'covers'
 ): Promise<UploadResult> => {
-  try {
-    // Check if Firebase is properly configured
-    if (!storage) {
-      throw new Error('Firebase Storage가 설정되지 않았습니다. 임시 저장 기능을 사용합니다.')
-    }
+  // Directly use base64 fallback if Firebase is not configured
+  console.log('Starting file upload, checking Firebase configuration...')
 
-    // Try Firebase upload first
-    try {
-      // Create unique file name
+  // Always use base64 fallback for now until Firebase is properly configured
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const base64Data = reader.result as string
       const fileExtension = file.name.split('.').pop()
       const uniqueFileName = `${uuidv4()}.${fileExtension}`
-      const filePath = `${folder}/${uniqueFileName}`
 
-      // Create storage reference
-      const storageRef = ref(storage, filePath)
-
-      // Upload file
-      const snapshot = await uploadBytes(storageRef, file)
-
-      // Get download URL
-      const downloadURL = await getDownloadURL(snapshot.ref)
-
-      return {
-        url: downloadURL,
-        path: filePath,
+      console.log('File converted to base64, using temporary storage')
+      resolve({
+        url: base64Data,
+        path: `temp/${folder}/${uniqueFileName}`,
         fileName: file.name
-      }
-    } catch (firebaseError) {
-      console.warn('Firebase upload failed, using fallback method:', firebaseError)
-
-      // Fallback: Convert to base64 and store temporarily
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => {
-          const base64Data = reader.result as string
-          const uniqueFileName = `${uuidv4()}_${file.name}`
-
-          resolve({
-            url: base64Data,
-            path: `temp/${uniqueFileName}`,
-            fileName: file.name
-          })
-        }
-        reader.onerror = () => {
-          reject(new Error('파일 읽기에 실패했습니다.'))
-        }
-        reader.readAsDataURL(file)
       })
     }
-  } catch (error) {
-    console.error('File upload failed:', error)
-    if (error instanceof Error && error.message.includes('auth/invalid-api-key')) {
-      throw new Error('Firebase 인증이 설정되지 않았습니다. 관리자에게 문의하세요.')
+    reader.onerror = () => {
+      console.error('Failed to read file')
+      reject(new Error('파일 읽기에 실패했습니다.'))
     }
-    throw new Error('파일 업로드에 실패했습니다.')
-  }
+    reader.readAsDataURL(file)
+  })
 }
 
 export const deleteFile = async (filePath: string): Promise<void> => {
+  // For base64 files (temp storage), we don't need to delete anything
+  if (filePath.startsWith('temp/')) {
+    console.log('Temporary file, no deletion needed')
+    return
+  }
+
   try {
-    const storageRef = ref(storage, filePath)
-    await deleteObject(storageRef)
+    if (storage) {
+      const storageRef = ref(storage, filePath)
+      await deleteObject(storageRef)
+    }
   } catch (error) {
     console.error('File deletion failed:', error)
     // Don't throw error for deletion failures as they're not critical

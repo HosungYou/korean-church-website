@@ -257,7 +257,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 item.dropdown ? (
                   <Menu as="div" key={item.labelKey} className="relative">
                     <Menu.Button className={`inline-flex items-center px-1 pt-1 text-base font-medium text-black hover:opacity-70 transition-opacity ${fontClass}`}>
-                      <span>{t(item.labelKey)}</span>
+                      <span>{item.labelKey === 'nav_groups.worship' ? '예배' :
+                             item.labelKey === 'nav_groups.growth' ? '성장' :
+                             item.labelKey === 'nav_groups.serving' ? '섬김' :
+                             item.labelKey === 'nav_groups.media' ? '미디어' :
+                             item.labelKey === 'nav_groups.community' ? '소통' :
+                             item.labelKey === 'nav_groups.about' ? '교회안내' :
+                             t(item.labelKey)}</span>
                       <ChevronDownIcon className="ml-1 h-5 w-5" />
                     </Menu.Button>
                     <Transition
