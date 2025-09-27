@@ -25,42 +25,42 @@ interface BreadcrumbItem {
 
 const getBreadcrumbs = (pathname: string, translate: (key: string) => string): BreadcrumbItem[] => {
   const segments = pathname.split('/').filter(Boolean)
-  const breadcrumbs: BreadcrumbItem[] = [{ name: '홈', href: '/' }]
+  const breadcrumbs: BreadcrumbItem[] = [{ name: translate('breadcrumbs.home'), href: '/' }]
 
   const pathMap: { [key: string]: string } = {
-    'about': '교회안내',
-    'philosophy': '목회철학',
-    'greeting': '인사말',
-    'history': '연혁',
-    'ministers': '섬기는 분들',
-    'service-info': '예배안내',
-    'directions': '오시는 길',
-    'sermons': '설교',
-    'sermons-live': '예배 LIVE',
-    'sunday': '주일예배',
-    'wednesday': '수요예배',
-    'friday': '금요철야',
-    'special-praise': '특별찬양',
-    'education': '교육',
-    'infants': '영아부',
-    'kindergarten': '유치부',
-    'elementary': '초등부',
-    'youth': '중고등부',
-    'young-adults': '청년부',
-    'missions': '선교',
-    'domestic': '국내선교',
-    'international': '해외선교',
-    'new-family': '새가족양육',
-    'discipleship': '제자훈련',
-    'training': '교육/훈련',
-    'news': '교회소식',
-    'posts': '게시글',
-    'announcements': '공지사항',
-    'resources': '자료실',
-    'bulletin': '주보',
-    'gallery': '갤러리',
-    'giving': '온라인헌금',
-    'korean-school': '한글학교'
+    'about': 'about',
+    'philosophy': 'philosophy',
+    'greeting': 'greeting',
+    'history': 'history',
+    'ministers': 'ministers',
+    'service-info': 'service_info',
+    'directions': 'directions',
+    'sermons': 'sermons',
+    'sermons-live': 'sermons_live',
+    'sunday': 'sunday',
+    'wednesday': 'wednesday',
+    'friday': 'friday',
+    'special-praise': 'special_praise',
+    'education': 'education',
+    'infants': 'infants',
+    'kindergarten': 'kindergarten',
+    'elementary': 'elementary',
+    'youth': 'youth',
+    'young-adults': 'young_adults',
+    'missions': 'missions',
+    'domestic': 'domestic',
+    'international': 'international',
+    'new-family': 'new_family',
+    'discipleship': 'discipleship',
+    'training': 'training',
+    'news': 'news',
+    'posts': 'posts',
+    'announcements': 'announcements',
+    'resources': 'resources',
+    'bulletin': 'bulletin',
+    'gallery': 'gallery',
+    'giving': 'giving',
+    'korean-school': 'korean_school'
   }
 
   let currentPath = ''
@@ -68,12 +68,12 @@ const getBreadcrumbs = (pathname: string, translate: (key: string) => string): B
     currentPath += `/${segment}`
     if (pathMap[segment]) {
       breadcrumbs.push({
-        name: pathMap[segment],
+        name: translate(`breadcrumbs.${pathMap[segment]}`),
         href: currentPath
       })
     }
   }
-  
+
   return breadcrumbs
 }
 
@@ -135,13 +135,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [adminSession, setAdminSession] = useState<{ email?: string; name?: string } | null>(null)
 
-  // 기본 언어를 한국어로 강제 설정
+  // 현재 언어 설정 (기본값: 한국어)
   const currentLanguage = i18n.language || 'ko'
   const fontClass = currentLanguage === 'ko' ? 'font-korean' : 'font-english'
 
-  // 언어가 영어로 설정되어 있으면 한국어로 변경
+  // 초기 언어를 한국어로 설정 (한 번만 실행)
   useEffect(() => {
-    if (i18n.language === 'en') {
+    if (!i18n.language) {
       i18n.changeLanguage('ko')
     }
   }, [i18n])
@@ -228,7 +228,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   const changeLanguage = (lng: string) => {
-    router.push(router.pathname, router.asPath, { locale: lng })
+    i18n.changeLanguage(lng)
   }
 
   return (

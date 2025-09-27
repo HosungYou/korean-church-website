@@ -79,6 +79,8 @@ async function handleCreatePost(req: NextApiRequest, res: NextApiResponse) {
       authorEmail,
       authorName,
       coverImageUrl,
+      attachmentUrl,
+      attachmentName,
       attachments,
       scheduledFor
     } = req.body
@@ -96,6 +98,8 @@ async function handleCreatePost(req: NextApiRequest, res: NextApiResponse) {
       authorEmail: authorEmail || null,
       authorName: authorName || '관리자',
       coverImageUrl: coverImageUrl?.trim() || null,
+      attachmentUrl: attachmentUrl?.trim() || null,
+      attachmentName: attachmentName?.trim() || null,
       attachments: attachments || [],
       excerpt: createExcerpt(content),
       createdAt: FieldValue.serverTimestamp(),
