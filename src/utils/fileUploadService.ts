@@ -12,10 +12,58 @@ export const uploadFile = async (
   file: File,
   folder: 'posts' | 'covers'
 ): Promise<UploadResult> => {
-  // Directly use base64 fallback if Firebase is not configured
   console.log('Starting file upload, checking Firebase configuration...')
 
-  // Always use base64 fallback for now until Firebase is properly configured
+  try {
+    // Check if Firebase Storage is available
+    if (!storage) {
+      console.warn('Firebase Storage not initialized, using base64 fallback')
+      return await uploadFileAsBase64(file, folder)
+    }
+
+    // Try Firebase Storage upload
+    const fileExtension = file.name.split('.').pop()
+    const uniqueFileName = `${uuidv4()}.${fileExtension}`
+    const filePath = `${folder}/${uniqueFileName}`
+
+    console.log('Uploading to Firebase Storage:', filePath)
+
+    // Create storage reference
+    const storageRef = ref(storage, filePath)
+
+    // Upload file with metadata
+    const metadata = {
+      contentType: file.type,
+      customMetadata: {
+        originalName: file.name,
+        uploadedAt: new Date().toISOString()
+      }
+    }
+
+    const snapshot = await uploadBytes(storageRef, file, metadata)
+    const downloadURL = await getDownloadURL(snapshot.ref)
+
+    console.log('Firebase upload successful:', downloadURL)
+
+    return {
+      url: downloadURL,
+      path: filePath,
+      fileName: file.name
+    }
+  } catch (error) {
+    console.error('Firebase upload failed:', error)
+
+    // Fallback to base64 if Firebase fails
+    console.log('Falling back to base64 storage')
+    return await uploadFileAsBase64(file, folder)
+  }
+}
+
+// Helper function for base64 fallback
+const uploadFileAsBase64 = async (
+  file: File,
+  folder: 'posts' | 'covers'
+): Promise<UploadResult> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => {
