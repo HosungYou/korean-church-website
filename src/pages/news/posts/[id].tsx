@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import Layout from '@/components/Layout'
 import { GetServerSideProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { ArrowLeft, Calendar, User } from 'lucide-react'
+import { ArrowLeft, Calendar, User, Download, File } from 'lucide-react'
 import Link from 'next/link'
 import { getPostById } from '../../../utils/postService'
 import { useTranslation } from 'next-i18next'
@@ -14,6 +14,8 @@ interface SerializedPost {
   type: 'announcement' | 'event' | 'general'
   excerpt?: string | null
   coverImageUrl?: string | null
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   authorName?: string | null
   publishedAt?: string | null
   createdAt?: string | null
@@ -134,6 +136,33 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
                 {post.content}
               </div>
             </div>
+
+            {/* Attachment */}
+            {post.attachmentUrl && post.attachmentName && (
+              <div className="mt-8 pt-8 border-t border-gray-200">
+                <h3 className={`text-lg font-semibold text-gray-800 mb-4 ${fontClass}`}>
+                  첨부파일
+                </h3>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <File className="w-5 h-5 text-gray-600 mr-3" />
+                      <span className={`text-gray-800 ${fontClass}`}>
+                        {post.attachmentName}
+                      </span>
+                    </div>
+                    <a
+                      href={post.attachmentUrl}
+                      download={post.attachmentName}
+                      className={`inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors ${fontClass}`}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      다운로드
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
         </div>
