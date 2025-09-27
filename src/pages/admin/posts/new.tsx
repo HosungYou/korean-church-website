@@ -15,6 +15,9 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { sendNewsletterToSubscribers } from '../../../utils/emailService'
+import { createPost } from '../../../utils/postService'
+import { FileUpload } from '../../../components/FileUpload'
+import { UploadResult, deleteFile } from '../../../utils/fileUploadService'
 
 const NewPostPage = () => {
   const router = useRouter()
@@ -28,12 +31,42 @@ const NewPostPage = () => {
   const [category, setCategory] = useState<'general' | 'wednesday' | 'sunday' | 'bible'>('general')
   const [status, setStatus] = useState<'draft' | 'published' | 'scheduled'>('draft')
   const [scheduledDate, setScheduledDate] = useState('')
-  const [coverImageUrl, setCoverImageUrl] = useState('')
-  const [attachments, setAttachments] = useState<Array<{name: string, url: string, size: string}>>([])
+  const [coverImage, setCoverImage] = useState<{ url: string; fileName: string; path?: string } | null>(null)
+  const [attachment, setAttachment] = useState<{ url: string; fileName: string; path?: string } | null>(null)
   const [sendNewsletter, setSendNewsletter] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleCoverImageUpload = (result: UploadResult) => {
+    setCoverImage({
+      url: result.url,
+      fileName: result.fileName,
+      path: result.path
+    })
+  }
+
+  const handleAttachmentUpload = (result: UploadResult) => {
+    setAttachment({
+      url: result.url,
+      fileName: result.fileName,
+      path: result.path
+    })
+  }
+
+  const handleCoverImageRemove = () => {
+    if (coverImage?.path) {
+      deleteFile(coverImage.path).catch(console.error)
+    }
+    setCoverImage(null)
+  }
+
+  const handleAttachmentRemove = () => {
+    if (attachment?.path) {
+      deleteFile(attachment.path).catch(console.error)
+    }
+    setAttachment(null)
+  }
 
   useEffect(() => {
     const { type: queryType, category: queryCategory } = router.query
@@ -144,8 +177,9 @@ const NewPostPage = () => {
           status: publishStatus,
           authorEmail: user?.email ?? null,
           authorName: user?.name ?? user?.email ?? '관리자',
-          coverImageUrl,
-          attachments,
+          coverImageUrl: coverImage?.url ?? null,
+          attachmentUrl: attachment?.url ?? null,
+          attachmentName: attachment?.fileName ?? null,
           scheduledFor: publishStatus === 'scheduled' ? scheduledDate : null
         })
       })
@@ -248,25 +282,24 @@ const NewPostPage = () => {
                         </div>
 
                         {/* 표지 이미지 */}
-                        <div>
-                          <label htmlFor="cover-image" className="block text-sm font-medium text-gray-700 font-korean mb-2">
-                            대표 이미지 URL (선택)
-                          </label>
-                          <input
-                            type="url"
-                            id="cover-image"
-                            value={coverImageUrl}
-                            onChange={(e) => setCoverImageUrl(e.target.value)}
-                            placeholder="https://example.com/image.jpg"
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black font-korean"
-                          />
-                          {coverImageUrl ? (
-                            <div
-                              className="mt-3 h-40 rounded-md overflow-hidden border border-gray-200 bg-gray-100"
-                              style={{ backgroundImage: `url(${coverImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                            />
-                          ) : null}
-                        </div>
+                        <FileUpload
+                          onUpload={handleCoverImageUpload}
+                          onRemove={handleCoverImageRemove}
+                          currentFile={coverImage}
+                          isImage={true}
+                          label="대표 이미지"
+                          accept="image/*"
+                          disabled={isLoading}
+                        />
+
+                        <FileUpload
+                          onUpload={handleAttachmentUpload}
+                          onRemove={handleAttachmentRemove}
+                          currentFile={attachment}
+                          isImage={false}
+                          label="첨부파일"
+                          disabled={isLoading}
+                        />
 
                         {/* 내용 */}
                         <div>
