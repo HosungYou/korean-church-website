@@ -13,6 +13,11 @@ export const uploadFile = async (
   folder: 'posts' | 'covers'
 ): Promise<UploadResult> => {
   try {
+    // Check if Firebase is properly configured
+    if (!storage) {
+      throw new Error('Firebase Storage가 설정되지 않았습니다.')
+    }
+
     // Create unique file name
     const fileExtension = file.name.split('.').pop()
     const uniqueFileName = `${uuidv4()}.${fileExtension}`
@@ -34,6 +39,9 @@ export const uploadFile = async (
     }
   } catch (error) {
     console.error('File upload failed:', error)
+    if (error instanceof Error && error.message.includes('auth/invalid-api-key')) {
+      throw new Error('Firebase 인증이 설정되지 않았습니다. 관리자에게 문의하세요.')
+    }
     throw new Error('파일 업로드에 실패했습니다.')
   }
 }

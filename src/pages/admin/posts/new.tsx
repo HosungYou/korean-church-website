@@ -24,7 +24,7 @@ const NewPostPage = () => {
   const { type: queryType } = router.query
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  
+
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [type, setType] = useState<'announcement' | 'event' | 'general'>('announcement')
@@ -36,7 +36,6 @@ const NewPostPage = () => {
   const [sendNewsletter, setSendNewsletter] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleCoverImageUpload = (result: UploadResult) => {
     setCoverImage({
@@ -93,61 +92,6 @@ const NewPostPage = () => {
     setLoading(false)
   }, [router])
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (!files) return
-
-    setIsLoading(true)
-    const newAttachments: Array<{name: string, url: string, size: string}> = []
-
-    try {
-      for (const file of Array.from(files)) {
-        try {
-          const reader = new FileReader()
-          const fileDataPromise = new Promise<string>((resolve, reject) => {
-            reader.onload = (e) => resolve(e.target?.result as string)
-            reader.onerror = () => reject(new Error('파일 읽기 실패'))
-          })
-          reader.readAsDataURL(file)
-          const fileData = await fileDataPromise
-
-          const response = await fetch('/api/upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              fileName: file.name,
-              fileData,
-              fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
-            })
-          })
-
-          if (response.ok) {
-            const { file: uploadedFile } = await response.json()
-            newAttachments.push(uploadedFile)
-          } else {
-            const error = await response.json()
-            console.error('Upload API error:', error)
-            alert(`파일 업로드 실패: ${file.name} - ${error.error}`)
-          }
-        } catch (error) {
-          console.error('File upload error:', error)
-          alert(`파일 업로드 실패: ${file.name}`)
-        }
-      }
-
-      setAttachments([...attachments, ...newAttachments])
-
-      if (newAttachments.length > 0) {
-        alert(`${newAttachments.length}개 파일 업로드 완료`)
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const removeAttachment = (index: number) => {
-    setAttachments(attachments.filter((_, i) => i !== index))
-  }
 
   const handleSave = async (publishStatus: 'draft' | 'published' | 'scheduled') => {
     if (!title || !content) {
@@ -316,61 +260,7 @@ const NewPostPage = () => {
                           />
                         </div>
 
-                        {/* 첨부파일 목록 */}
-                        {attachments.length > 0 && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
-                              첨부파일
-                            </label>
-                            <div className="space-y-2">
-                              {attachments.map((file, index) => (
-                                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
-                                  <div className="flex items-center">
-                                    <Upload className="w-4 h-4 text-gray-500 mr-2" />
-                                    <span className="text-sm text-gray-700 font-korean">{file.name}</span>
-                                    <span className="ml-2 text-xs text-gray-500">({file.size})</span>
-                                  </div>
-                                  <button
-                                    type="button"
-                                    onClick={() => removeAttachment(index)}
-                                    className="text-red-600 hover:text-red-800 text-sm font-korean"
-                                  >
-                                    삭제
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
 
-                        {/* 툴바 */}
-                        <div className="border-t pt-4">
-                          <div className="flex items-center space-x-4">
-                            <button
-                              type="button"
-                              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                            >
-                              <ImageIcon className="w-4 h-4 mr-2" />
-                              <span className="font-korean">이미지 추가</span>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => fileInputRef.current?.click()}
-                              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                            >
-                              <Upload className="w-4 h-4 mr-2" />
-                              <span className="font-korean">파일 첨부</span>
-                            </button>
-                            <input
-                              ref={fileInputRef}
-                              type="file"
-                              multiple
-                              onChange={handleFileUpload}
-                              className="hidden"
-                              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
-                            />
-                          </div>
-                        </div>
                       </div>
                     ) : (
                       /* 미리보기 */
