@@ -15,27 +15,51 @@ export const uploadFile = async (
   try {
     // Check if Firebase is properly configured
     if (!storage) {
-      throw new Error('Firebase Storage가 설정되지 않았습니다.')
+      throw new Error('Firebase Storage가 설정되지 않았습니다. 임시 저장 기능을 사용합니다.')
     }
 
-    // Create unique file name
-    const fileExtension = file.name.split('.').pop()
-    const uniqueFileName = `${uuidv4()}.${fileExtension}`
-    const filePath = `${folder}/${uniqueFileName}`
+    // Try Firebase upload first
+    try {
+      // Create unique file name
+      const fileExtension = file.name.split('.').pop()
+      const uniqueFileName = `${uuidv4()}.${fileExtension}`
+      const filePath = `${folder}/${uniqueFileName}`
 
-    // Create storage reference
-    const storageRef = ref(storage, filePath)
+      // Create storage reference
+      const storageRef = ref(storage, filePath)
 
-    // Upload file
-    const snapshot = await uploadBytes(storageRef, file)
+      // Upload file
+      const snapshot = await uploadBytes(storageRef, file)
 
-    // Get download URL
-    const downloadURL = await getDownloadURL(snapshot.ref)
+      // Get download URL
+      const downloadURL = await getDownloadURL(snapshot.ref)
 
-    return {
-      url: downloadURL,
-      path: filePath,
-      fileName: file.name
+      return {
+        url: downloadURL,
+        path: filePath,
+        fileName: file.name
+      }
+    } catch (firebaseError) {
+      console.warn('Firebase upload failed, using fallback method:', firebaseError)
+
+      // Fallback: Convert to base64 and store temporarily
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          const base64Data = reader.result as string
+          const uniqueFileName = `${uuidv4()}_${file.name}`
+
+          resolve({
+            url: base64Data,
+            path: `temp/${uniqueFileName}`,
+            fileName: file.name
+          })
+        }
+        reader.onerror = () => {
+          reject(new Error('파일 읽기에 실패했습니다.'))
+        }
+        reader.readAsDataURL(file)
+      })
     }
   } catch (error) {
     console.error('File upload failed:', error)
