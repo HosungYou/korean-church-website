@@ -8,6 +8,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        primary: {
+          DEFAULT: '#0F172A', // Deep Navy
+          light: '#334155',
+        },
+        secondary: {
+          DEFAULT: '#C5A065', // Soft Gold/Bronze
+          light: '#DCC394',
+        },
+        background: '#FAFAFA', // Off-white
         'black': '#000',
         'white': '#fff',
         'gray': {
@@ -25,6 +34,7 @@ module.exports = {
       fontFamily: {
         'korean': ['Noto Sans KR', 'sans-serif'],
         'english': ['Inter', 'sans-serif'],
+        'serif': ['Playfair Display', 'serif'],
       },
     },
   },

@@ -62,7 +62,7 @@ const Home: NextPage = () => {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) return
-    
+
     try {
       await addEmailSubscriber(email)
       setIsSubscribed(true)
@@ -134,8 +134,9 @@ const Home: NextPage = () => {
       <HeroSlider slides={heroSlides} fontClass={fontClass} />
 
       {/* Quick Access Icons */}
-      <section className="bg-white py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="bg-white py-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-dotted-pattern opacity-30"></div>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-4 gap-6 md:grid-cols-8">
             {quickAccessIcons.map((item) => {
               const Icon = item.icon
@@ -143,12 +144,12 @@ const Home: NextPage = () => {
                 <Link
                   key={item.titleKey}
                   href={item.href}
-                  className="group flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="group flex flex-col items-center p-4 rounded-xl hover:bg-gray-50/80 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center mb-3 group-hover:bg-gray-800 transition-colors">
+                  <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mb-3 group-hover:bg-primary/90 group-hover:scale-110 transition-all duration-300 shadow-md group-hover:shadow-lg">
                     <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <span className={`text-sm text-black text-center ${fontClass}`}>
+                  <span className={`text-sm text-primary font-medium text-center ${fontClass} group-hover:text-secondary transition-colors`}>
                     {t(item.titleKey)}
                   </span>
                 </Link>
@@ -159,23 +160,30 @@ const Home: NextPage = () => {
       </section>
 
       {/* Worship/Sermon Section */}
-      <section className="bg-gray-50 py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h2 className={`text-3xl font-bold text-black ${fontClass}`}>
+      <section className="bg-gray-50 py-20 relative">
+        {/* Decorative background element */}
+        <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="mb-12 text-center">
+            <h2 className={`text-4xl font-serif font-bold text-primary mb-3 ${fontClass}`}>
               {t('home:worship_section.title')}
             </h2>
+            <div className="h-1 w-20 bg-secondary mx-auto rounded-full"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {worshipCards.map((card) => (
-              <Link href={card.href} key={card.href} className="group block">
-                <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center mb-4">
-                    <div className="w-3 h-3 bg-black rounded-full mr-3"></div>
-                    <h3 className={`text-xl font-semibold text-black ${fontClass}`}>{card.title}</h3>
+              <Link href={card.href} key={card.href} className="group block h-full">
+                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 flex flex-col h-full relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="flex items-center mb-6">
+                    <div className="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center mr-4 group-hover:bg-primary/10 transition-colors">
+                      <div className="w-3 h-3 bg-primary rounded-full"></div>
+                    </div>
+                    <h3 className={`text-xl font-bold text-primary ${fontClass}`}>{card.title}</h3>
                   </div>
-                  <p className={`text-gray-600 mb-3 ${fontClass}`}>{card.description}</p>
-                  <div className={`flex items-center text-black text-sm ${fontClass}`}>
+                  <p className={`text-gray-600 mb-6 flex-grow ${fontClass} leading-relaxed`}>{card.description}</p>
+                  <div className={`flex items-center text-secondary font-semibold text-sm ${fontClass} mt-auto`}>
                     {card.cta}
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </div>
@@ -187,29 +195,29 @@ const Home: NextPage = () => {
       </section>
 
       {/* First-Time Visitors Section */}
-      <section className="bg-white py-16">
+      <section className="bg-white py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h2 className={`text-3xl font-bold text-black ${fontClass}`}>
+          <div className="mb-12">
+            <h2 className={`text-3xl font-serif font-bold text-primary ${fontClass}`}>
               {t('home:first_time_section.title')}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featureCards.map((card) => (
               <Link href={card.href} key={card.title} className="group block">
-                <div className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
+                <div className="bg-gray-50/50 rounded-xl p-6 hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-gray-100 hover:-translate-y-1">
                   <div className="flex items-start mb-4">
-                    <div className="w-3 h-3 bg-black rounded-full mr-3 mt-1"></div>
+                    <div className="w-2 h-2 bg-secondary rounded-full mr-3 mt-2"></div>
                     <div>
-                      <h3 className={`text-lg font-semibold text-black mb-2 ${fontClass}`}>
+                      <h3 className={`text-lg font-bold text-primary mb-2 ${fontClass}`}>
                         {card.title}
                       </h3>
-                      <p className={`text-gray-600 text-sm ${fontClass}`}>
+                      <p className={`text-gray-600 text-sm ${fontClass} leading-relaxed`}>
                         {card.description}
                       </p>
                     </div>
                   </div>
-                  <div className={`flex items-center text-black text-sm ${fontClass}`}>
+                  <div className={`flex items-center text-primary/70 text-sm ${fontClass} group-hover:text-secondary transition-colors`}>
                     {t('home:first_time_section.cta')}
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </div>
@@ -221,48 +229,54 @@ const Home: NextPage = () => {
       </section>
 
       {/* Email Subscription Section */}
-      <section className="bg-gray-100 py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg p-8 shadow-sm">
-            <div className="flex items-center mb-6">
-              <div className="w-4 h-4 bg-black rounded-full mr-4"></div>
-              <h2 className={`text-2xl font-bold text-black ${fontClass}`}>
-                {t('home:subscribe_section.title')}
-              </h2>
+      <section className="bg-primary py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-dotted-pattern opacity-5 mix-blend-overlay"></div>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-2xl border border-white/10">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="md:w-1/2">
+                <div className="flex items-center mb-4">
+                  <Mail className="w-8 h-8 text-secondary mr-4" />
+                  <h2 className={`text-2xl font-serif font-bold text-white ${fontClass}`}>
+                    {t('home:subscribe_section.title')}
+                  </h2>
+                </div>
+                <p className={`text-gray-300 text-lg ${fontClass}`}>
+                  {t('home:subscribe_section.description')}
+                </p>
+              </div>
+
+              <div className="md:w-1/2 w-full">
+                <form onSubmit={handleSubscribe} className="flex gap-3">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t('home:subscribe_section.placeholder') as string}
+                    className={`flex-1 px-4 py-3 bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all ${fontClass}`}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className={`px-6 py-3 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary/90 transition-all shadow-lg flex items-center whitespace-nowrap ${fontClass}`}
+                  >
+                    <Bell className="w-4 h-4 mr-2" />
+                    {t('home:subscribe_section.button')}
+                  </button>
+                </form>
+                {isSubscribed && (
+                  <p className={`mt-4 text-green-400 font-medium ${fontClass}`}>
+                    {t('home:subscribe_section.success')}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="flex items-center mb-4">
-              <Mail className="w-6 h-6 text-gray-600 mr-3" />
-              <p className={`text-gray-700 ${fontClass}`}>
-                {t('home:subscribe_section.description')}
-              </p>
-            </div>
-            <form onSubmit={handleSubscribe} className="flex gap-3">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('home:subscribe_section.placeholder') as string}
-                className={`flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent ${fontClass}`}
-                required
-              />
-              <button
-                type="submit"
-                className={`px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center ${fontClass}`}
-              >
-                <Bell className="w-4 h-4 mr-2" />
-                {t('home:subscribe_section.button')}
-              </button>
-            </form>
-            {isSubscribed && (
-              <p className={`mt-4 text-green-600 ${fontClass}`}>
-                {t('home:subscribe_section.success')}
-              </p>
-            )}
           </div>
         </div>
       </section>
 
     </Layout>
+
   )
 }
 

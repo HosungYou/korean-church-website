@@ -232,10 +232,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black font-english">
-      <header className="bg-white/70 sticky top-0 z-50 backdrop-blur-lg border-b border-black/10">
+    <div className="min-h-screen bg-background text-primary font-english">
+      <header className="bg-white/80 sticky top-0 z-50 backdrop-blur-md border-b border-primary/5">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 justify-between items-center">
+            {/* ... (Logo section unchanged, mostly) ... */}
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
                 <div className="relative h-12 w-32">
@@ -256,14 +257,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {navigationItems.map((item) =>
                 item.dropdown ? (
                   <Menu as="div" key={item.labelKey} className="relative">
-                    <Menu.Button className={`inline-flex items-center px-1 pt-1 text-base font-medium text-black hover:opacity-70 transition-opacity ${fontClass}`}>
+                    <Menu.Button className={`inline-flex items-center px-1 pt-1 text-base font-medium text-primary hover:text-secondary transition-colors ${fontClass}`}>
                       <span>{item.labelKey === 'nav_groups.worship' ? '예배' :
-                             item.labelKey === 'nav_groups.growth' ? '성장' :
-                             item.labelKey === 'nav_groups.serving' ? '섬김' :
-                             item.labelKey === 'nav_groups.media' ? '미디어' :
-                             item.labelKey === 'nav_groups.community' ? '소통' :
-                             item.labelKey === 'nav_groups.about' ? '교회안내' :
-                             t(item.labelKey)}</span>
+                        item.labelKey === 'nav_groups.growth' ? '성장' :
+                          item.labelKey === 'nav_groups.serving' ? '섬김' :
+                            item.labelKey === 'nav_groups.media' ? '미디어' :
+                              item.labelKey === 'nav_groups.community' ? '소통' :
+                                item.labelKey === 'nav_groups.about' ? '교회안내' :
+                                  t(item.labelKey)}</span>
                       <ChevronDownIcon className="ml-1 h-5 w-5" />
                     </Menu.Button>
                     <Transition
@@ -275,15 +276,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       leaveFrom="opacity-100 translate-y-0"
                       leaveTo="opacity-0 translate-y-1"
                     >
-                      <Menu.Items className="absolute -right-4 top-full mt-4 w-64 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="absolute -right-4 top-full mt-4 w-64 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                         {item.dropdown.map((subItem) => (
                           <Menu.Item key={subItem.labelKey}>
                             {({ active }) => (
                               <Link
                                 href={subItem.href!}
-                                className={`${
-                                  active ? 'bg-black/5' : ''
-                                } block px-4 py-2 text-base text-black/80 ${fontClass}`}
+                                className={`${active ? 'bg-primary/5 text-primary' : 'text-gray-700'
+                                  } block px-4 py-2 text-base ${fontClass}`}
                               >
                                 {t(subItem.labelKey)}
                               </Link>
@@ -297,7 +297,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Link
                     key={item.labelKey}
                     href={item.href!}
-                    className={`px-1 pt-1 text-base font-medium text-black hover:opacity-70 transition-opacity ${fontClass}`}
+                    className={`px-1 pt-1 text-base font-medium text-primary hover:text-secondary transition-colors ${fontClass}`}
                   >
                     {t(item.labelKey)}
                   </Link>
@@ -312,13 +312,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <>
                     <button
                       onClick={handleAdminNavigate}
-                      className={`px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors ${fontClass}`}
+                      className={`px-3 py-1.5 text-sm font-medium rounded-md border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors ${fontClass}`}
                     >
                       {t('admin.dashboard')}
                     </button>
                     <button
                       onClick={handleAdminLogout}
-                      className={`px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors ${fontClass}`}
+                      className={`px-3 py-1.5 text-sm font-medium rounded-md border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors ${fontClass}`}
                     >
                       {t('admin.logout')}
                     </button>
@@ -326,7 +326,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 ) : (
                   <button
                     onClick={handleAdminNavigate}
-                    className={`px-3 py-1.5 text-sm font-medium rounded-md border border-black/20 text-black hover:bg-black hover:text-white transition-colors ${fontClass}`}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors ${fontClass}`}
                   >
                     {t('admin.login')}
                   </button>
@@ -335,23 +335,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="hidden sm:flex items-center space-x-2 mr-4">
                 <button
                   onClick={() => changeLanguage('ko')}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md border ${
-                    i18n.language === 'ko' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
-                  } ${fontClass}`}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md border ${i18n.language === 'ko' ? 'bg-primary text-white border-primary' : 'text-primary border-primary/20 hover:bg-primary/5'
+                    } ${fontClass}`}
                 >
                   {languageShortLabels.ko}
                 </button>
                 <button
                   onClick={() => changeLanguage('en')}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md border ${
-                    i18n.language === 'en' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
-                  } ${fontClass}`}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md border ${i18n.language === 'en' ? 'bg-primary text-white border-primary' : 'text-primary border-primary/20 hover:bg-primary/5'
+                    } ${fontClass}`}
                 >
                   {languageShortLabels.en}
                 </button>
               </div>
               <div className="lg:hidden">
-                <button onClick={() => setMobileMenuOpen(true)} className="p-2">
+                <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-primary">
                   <MenuIcon className="h-6 w-6" />
                 </button>
               </div>
@@ -399,13 +397,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <div key={item.labelKey} className="px-4">
                       {item.dropdown ? (
                         <div>
-                          <p className={`${fontClass} font-semibold text-lg py-2`}>{t(item.labelKey)}</p>
-                          <div className="pl-2 border-l border-black/20">
+                          <p className={`${fontClass} font-semibold text-lg py-2 text-primary`}>{t(item.labelKey)}</p>
+                          <div className="pl-2 border-l border-primary/20">
                             {item.dropdown.map((subItem) => (
                               <Link
                                 key={subItem.labelKey}
                                 href={subItem.href!}
-                                className={`block rounded-lg py-2 pl-4 pr-3 text-base ${fontClass} text-black/80 hover:bg-black/5`}
+                                className={`block rounded-lg py-2 pl-4 pr-3 text-base ${fontClass} text-gray-600 hover:bg-gray-50`}
                                 onClick={() => setMobileMenuOpen(false)}
                               >
                                 {t(subItem.labelKey)}
@@ -416,7 +414,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       ) : (
                         <Link
                           href={item.href!}
-                          className={`-mx-3 block rounded-lg px-3 py-2.5 text-base ${fontClass} font-semibold leading-7 text-gray-900 hover:bg-gray-50`}
+                          className={`-mx-3 block rounded-lg px-3 py-2.5 text-base ${fontClass} font-semibold leading-7 text-primary hover:bg-gray-50`}
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           {t(item.labelKey)}
@@ -425,18 +423,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </div>
                   ))}
                 </div>
+                {/* Mobile Admin/Lang unchanged mostly but using primary color tokens */}
                 <div className="px-4 py-6 space-y-3">
                   {adminSession ? (
                     <>
                       <button
                         onClick={handleMobileAdminNavigate}
-                        className={`w-full px-4 py-2 rounded-md border border-black/20 text-left ${fontClass} text-black hover:bg-black hover:text-white transition-colors`}
+                        className={`w-full px-4 py-2 rounded-md border border-primary/20 text-left ${fontClass} text-primary hover:bg-primary hover:text-white transition-colors`}
                       >
                         {t('admin.dashboard')}
                       </button>
                       <button
                         onClick={handleMobileAdminLogout}
-                        className={`w-full px-4 py-2 rounded-md border border-black/20 text-left ${fontClass} text-black hover:bg-black hover:text-white transition-colors`}
+                        className={`w-full px-4 py-2 rounded-md border border-primary/20 text-left ${fontClass} text-primary hover:bg-primary hover:text-white transition-colors`}
                       >
                         {t('admin.logout')}
                       </button>
@@ -444,7 +443,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   ) : (
                     <button
                       onClick={handleMobileAdminNavigate}
-                      className={`w-full px-4 py-2 rounded-md border border-black/20 text-left ${fontClass} text-black hover:bg-black hover:text-white transition-colors`}
+                      className={`w-full px-4 py-2 rounded-md border border-primary/20 text-left ${fontClass} text-primary hover:bg-primary hover:text-white transition-colors`}
                     >
                       {t('admin.login')}
                     </button>
@@ -453,17 +452,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <div className="py-6 px-4 flex items-center space-x-2">
                   <button
                     onClick={() => { changeLanguage('ko'); setMobileMenuOpen(false); }}
-                    className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${
-                      i18n.language === 'ko' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
-                    } ${fontClass}`}
+                    className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${i18n.language === 'ko' ? 'bg-primary text-white border-primary' : 'text-primary border-primary/20 hover:bg-primary/5'
+                      } ${fontClass}`}
                   >
                     {languageFullLabels.ko}
                   </button>
                   <button
                     onClick={() => { changeLanguage('en'); setMobileMenuOpen(false); }}
-                    className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${
-                      i18n.language === 'en' ? 'bg-black text-white border-black' : 'text-black border-black/20 hover:bg-black/5'
-                    } ${fontClass}`}
+                    className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${i18n.language === 'en' ? 'bg-primary text-white border-primary' : 'text-primary border-primary/20 hover:bg-primary/5'
+                      } ${fontClass}`}
                   >
                     {languageFullLabels.en}
                   </button>
@@ -476,21 +473,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Breadcrumb Navigation */}
       {router.pathname !== '/' && (
-        <nav className="bg-gray-50 border-b border-gray-200 py-3">
+        <nav className="bg-gray-50/50 border-b border-gray-100 py-3 backdrop-blur-sm">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-center space-x-2 text-sm">
               {breadcrumbs.map((crumb, index) => (
                 <React.Fragment key={crumb.name}>
                   {index > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
                   {crumb.href ? (
-                    <Link 
-                      href={crumb.href} 
-                      className={`text-gray-600 hover:text-black transition-colors ${fontClass}`}
+                    <Link
+                      href={crumb.href}
+                      className={`text-gray-500 hover:text-primary transition-colors ${fontClass}`}
                     >
                       {crumb.name}
                     </Link>
                   ) : (
-                    <span className={`text-black font-medium ${fontClass}`}>{crumb.name}</span>
+                    <span className={`text-primary font-medium ${fontClass}`}>{crumb.name}</span>
                   )}
                 </React.Fragment>
               ))}
@@ -498,39 +495,39 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </nav>
       )}
-      
+
       <main>{children}</main>
 
-      <footer className="bg-white border-t">
+      <footer className="bg-primary text-white border-t border-primary/20">
         <div className="mx-auto max-w-7xl px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
-              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('church_name', { defaultValue: '스테이트 칼리지 한인교회' })}</h3>
-              <p className={`text-black/70 ${fontClass}`}>{t('full_address', { defaultValue: '758 Glenn Rd, State College, PA 16803' })}</p>
-              <p className={`text-black/70 mt-2 ${fontClass}`}>
-                <span className="font-semibold">{t('phone', { defaultValue: '전화' })}:</span> {t('phone_number', { defaultValue: '814-380-9393' })}
+              <h3 className={`text-xl font-serif font-bold mb-4 text-white ${fontClass}`}>{t('church_name', { defaultValue: '스테이트 칼리지 한인교회' })}</h3>
+              <p className={`text-gray-300 ${fontClass}`}>{t('full_address', { defaultValue: '758 Glenn Rd, State College, PA 16803' })}</p>
+              <p className={`text-gray-300 mt-2 ${fontClass}`}>
+                <span className="font-semibold text-secondary">{t('phone', { defaultValue: '전화' })}:</span> {t('phone_number', { defaultValue: '814-380-9393' })}
               </p>
-              <p className={`text-black/70 ${fontClass}`}>
-                <span className="font-semibold">{t('email', { defaultValue: '이메일' })}:</span> {t('email_address', { defaultValue: 'KyuHongYeon@gmail.com' })}
+              <p className={`text-gray-300 ${fontClass}`}>
+                <span className="font-semibold text-secondary">{t('email', { defaultValue: '이메일' })}:</span> {t('email_address', { defaultValue: 'KyuHongYeon@gmail.com' })}
               </p>
             </div>
             <div>
-              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('service_times', { defaultValue: '예배 시간' })}</h3>
-              <p className={`text-black/70 ${fontClass}`}>{t('sunday', { defaultValue: '주일' })}: {t('sunday_time', { defaultValue: '오전 11:00' })}</p>
-              <p className={`text-black/70 ${fontClass}`}>{t('wednesday', { defaultValue: '수요일' })}: {t('wednesday_time', { defaultValue: '오후 7:30' })}</p>
+              <h3 className={`text-lg font-semibold mb-4 text-secondary ${fontClass}`}>{t('service_times', { defaultValue: '예배 시간' })}</h3>
+              <p className={`text-gray-300 ${fontClass}`}><span className="text-white font-medium">{t('sunday', { defaultValue: '주일' })}:</span> {t('sunday_time', { defaultValue: '오전 11:00' })}</p>
+              <p className={`text-gray-300 ${fontClass}`}><span className="text-white font-medium">{t('wednesday', { defaultValue: '수요일' })}:</span> {t('wednesday_time', { defaultValue: '오후 7:30' })}</p>
             </div>
             <div>
-              <h3 className={`text-lg font-semibold mb-4 ${fontClass}`}>{t('quick_links', { defaultValue: '바로가기' })}</h3>
+              <h3 className={`text-lg font-semibold mb-4 text-secondary ${fontClass}`}>{t('quick_links', { defaultValue: '바로가기' })}</h3>
               <div className="flex flex-col space-y-2">
-                <Link href="/about/greeting" className={`text-black/70 hover:text-black ${fontClass}`}>{t('church_guide', { defaultValue: '교회안내' })}</Link>
-                <Link href="/sermons-live" className={`text-black/70 hover:text-black ${fontClass}`}>{t('sermons_praise', { defaultValue: '설교/찬양' })}</Link>
-                <Link href="/news/announcements" className={`text-black/70 hover:text-black ${fontClass}`}>{t('nav_links.announcements', { defaultValue: '공지사항' })}</Link>
-                <Link href="/giving" className={`text-black/70 hover:text-black ${fontClass}`}>{t('online_giving', { defaultValue: '온라인헌금' })}</Link>
+                <Link href="/about/greeting" className={`text-gray-300 hover:text-white transition-colors ${fontClass}`}>{t('church_guide', { defaultValue: '교회안내' })}</Link>
+                <Link href="/sermons-live" className={`text-gray-300 hover:text-white transition-colors ${fontClass}`}>{t('sermons_praise', { defaultValue: '설교/찬양' })}</Link>
+                <Link href="/news/announcements" className={`text-gray-300 hover:text-white transition-colors ${fontClass}`}>{t('nav_links.announcements', { defaultValue: '공지사항' })}</Link>
+                <Link href="/giving" className={`text-gray-300 hover:text-white transition-colors ${fontClass}`}>{t('online_giving', { defaultValue: '온라인헌금' })}</Link>
               </div>
             </div>
           </div>
-          <div className="mt-8 border-t border-black/10 pt-8 text-center">
-            <p className={`text-black/50 text-sm ${fontClass}`}>
+          <div className="mt-8 border-t border-gray-700/50 pt-8 text-center">
+            <p className={`text-gray-500 text-sm ${fontClass}`}>
               © {new Date().getFullYear()} {t('church_name')}. All rights reserved.
             </p>
           </div>

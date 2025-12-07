@@ -42,9 +42,8 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ slides, fontClass }) => {
       {slides.map((slide, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+            }`}
         >
           <Image
             src={slideImages[index]}
@@ -54,15 +53,22 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ slides, fontClass }) => {
             priority={index === 0}
           />
 
-          {/* Dark overlay for better text visibility */}
-          <div className="absolute inset-0 bg-black bg-opacity-50" />
+          {/* Gradient overlay for better text visibility and warmth */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-primary/40" />
 
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center text-white px-4 max-w-4xl">
-              <h1 className={`text-5xl md:text-6xl font-bold mb-6 ${fontClass ?? ''}`}>
+              <h1 className={`text-5xl md:text-7xl font-serif font-bold mb-6 drop-shadow-lg ${fontClass ?? ''} ${index === currentSlide ? 'animate-fade-in-up' : 'opacity-0'}`}>
                 {slide.title}
               </h1>
-              <p className={`text-xl md:text-2xl font-light max-w-3xl mx-auto ${fontClass ?? ''}`}>
+              <div
+                className={`h-1 w-24 bg-secondary mx-auto mb-8 rounded-full ${index === currentSlide ? 'animate-fade-in-up' : 'opacity-0'}`}
+                style={{ animationDelay: '0.2s' }}
+              />
+              <p
+                className={`text-xl md:text-2xl font-light max-w-3xl mx-auto drop-shadow-md ${fontClass ?? ''} ${index === currentSlide ? 'animate-fade-in-up' : 'opacity-0'}`}
+                style={{ animationDelay: '0.4s' }}
+              >
                 {slide.subtitle}
               </p>
             </div>
@@ -76,9 +82,8 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ slides, fontClass }) => {
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-colors ${
-              index === currentSlide ? 'bg-white' : 'bg-white/50'
-            }`}
+            className={`w-3 h-3 rounded-full transition-colors ${index === currentSlide ? 'bg-white' : 'bg-white/50'
+              }`}
           />
         ))}
       </div>
