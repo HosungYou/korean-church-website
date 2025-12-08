@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import { createSupabaseClient } from '@/lib/supabaseClient'
+import { createSupabaseClient } from '../lib/supabaseClient'
 
 export default function AdminLoginFormSupabase() {
   const [loading, setLoading] = useState(false)
