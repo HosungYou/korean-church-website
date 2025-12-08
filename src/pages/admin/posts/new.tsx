@@ -95,33 +95,20 @@ const NewPostPage = () => {
     try {
       setStatus(publishStatus)
 
-      const response = await fetch('/api/admin/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title,
-          content,
-          type,
-          category,
-          status: publishStatus,
-          authorEmail: admin?.email ?? null,
-          authorName: admin?.name ?? admin?.email ?? '관리자',
-          coverImageUrl: coverImage?.url ?? null,
-          attachmentUrl: attachment?.url ?? null,
-          attachmentName: attachment?.fileName ?? null,
-          scheduledFor: publishStatus === 'scheduled' ? scheduledDate : null
-        })
+      // Use createPost directly instead of API route
+      const createdId = await createPost({
+        title,
+        content,
+        type,
+        category,
+        status: publishStatus,
+        authorEmail: admin?.email ?? null,
+        authorName: admin?.name ?? admin?.email ?? '관리자',
+        coverImageUrl: coverImage?.url ?? null,
+        attachmentUrl: attachment?.url ?? null,
+        attachmentName: attachment?.fileName ?? null,
+        scheduledFor: publishStatus === 'scheduled' ? scheduledDate : null
       })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.details || errorData.error || '게시글 생성에 실패했습니다.')
-      }
-
-      const result = await response.json()
-      const createdId = result.id
 
       if (publishStatus === 'published' && sendNewsletter) {
         await sendNewsletterToSubscribers({
