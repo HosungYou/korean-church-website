@@ -13,8 +13,18 @@ const AuthCallbackPage = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        console.log('[Callback] Starting auth callback...')
+        console.log('[Callback] URL hash:', window.location.hash)
+        console.log('[Callback] URL search:', window.location.search)
+
         // Get the auth code from URL
         const { data: { session }, error } = await supabase.auth.getSession()
+
+        console.log('[Callback] getSession result:', {
+          hasSession: !!session,
+          error: error?.message,
+          userId: session?.user?.id
+        })
 
         if (error) {
           console.error('Auth callback error:', error)
@@ -24,12 +34,18 @@ const AuthCallbackPage = () => {
         }
 
         if (session?.user) {
+          console.log('[Callback] Session found, checking admin role...')
           // Check if user is admin
           const { data: adminData, error: adminError } = await supabase
             .from('profiles')
             .select('id, full_name, role')
             .eq('id', session.user.id)
             .single<{ id: string; full_name: string | null; role: string }>()
+
+          console.log('[Callback] Admin check result:', {
+            adminData,
+            error: adminError?.message
+          })
 
           if (adminError || !adminData || adminData.role !== 'admin') {
             console.error('Admin check failed:', adminError)
@@ -62,13 +78,20 @@ const AuthCallbackPage = () => {
           router.push('/admin/dashboard')
         } else {
           // No session, try to exchange code
+          console.log('[Callback] No session found, trying to extract tokens from URL...')
           const hashParams = new URLSearchParams(window.location.hash.substring(1))
           const queryParams = new URLSearchParams(window.location.search)
 
           const accessToken = hashParams.get('access_token') || queryParams.get('access_token')
           const refreshToken = hashParams.get('refresh_token') || queryParams.get('refresh_token')
 
+          console.log('[Callback] Tokens found:', {
+            hasAccessToken: !!accessToken,
+            hasRefreshToken: !!refreshToken
+          })
+
           if (accessToken && refreshToken) {
+            console.log('[Callback] Setting session with tokens...')
             const { data, error: setSessionError } = await supabase.auth.setSession({
               access_token: accessToken,
               refresh_token: refreshToken

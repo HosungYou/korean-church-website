@@ -22,9 +22,17 @@ export function useAdminAuth() {
     const checkSession = async () => {
       try {
         setLoading(true)
+        console.log('[useAdminAuth] Checking session...')
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
 
+        console.log('[useAdminAuth] Session result:', {
+          hasSession: !!sessionData.session,
+          error: sessionError?.message,
+          userId: sessionData.session?.user?.id
+        })
+
         if (sessionError || !sessionData.session) {
+          console.log('[useAdminAuth] No session, redirecting to login')
           if (isMounted) {
             setAdmin(null)
             setError(sessionError?.message || null)
@@ -35,13 +43,17 @@ export function useAdminAuth() {
 
         const session = sessionData.session
 
+        console.log('[useAdminAuth] Checking admin profile for user:', session.user.id)
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('full_name, role')
           .eq('id', session.user.id)
           .single<{ full_name: string | null; role: string }>()
 
+        console.log('[useAdminAuth] Profile result:', { profile, error: profileError?.message })
+
         if (profileError || profile?.role !== 'admin') {
+          console.log('[useAdminAuth] Not admin or profile error, signing out')
           await supabase.auth.signOut()
           if (isMounted) {
             setAdmin(null)
