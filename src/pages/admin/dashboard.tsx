@@ -3,48 +3,80 @@ import { useRouter } from 'next/router'
 import Layout from '../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-// Firebase 비활성화 - localStorage 기반 인증 사용
+import { supabase } from '../../../lib/supabase'
+import { getSubscriberCount } from '../../utils/emailService'
+import { getPosts } from '../../utils/postService'
 import {
   LayoutDashboard,
   FileText,
   Mail,
   Users,
-  Settings,
   Plus,
   TrendingUp,
   Calendar,
-  MessageSquare,
   LogOut,
   BookOpen,
   Megaphone
 } from 'lucide-react'
 import Link from 'next/link'
-import { signOut } from 'firebase/auth'
-import { auth } from '../../../lib/firebase'
 
 const AdminDashboardPage = () => {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
-    totalPosts: 12,
-    subscribers: 45,
-    recentViews: 1234,
-    pendingApprovals: 3
+    totalPosts: 0,
+    subscribers: 0,
+    publishedPosts: 0
   })
 
   useEffect(() => {
-    // localStorage 기반 인증 체크
-    const adminLoggedIn = localStorage.getItem('adminLoggedIn')
-    const adminUser = localStorage.getItem('adminUser')
-    
-    if (adminLoggedIn === 'true' && adminUser) {
-      setUser(JSON.parse(adminUser))
-    } else {
-      router.push('/admin/login')
+    // localStorage 기반 인증 체크 + Supabase 세션 확인
+    const checkAuth = async () => {
+      const adminLoggedIn = localStorage.getItem('adminLoggedIn')
+      const adminUser = localStorage.getItem('adminUser')
+
+      if (adminLoggedIn === 'true' && adminUser) {
+        setUser(JSON.parse(adminUser))
+        // Fetch real stats
+        await fetchStats()
+      } else {
+        // Check Supabase session as fallback
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          setUser({
+            email: session.user.email,
+            name: session.user.user_metadata?.full_name || '관리자'
+          })
+          await fetchStats()
+        } else {
+          router.push('/admin/login')
+        }
+      }
+      setLoading(false)
     }
-    setLoading(false)
+
+    checkAuth()
   }, [router])
+
+  const fetchStats = async () => {
+    try {
+      const [posts, subscriberCount] = await Promise.all([
+        getPosts(),
+        getSubscriberCount()
+      ])
+
+      const publishedPosts = posts.filter(p => p.status === 'published').length
+
+      setStats({
+        totalPosts: posts.length,
+        subscribers: subscriberCount,
+        publishedPosts
+      })
+    } catch (error) {
+      console.error('Failed to fetch stats:', error)
+    }
+  }
 
   const handleLogout = async () => {
     try {
@@ -56,7 +88,7 @@ const AdminDashboardPage = () => {
 
       setUser(null)
 
-      await signOut(auth)
+      await supabase.auth.signOut()
     } catch (error) {
       console.error('로그아웃 오류:', error)
     } finally {
@@ -97,24 +129,6 @@ const AdminDashboardPage = () => {
       name: '뉴스레터',
       href: '/admin/newsletter',
       icon: Mail,
-      current: false
-    },
-    {
-      name: '구독자 관리',
-      href: '/admin/subscribers',
-      icon: Users,
-      current: false
-    },
-    {
-      name: '댓글 관리',
-      href: '/admin/comments',
-      icon: MessageSquare,
-      current: false
-    },
-    {
-      name: '설정',
-      href: '/admin/settings',
-      icon: Settings,
       current: false
     }
   ]
@@ -159,7 +173,7 @@ const AdminDashboardPage = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700 font-korean">
-                  안녕하세요, {user?.email || user?.name}님
+                  안녕하세요, {user?.name || user?.email}님
                 </span>
                 <button
                   onClick={handleLogout}
@@ -176,7 +190,7 @@ const AdminDashboardPage = () => {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             {/* 통계 카드 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
@@ -217,24 +231,8 @@ const AdminDashboardPage = () => {
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate font-korean">최근 조회수</dt>
-                        <dd className="text-lg font-medium text-gray-900">{stats.recentViews}</dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <MessageSquare className="h-6 w-6 text-gray-400" />
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate font-korean">승인 대기</dt>
-                        <dd className="text-lg font-medium text-gray-900">{stats.pendingApprovals}</dd>
+                        <dt className="text-sm font-medium text-gray-500 truncate font-korean">발행된 게시글</dt>
+                        <dd className="text-lg font-medium text-gray-900">{stats.publishedPosts}</dd>
                       </dl>
                     </div>
                   </div>
@@ -323,9 +321,9 @@ const AdminDashboardPage = () => {
                             <div className="min-w-0 flex-1 pt-1.5">
                               <div>
                                 <p className="text-sm text-gray-500 font-korean">
-                                  새로운 공지사항이 게시되었습니다
+                                  대시보드가 Supabase로 마이그레이션되었습니다
                                 </p>
-                                <p className="text-xs text-gray-400">2시간 전</p>
+                                <p className="text-xs text-gray-400">방금</p>
                               </div>
                             </div>
                           </div>
@@ -342,9 +340,9 @@ const AdminDashboardPage = () => {
                             <div className="min-w-0 flex-1 pt-1.5">
                               <div>
                                 <p className="text-sm text-gray-500 font-korean">
-                                  뉴스레터가 45명의 구독자에게 발송되었습니다
+                                  이메일 구독 시스템이 업데이트되었습니다
                                 </p>
-                                <p className="text-xs text-gray-400">5시간 전</p>
+                                <p className="text-xs text-gray-400">최근</p>
                               </div>
                             </div>
                           </div>

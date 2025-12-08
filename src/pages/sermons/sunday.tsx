@@ -1,139 +1,249 @@
 import Layout from '@/components/Layout'
-import PageHeader from '@/components/PageHeader'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import Image from 'next/image'
 import Link from 'next/link'
+import { Play, Calendar, User, BookOpen, ArrowRight, Filter, Search } from 'lucide-react'
+import { useState } from 'react'
+
+interface Sermon {
+  id: number
+  title: string
+  speaker: string
+  date: string
+  scripture: string
+  videoId: string
+  series?: string
+}
 
 const SundaySermonsPage = () => {
-  const sermons = [
-    { id: 1, title: '믿음의 기초', speaker: '김철수 목사', date: '2025-08-10', videoId: 'dQw4w9WgXcQ', image: '/images/sermon1.jpg' },
-    { id: 2, title: '사랑의 실천', speaker: '김철수 목사', date: '2025-08-03', videoId: 'dQw4w9WgXcQ', image: '/images/sermon2.jpg' },
-    { id: 3, title: '소망의 이유', speaker: '이영희 부목사', date: '2025-07-27', videoId: 'dQw4w9WgXcQ', image: '/images/sermon3.jpg' },
-    { id: 4, title: '은혜의 통로', speaker: '김철수 목사', date: '2025-07-20', videoId: 'dQw4w9WgXcQ', image: '/images/sermon4.jpg' },
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedYear, setSelectedYear] = useState('all')
+
+  const sermons: Sermon[] = [
+    { id: 1, title: '믿음의 기초', speaker: '연규홍 목사', date: '2025-08-10', scripture: '히브리서 11:1-6', videoId: 'dQw4w9WgXcQ', series: '요한복음 강해' },
+    { id: 2, title: '사랑의 실천', speaker: '연규홍 목사', date: '2025-08-03', scripture: '요한일서 4:7-12', videoId: 'dQw4w9WgXcQ', series: '요한복음 강해' },
+    { id: 3, title: '소망의 이유', speaker: '연규홍 목사', date: '2025-07-27', scripture: '베드로전서 3:15', videoId: 'dQw4w9WgXcQ', series: '요한복음 강해' },
+    { id: 4, title: '은혜의 통로', speaker: '연규홍 목사', date: '2025-07-20', scripture: '에베소서 2:8-10', videoId: 'dQw4w9WgXcQ', series: '요한복음 강해' },
+    { id: 5, title: '하나님의 사랑', speaker: '연규홍 목사', date: '2025-07-13', scripture: '요한복음 3:16', videoId: 'dQw4w9WgXcQ', series: '요한복음 강해' },
+    { id: 6, title: '그리스도의 십자가', speaker: '연규홍 목사', date: '2025-07-06', scripture: '갈라디아서 2:20', videoId: 'dQw4w9WgXcQ' },
   ]
+
+  const years = ['all', '2025', '2024', '2023']
+
+  const filteredSermons = sermons.filter(sermon => {
+    const matchesSearch = sermon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sermon.scripture.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sermon.speaker.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesYear = selectedYear === 'all' || sermon.date.startsWith(selectedYear)
+    return matchesSearch && matchesYear
+  })
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
 
   return (
     <Layout>
-      <PageHeader
-        title="주일예배"
-        subtitle="하나님의 말씀으로 은혜받는 주일예배 설교말씀"
-      />
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
-          {/* Section Header */}
-          <div className="text-center mb-16">
+      {/* Hero Section */}
+      <section className="bg-white py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
             <div className="flex items-center justify-center mb-6">
-              <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
-              <h2 className="text-3xl font-bold text-black font-korean">최근 설교</h2>
+              <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
+              <h1 className="text-4xl md:text-5xl font-bold text-black font-korean">주일설교 영상</h1>
+              <div className="w-3 h-3 bg-black rounded-full ml-4"></div>
             </div>
-            <p className="text-lg text-gray-600 font-korean">하나님의 말씀으로 은혜받는 주일예배 설교말씀</p>
+            <p className="text-xl text-gray-600 font-korean max-w-2xl mx-auto">
+              하나님의 말씀으로 은혜받는 주일예배 설교말씀
+            </p>
           </div>
+        </div>
+      </section>
 
-          {/* Service Info */}
-          <div className="bg-gray-50 rounded-lg p-8 mb-12">
-            <div className="flex items-center mb-6">
-              <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
-              <h3 className="text-2xl font-bold text-black font-korean">예배 안내</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-1 h-1 bg-black rounded-full mr-2"></div>
-                  <h4 className="font-semibold text-gray-800 font-korean">예배 시간</h4>
-                </div>
-                <p className="text-sm text-gray-600 font-korean">주일 오전 11:00</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-1 h-1 bg-black rounded-full mr-2"></div>
-                  <h4 className="font-semibold text-gray-800 font-korean">예배 장소</h4>
-                </div>
-                <p className="text-sm text-gray-600 font-korean">본당 (메인홀)</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-1 h-1 bg-black rounded-full mr-2"></div>
-                  <h4 className="font-semibold text-gray-800 font-korean">동시통역</h4>
-                </div>
-                <p className="text-sm text-gray-600 font-korean">한국어/영어</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Sermons Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12">
-            {sermons.map((sermon) => (
-              <div key={sermon.id} className="group bg-white rounded-lg shadow-md overflow-hidden">
-                <Link href={`/sermons/sunday/${sermon.id}`}>
-                  <div className="relative aspect-w-16 aspect-h-9">
-                    <Image src={sermon.image} alt={sermon.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center mb-3">
-                      <div className="w-1 h-1 bg-black rounded-full mr-2"></div>
-                      <span className="text-xs text-gray-500 font-korean">설교말씀</span>
-                    </div>
-                    <h3 className="text-xl font-bold text-black font-korean group-hover:underline mb-2">{sermon.title}</h3>
-                    <div className="space-y-1">
-                      <div className="flex items-center">
-                        <div className="w-1 h-1 bg-gray-400 rounded-full mr-2"></div>
-                        <p className="text-base text-gray-600 font-korean">{sermon.speaker}</p>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="w-1 h-1 bg-gray-400 rounded-full mr-2"></div>
-                        <p className="text-sm text-gray-500 font-english">{sermon.date}</p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          {/* Additional Resources */}
-          <div className="mt-16 bg-white rounded-lg shadow-md p-8">
-            <div className="flex items-center mb-6">
-              <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
-              <h3 className="text-2xl font-bold text-black font-korean">설교 자료</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Service Info */}
+      <section className="bg-gray-50 py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center justify-center bg-white rounded-lg p-4 shadow-sm">
+              <Calendar className="w-5 h-5 text-black mr-3" />
               <div>
-                <div className="flex items-center mb-4">
-                  <div className="w-1 h-1 bg-black rounded-full mr-2"></div>
-                  <h4 className="font-semibold text-gray-800 font-korean">온라인 시청</h4>
-                </div>
-                <ul className="space-y-2 text-sm text-gray-600 font-korean">
-                  <li className="flex items-center">
-                    <div className="w-1 h-1 bg-gray-400 rounded-full mr-2"></div>
-                    YouTube 라이브 스트리밍
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-1 h-1 bg-gray-400 rounded-full mr-2"></div>
-                    과거 설교 아카이브 제공
-                  </li>
-                </ul>
+                <p className="text-sm text-gray-500 font-korean">예배 시간</p>
+                <p className="font-semibold text-black font-korean">매주 일요일 오전 11:00</p>
               </div>
+            </div>
+            <div className="flex items-center justify-center bg-white rounded-lg p-4 shadow-sm">
+              <User className="w-5 h-5 text-black mr-3" />
               <div>
-                <div className="flex items-center mb-4">
-                  <div className="w-1 h-1 bg-black rounded-full mr-2"></div>
-                  <h4 className="font-semibold text-gray-800 font-korean">설교 노트</h4>
-                </div>
-                <ul className="space-y-2 text-sm text-gray-600 font-korean">
-                  <li className="flex items-center">
-                    <div className="w-1 h-1 bg-gray-400 rounded-full mr-2"></div>
-                    PDF 다운로드 가능
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-1 h-1 bg-gray-400 rounded-full mr-2"></div>
-                    성경 본문 및 요약 포함
-                  </li>
-                </ul>
+                <p className="text-sm text-gray-500 font-korean">설교자</p>
+                <p className="font-semibold text-black font-korean">연규홍 목사</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center bg-white rounded-lg p-4 shadow-sm">
+              <BookOpen className="w-5 h-5 text-black mr-3" />
+              <div>
+                <p className="text-sm text-gray-500 font-korean">현재 시리즈</p>
+                <p className="font-semibold text-black font-korean">요한복음 강해</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Filter Section */}
+      <section className="bg-white py-8 border-b border-gray-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            {/* Search */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="설교 제목, 성경 구절로 검색..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent font-korean"
+              />
+            </div>
+
+            {/* Year Filter */}
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5 text-gray-500" />
+              <div className="flex gap-2">
+                {years.map((year) => (
+                  <button
+                    key={year}
+                    onClick={() => setSelectedYear(year)}
+                    className={`px-4 py-2 rounded-lg font-korean text-sm transition-colors ${
+                      selectedYear === year
+                        ? 'bg-black text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {year === 'all' ? '전체' : year}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sermons Grid */}
+      <section className="bg-gray-50 py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center mb-8">
+            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
+            <h2 className="text-2xl font-bold text-black font-korean">설교 목록</h2>
+            <span className="ml-3 text-gray-500 font-korean">({filteredSermons.length}개)</span>
+          </div>
+
+          {filteredSermons.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 font-korean">검색 결과가 없습니다.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredSermons.map((sermon) => (
+                <div key={sermon.id} className="group bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                  <div className="flex">
+                    {/* Video Thumbnail */}
+                    <div className="relative w-48 h-32 flex-shrink-0 bg-black">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                          <Play className="w-6 h-6 text-white ml-1" />
+                        </div>
+                      </div>
+                      {sermon.series && (
+                        <div className="absolute top-2 left-2">
+                          <span className="bg-black/80 text-white text-xs px-2 py-1 rounded font-korean">
+                            {sermon.series}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 p-4">
+                      <div className="flex items-center mb-2">
+                        <div className="w-1.5 h-1.5 bg-black rounded-full mr-2"></div>
+                        <span className="text-xs text-gray-500 font-korean">{formatDate(sermon.date)}</span>
+                      </div>
+                      <h3 className="text-lg font-bold text-black font-korean mb-1 group-hover:underline">
+                        {sermon.title}
+                      </h3>
+                      <div className="flex items-center text-sm text-gray-600 mb-2">
+                        <User className="w-4 h-4 mr-1" />
+                        <span className="font-korean">{sermon.speaker}</span>
+                      </div>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <BookOpen className="w-4 h-4 mr-1" />
+                        <span className="font-korean">{sermon.scripture}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Related Links */}
+      <section className="bg-white py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center mb-8">
+            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
+            <h2 className="text-2xl font-bold text-black font-korean">관련 페이지</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Link href="/sermons" className="group block">
+              <div className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
+                <div className="flex items-center mb-4">
+                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
+                  <h3 className="text-lg font-semibold text-black font-korean">설교 안내</h3>
+                </div>
+                <p className="text-gray-600 font-korean text-sm mb-3">설교 시리즈 및 설교자 정보</p>
+                <div className="flex items-center text-black font-korean text-sm">
+                  자세히 보기
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </div>
+              </div>
+            </Link>
+            <Link href="/sermons/wednesday" className="group block">
+              <div className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
+                <div className="flex items-center mb-4">
+                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
+                  <h3 className="text-lg font-semibold text-black font-korean">수요설교 영상</h3>
+                </div>
+                <p className="text-gray-600 font-korean text-sm mb-3">수요예배 설교 영상 보기</p>
+                <div className="flex items-center text-black font-korean text-sm">
+                  자세히 보기
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </div>
+              </div>
+            </Link>
+            <Link href="/about/service-info" className="group block">
+              <div className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
+                <div className="flex items-center mb-4">
+                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
+                  <h3 className="text-lg font-semibold text-black font-korean">예배안내</h3>
+                </div>
+                <p className="text-gray-600 font-korean text-sm mb-3">예배 시간 및 장소 안내</p>
+                <div className="flex items-center text-black font-korean text-sm">
+                  자세히 보기
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
     </Layout>
   )
 }

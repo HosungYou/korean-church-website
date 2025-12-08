@@ -5,8 +5,7 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon, Menu as MenuIcon, X as XIcon, Home, ChevronRight } from 'lucide-react'
-import { signOut } from 'firebase/auth'
-import { auth } from '../../lib/firebase'
+import { supabase } from '../../lib/supabase'
 
 interface NavItem {
   labelKey: string
@@ -209,9 +208,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     setAdminSession(null)
 
     try {
-      await signOut(auth)
+      await supabase.auth.signOut()
     } catch (error) {
-      console.error('Failed to sign out from Firebase:', error)
+      console.error('Failed to sign out from Supabase:', error)
     }
 
     router.push('/').catch((error) => console.error('Failed to redirect after logout:', error))

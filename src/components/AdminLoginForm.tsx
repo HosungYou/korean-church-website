@@ -1,16 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import {
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut
-} from 'firebase/auth'
-import { auth } from '../../lib/firebase'
+import { supabase } from '../../lib/supabase'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
-
-const authorizedAdminEmails = ['newhosung@gmail.com', 'admin@sckc.org']
 
 interface AdminLoginFormProps {
   showHeader?: boolean
@@ -34,40 +25,81 @@ const AdminLoginForm = ({
   const [error, setError] = useState('')
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (typeof window === 'undefined') {
-        return
-      }
+    // Check for existing session
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
 
-      if (!currentUser) {
-        window.localStorage.removeItem('adminLoggedIn')
-        window.localStorage.removeItem('adminUser')
-        window.dispatchEvent(new Event('admin-auth-changed'))
-        return
-      }
+      if (session?.user) {
+        // Check if user is an admin
+        const isAdmin = await checkAdminUser(session.user.email || '')
 
+        if (isAdmin) {
+          updateLocalStorage(session.user)
+          router.push(onSuccessRedirect)
+        }
+      }
+    }
+
+    checkSession()
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const isAdmin = await checkAdminUser(session.user.email || '')
+
+          if (isAdmin) {
+            updateLocalStorage(session.user)
+            router.push(onSuccessRedirect)
+          } else {
+            await supabase.auth.signOut()
+            setError('권한이 없는 계정입니다. 관리자 계정으로 로그인해주세요.')
+          }
+        } else if (event === 'SIGNED_OUT') {
+          clearLocalStorage()
+        }
+      }
+    )
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [router, onSuccessRedirect])
+
+  const checkAdminUser = async (email: string): Promise<boolean> => {
+    const { data } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('email', email)
+      .single()
+
+    return !!data
+  }
+
+  const updateLocalStorage = (user: any) => {
+    if (typeof window !== 'undefined') {
       window.localStorage.setItem('adminLoggedIn', 'true')
       window.localStorage.setItem(
         'adminUser',
         JSON.stringify({
-          email: currentUser.email,
-          name: currentUser.displayName || '관리자',
-          photoURL: currentUser.photoURL,
-          uid: currentUser.uid,
+          email: user.email,
+          name: user.user_metadata?.full_name || user.user_metadata?.name || '관리자',
+          photoURL: user.user_metadata?.avatar_url,
+          uid: user.id,
           loginTime: new Date().toISOString()
         })
       )
       window.dispatchEvent(new Event('admin-auth-changed'))
+    }
+  }
 
-      if (router.asPath !== onSuccessRedirect) {
-        router.push(onSuccessRedirect).catch((pushError) => {
-          console.error('Admin redirect failed:', pushError)
-        })
-      }
-    })
-
-    return () => unsubscribe()
-  }, [router, onSuccessRedirect])
+  const clearLocalStorage = () => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('adminLoggedIn')
+      window.localStorage.removeItem('adminUser')
+      window.dispatchEvent(new Event('admin-auth-changed'))
+    }
+  }
 
   const handleEmailLogin = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -75,44 +107,34 @@ const AdminLoginForm = ({
     setError('')
 
     try {
-      await signInWithEmailAndPassword(auth, email, password)
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (signInError) {
+        throw signInError
+      }
+
+      if (data.user) {
+        const isAdmin = await checkAdminUser(data.user.email || '')
+
+        if (!isAdmin) {
+          await supabase.auth.signOut()
+          setError('권한이 없는 계정입니다. 관리자에게 문의하세요.')
+          return
+        }
+
+        updateLocalStorage(data.user)
+        router.push(onSuccessRedirect)
+      }
     } catch (authError: any) {
       console.error('Email login error:', authError)
 
-      if (typeof window === 'undefined') {
-        setError('로그인에 실패했습니다. 다시 시도해주세요.')
-        setIsLoading(false)
-        return
-      }
-
-      const localAccounts = JSON.parse(localStorage.getItem('adminAccounts') || '[]')
-      const defaultAccounts = [
-        { email: 'newhosung@gmail.com', password: 'admin123!', name: '관리자' },
-        { email: 'admin@sckc.org', password: 'sckc2025!', name: '관리자' }
-      ]
-
-      const allAccounts = [...defaultAccounts, ...localAccounts]
-      const foundAccount = allAccounts.find(
-        (account) => account.email === email && account.password === password
-      )
-
-      if (foundAccount) {
-        window.localStorage.setItem('adminLoggedIn', 'true')
-        window.localStorage.setItem(
-          'adminUser',
-          JSON.stringify({
-            email: foundAccount.email,
-            name: foundAccount.name,
-            loginTime: new Date().toISOString()
-          })
-        )
-        window.dispatchEvent(new Event('admin-auth-changed'))
-
-        router.push(onSuccessRedirect).catch((pushError) => {
-          console.error('Admin redirect failed:', pushError)
-        })
-      } else {
+      if (authError.message?.includes('Invalid login credentials')) {
         setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+      } else {
+        setError(`로그인 실패: ${authError.message}`)
       }
     } finally {
       setIsLoading(false)
@@ -124,27 +146,19 @@ const AdminLoginForm = ({
     setError('')
 
     try {
-      const provider = new GoogleAuthProvider()
-      provider.setCustomParameters({ prompt: 'select_account' })
+      const { error: signInError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/admin/dashboard`
+        }
+      })
 
-      const result = await signInWithPopup(auth, provider)
-
-      if (!authorizedAdminEmails.includes(result.user.email ?? '')) {
-        await signOut(auth)
-        setError('권한이 없는 계정입니다. 관리자 계정으로 로그인해주세요.')
+      if (signInError) {
+        throw signInError
       }
     } catch (googleError: any) {
       console.error('Google login error:', googleError)
-
-      if (googleError.code === 'auth/popup-closed-by-user') {
-        setError('로그인이 취소되었습니다.')
-      } else if (googleError.code === 'auth/popup-blocked') {
-        setError('팝업이 차단되었습니다. 브라우저 설정을 확인해주세요.')
-      } else if (googleError.code === 'auth/unauthorized-domain') {
-        setError('인증 도메인 설정 오류입니다. Firebase Console에서 도메인을 추가해주세요.')
-      } else {
-        setError(`로그인 실패: ${googleError.message}`)
-      }
+      setError(`로그인 실패: ${googleError.message}`)
     } finally {
       setIsGoogleLoading(false)
     }
@@ -284,6 +298,12 @@ const AdminLoginForm = ({
             {isLoading ? '로그인 중...' : '로그인'}
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-xs text-gray-500 font-korean">
+            관리자 계정이 필요하시면 기존 관리자에게 문의하세요.
+          </p>
+        </div>
       </div>
     </div>
   )
