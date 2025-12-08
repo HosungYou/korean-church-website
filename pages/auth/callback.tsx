@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { createSupabaseClient } from '@/lib/supabaseClient'
+import { createSupabaseClient } from '../../lib/supabaseClient'
 
 type Status = 'loading' | 'success' | 'error'
 
