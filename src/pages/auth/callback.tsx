@@ -17,10 +17,32 @@ const AuthCallbackPage = () => {
         console.log('[Callback] URL hash:', window.location.hash)
         console.log('[Callback] URL search:', window.location.search)
 
-        // Get the auth code from URL
-        const { data: { session }, error } = await supabase.auth.getSession()
+        // Check for OAuth code in URL (PKCE flow)
+        const urlParams = new URLSearchParams(window.location.search)
+        const code = urlParams.get('code')
 
-        console.log('[Callback] getSession result:', {
+        let session = null
+        let error = null
+
+        if (code) {
+          // Exchange the code for a session
+          console.log('[Callback] Found OAuth code, exchanging for session...')
+          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+          session = data?.session
+          error = exchangeError
+          console.log('[Callback] Code exchange result:', {
+            hasSession: !!session,
+            error: exchangeError?.message
+          })
+        } else {
+          // No code, try to get existing session
+          console.log('[Callback] No code found, checking existing session...')
+          const { data, error: sessionError } = await supabase.auth.getSession()
+          session = data?.session
+          error = sessionError
+        }
+
+        console.log('[Callback] Session result:', {
           hasSession: !!session,
           error: error?.message,
           userId: session?.user?.id
@@ -30,6 +52,7 @@ const AuthCallbackPage = () => {
           console.error('Auth callback error:', error)
           setStatus('error')
           setErrorMessage(error.message)
+          setTimeout(() => router.push('/admin/login'), 2000)
           return
         }
 
@@ -77,74 +100,10 @@ const AuthCallbackPage = () => {
           // Redirect to dashboard
           router.push('/admin/dashboard')
         } else {
-          // No session, try to exchange code
-          console.log('[Callback] No session found, trying to extract tokens from URL...')
-          const hashParams = new URLSearchParams(window.location.hash.substring(1))
-          const queryParams = new URLSearchParams(window.location.search)
-
-          const accessToken = hashParams.get('access_token') || queryParams.get('access_token')
-          const refreshToken = hashParams.get('refresh_token') || queryParams.get('refresh_token')
-
-          console.log('[Callback] Tokens found:', {
-            hasAccessToken: !!accessToken,
-            hasRefreshToken: !!refreshToken
-          })
-
-          if (accessToken && refreshToken) {
-            console.log('[Callback] Setting session with tokens...')
-            const { data, error: setSessionError } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken
-            })
-
-            if (setSessionError) {
-              console.error('Set session error:', setSessionError)
-              setStatus('error')
-              setErrorMessage(setSessionError.message)
-              return
-            }
-
-            if (data.session) {
-              // Retry admin check
-              const { data: adminData } = await supabase
-                .from('admin_users')
-                .select('id, name, role')
-                .eq('id', data.session.user.id)
-                .single<{ id: string; name: string | null; role: string }>()
-
-              if (!adminData || adminData.role !== 'admin') {
-                await supabase.auth.signOut()
-                setStatus('error')
-                setErrorMessage('권한이 없는 계정입니다.')
-                setTimeout(() => router.push('/admin/login'), 2000)
-                return
-              }
-
-              if (typeof window !== 'undefined') {
-                window.localStorage.setItem('adminLoggedIn', 'true')
-                window.localStorage.setItem(
-                  'adminUser',
-                  JSON.stringify({
-                    email: data.session.user.email,
-                    name: adminData.name || data.session.user.user_metadata?.full_name || '관리자',
-                    photoURL: data.session.user.user_metadata?.avatar_url,
-                    uid: data.session.user.id,
-                    role: adminData.role,
-                    loginTime: new Date().toISOString()
-                  })
-                )
-                window.dispatchEvent(new Event('admin-auth-changed'))
-              }
-
-              setStatus('success')
-              router.push('/admin/dashboard')
-              return
-            }
-          }
-
-          // No session and no tokens
+          // No session found after code exchange attempt
+          console.log('[Callback] No session found')
           setStatus('error')
-          setErrorMessage('인증 정보를 찾을 수 없습니다.')
+          setErrorMessage('인증 정보를 찾을 수 없습니다. 다시 로그인해 주세요.')
           setTimeout(() => router.push('/admin/login'), 2000)
         }
       } catch (err: any) {
