@@ -59,7 +59,9 @@ export default function AdminLoginFormSupabase() {
           .eq('id', data.user.id)
           .single()
 
-        if (profileError || profile?.role !== 'admin') {
+        const role = (profile as { role?: string } | null)?.role
+
+        if (profileError || role !== 'admin') {
           await supabase.auth.signOut()
           setError('관리자 권한이 없습니다.')
           return
