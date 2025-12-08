@@ -1,5 +1,3 @@
-import { storage } from '../../lib/firebase'
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 import { v4 as uuidv4 } from 'uuid'
 
 export interface UploadResult {
@@ -8,62 +6,16 @@ export interface UploadResult {
   fileName: string
 }
 
+/**
+ * Upload file as base64 data URL
+ * Note: For production, consider using Supabase Storage
+ */
 export const uploadFile = async (
   file: File,
   folder: 'posts' | 'covers'
 ): Promise<UploadResult> => {
-  console.log('Starting file upload, checking Firebase configuration...')
+  console.log('Starting file upload using base64 encoding...')
 
-  try {
-    // Check if Firebase Storage is available
-    if (!storage) {
-      console.warn('Firebase Storage not initialized, using base64 fallback')
-      return await uploadFileAsBase64(file, folder)
-    }
-
-    // Try Firebase Storage upload
-    const fileExtension = file.name.split('.').pop()
-    const uniqueFileName = `${uuidv4()}.${fileExtension}`
-    const filePath = `${folder}/${uniqueFileName}`
-
-    console.log('Uploading to Firebase Storage:', filePath)
-
-    // Create storage reference
-    const storageRef = ref(storage, filePath)
-
-    // Upload file with metadata
-    const metadata = {
-      contentType: file.type,
-      customMetadata: {
-        originalName: file.name,
-        uploadedAt: new Date().toISOString()
-      }
-    }
-
-    const snapshot = await uploadBytes(storageRef, file, metadata)
-    const downloadURL = await getDownloadURL(snapshot.ref)
-
-    console.log('Firebase upload successful:', downloadURL)
-
-    return {
-      url: downloadURL,
-      path: filePath,
-      fileName: file.name
-    }
-  } catch (error) {
-    console.error('Firebase upload failed:', error)
-
-    // Fallback to base64 if Firebase fails
-    console.log('Falling back to base64 storage')
-    return await uploadFileAsBase64(file, folder)
-  }
-}
-
-// Helper function for base64 fallback
-const uploadFileAsBase64 = async (
-  file: File,
-  folder: 'posts' | 'covers'
-): Promise<UploadResult> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => {
@@ -71,7 +23,7 @@ const uploadFileAsBase64 = async (
       const fileExtension = file.name.split('.').pop()
       const uniqueFileName = `${uuidv4()}.${fileExtension}`
 
-      console.log('File converted to base64, using temporary storage')
+      console.log('File converted to base64 successfully')
       resolve({
         url: base64Data,
         path: `temp/${folder}/${uniqueFileName}`,
@@ -88,20 +40,12 @@ const uploadFileAsBase64 = async (
 
 export const deleteFile = async (filePath: string): Promise<void> => {
   // For base64 files (temp storage), we don't need to delete anything
-  if (filePath.startsWith('temp/')) {
-    console.log('Temporary file, no deletion needed')
+  if (filePath.startsWith('temp/') || filePath.startsWith('data:')) {
+    console.log('Temporary/base64 file, no deletion needed')
     return
   }
-
-  try {
-    if (storage) {
-      const storageRef = ref(storage, filePath)
-      await deleteObject(storageRef)
-    }
-  } catch (error) {
-    console.error('File deletion failed:', error)
-    // Don't throw error for deletion failures as they're not critical
-  }
+  // No-op for now - files stored as base64 in database don't need cleanup
+  console.log('File deletion skipped:', filePath)
 }
 
 export const validateFile = (file: File, maxSizeMB: number = 10): string | null => {

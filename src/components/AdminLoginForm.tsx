@@ -134,6 +134,7 @@ const AdminLoginForm = ({
     } finally {
       setIsGoogleLoading(false)
     }
+    // Don't set loading to false here - page will redirect
   }
 
   return (

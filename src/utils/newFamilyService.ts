@@ -1,5 +1,4 @@
-import { db } from '../../lib/firebase'
-import { collection, addDoc } from 'firebase/firestore'
+import { supabase } from '../../lib/supabase'
 
 export interface NewFamilyData {
   koreanName: string
@@ -25,14 +24,35 @@ export interface NewFamilyData {
 // 새가족 등록 데이터 저장
 export const addNewFamilyRegistration = async (formData: Omit<NewFamilyData, 'submittedAt'>): Promise<boolean> => {
   try {
-    const newFamilyData: NewFamilyData = {
-      ...formData,
-      submittedAt: new Date()
+    const { error } = await supabase
+      .from('new_family_registrations')
+      .insert({
+        korean_name: formData.koreanName,
+        english_name: formData.englishName,
+        birth_date: formData.birthDate,
+        baptism_date: formData.baptismDate || null,
+        gender: formData.gender,
+        country: formData.country,
+        address1: formData.address1,
+        address2: formData.address2 || null,
+        city: formData.city,
+        state: formData.state,
+        zip_code: formData.zipCode,
+        email: formData.email || null,
+        phone: formData.phone,
+        church_position: formData.churchPosition || null,
+        previous_church: formData.previousChurch || null,
+        introduction: formData.introduction || null,
+        family_info: formData.familyInfo || null,
+        submitted_at: new Date().toISOString()
+      })
+
+    if (error) {
+      console.error('새가족 등록 저장 오류:', error)
+      throw error
     }
 
-    await addDoc(collection(db, 'newFamilyRegistrations'), newFamilyData)
-
-    console.log('새가족 등록 데이터가 Firebase에 저장되었습니다.')
+    console.log('새가족 등록 데이터가 Supabase에 저장되었습니다.')
     return true
   } catch (error) {
     console.error('새가족 등록 저장 오류:', error)
@@ -43,17 +63,18 @@ export const addNewFamilyRegistration = async (formData: Omit<NewFamilyData, 'su
 // 관리자 대시보드용 - 최근 등록 목록 가져오기
 export const getRecentNewFamilyRegistrations = async (limit: number = 10) => {
   try {
-    // 실제 구현 시 Firebase에서 데이터 조회
-    // const q = query(
-    //   collection(db, 'newFamilyRegistrations'),
-    //   orderBy('submittedAt', 'desc'),
-    //   limit(limit)
-    // )
-    // const querySnapshot = await getDocs(q)
-    // return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    const { data, error } = await supabase
+      .from('new_family_registrations')
+      .select('*')
+      .order('submitted_at', { ascending: false })
+      .limit(limit)
 
-    console.log('새가족 등록 목록 조회')
-    return []
+    if (error) {
+      console.error('새가족 등록 목록 조회 오류:', error)
+      return []
+    }
+
+    return data || []
   } catch (error) {
     console.error('새가족 등록 목록 조회 오류:', error)
     return []

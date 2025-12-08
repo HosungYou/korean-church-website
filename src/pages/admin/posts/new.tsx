@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Layout from '../../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-// Firebase 비활성화 - localStorage 기반 인증 사용
+// Supabase 인증 사용
 import { 
   Save, 
   Send, 

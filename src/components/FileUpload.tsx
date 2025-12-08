@@ -44,13 +44,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     } catch (err) {
       console.error('File upload error:', err)
       if (err instanceof Error) {
-        if (err.message.includes('auth/invalid-api-key')) {
-          setError('Firebase 인증이 설정되지 않았습니다. 관리자에게 문의하세요.')
-        } else if (err.message.includes('Firebase Storage가 설정되지 않았습니다')) {
-          setError('Firebase 설정이 필요합니다. 임시로 파일이 저장됩니다.')
-        } else {
-          setError(err.message)
-        }
+        setError(err.message)
       } else {
         setError('파일 업로드에 실패했습니다. 다시 시도해주세요.')
       }
