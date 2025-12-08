@@ -18,8 +18,8 @@ export interface NewsletterData {
 export const addEmailSubscriber = async (email: string): Promise<boolean> => {
   try {
     // 중복 확인
-    const { data: existing } = await supabase
-      .from('email_subscribers')
+    const { data: existing } = await (supabase
+      .from('email_subscribers') as any)
       .select('id')
       .eq('email', email)
       .eq('is_active', true)
@@ -30,8 +30,8 @@ export const addEmailSubscriber = async (email: string): Promise<boolean> => {
     }
 
     // 새 구독자 추가
-    const { error } = await supabase
-      .from('email_subscribers')
+    const { error } = await (supabase
+      .from('email_subscribers') as any)
       .insert({
         email,
         is_active: true
@@ -52,8 +52,8 @@ export const addEmailSubscriber = async (email: string): Promise<boolean> => {
 // 모든 활성 구독자 가져오기
 export const getActiveSubscribers = async (): Promise<EmailSubscriber[]> => {
   try {
-    const { data, error } = await supabase
-      .from('email_subscribers')
+    const { data, error } = await (supabase
+      .from('email_subscribers') as any)
       .select('*')
       .eq('is_active', true)
       .order('subscribed_at', { ascending: false })
@@ -63,7 +63,7 @@ export const getActiveSubscribers = async (): Promise<EmailSubscriber[]> => {
       return []
     }
 
-    return (data || []).map(row => ({
+    return (data || []).map((row: any) => ({
       id: row.id,
       email: row.email,
       subscribedAt: new Date(row.subscribed_at),
@@ -109,8 +109,8 @@ export const sendNewsletterToSubscribers = async (newsletterData: NewsletterData
     */
 
     // 발송 기록 저장
-    const { error } = await supabase
-      .from('newsletter_sent')
+    const { error } = await (supabase
+      .from('newsletter_sent') as any)
       .insert({
         title: newsletterData.title,
         content: newsletterData.content,
@@ -203,8 +203,8 @@ export const generateEmailTemplate = (data: NewsletterData): string => {
 // 구독 취소
 export const unsubscribeEmail = async (email: string): Promise<boolean> => {
   try {
-    const { data: subscriber, error: fetchError } = await supabase
-      .from('email_subscribers')
+    const { data: subscriber, error: fetchError } = await (supabase
+      .from('email_subscribers') as any)
       .select('id')
       .eq('email', email)
       .eq('is_active', true)
@@ -215,8 +215,8 @@ export const unsubscribeEmail = async (email: string): Promise<boolean> => {
     }
 
     // 구독 비활성화
-    const { error } = await supabase
-      .from('email_subscribers')
+    const { error } = await (supabase
+      .from('email_subscribers') as any)
       .update({
         is_active: false,
         unsubscribed_at: new Date().toISOString()
@@ -237,8 +237,8 @@ export const unsubscribeEmail = async (email: string): Promise<boolean> => {
 
 // 구독자 수 가져오기
 export const getSubscriberCount = async (): Promise<number> => {
-  const { count, error } = await supabase
-    .from('email_subscribers')
+  const { count, error } = await (supabase
+    .from('email_subscribers') as any)
     .select('*', { count: 'exact', head: true })
     .eq('is_active', true)
 

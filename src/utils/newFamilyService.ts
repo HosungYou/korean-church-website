@@ -24,8 +24,8 @@ export interface NewFamilyData {
 // 새가족 등록 데이터 저장
 export const addNewFamilyRegistration = async (formData: Omit<NewFamilyData, 'submittedAt'>): Promise<boolean> => {
   try {
-    const { error } = await supabase
-      .from('new_family_registrations')
+    const { error } = await (supabase
+      .from('new_family_registrations') as any)
       .insert({
         korean_name: formData.koreanName,
         english_name: formData.englishName,
@@ -63,8 +63,8 @@ export const addNewFamilyRegistration = async (formData: Omit<NewFamilyData, 'su
 // 관리자 대시보드용 - 최근 등록 목록 가져오기
 export const getRecentNewFamilyRegistrations = async (limit: number = 10) => {
   try {
-    const { data, error } = await supabase
-      .from('new_family_registrations')
+    const { data, error } = await (supabase
+      .from('new_family_registrations') as any)
       .select('*')
       .order('submitted_at', { ascending: false })
       .limit(limit)

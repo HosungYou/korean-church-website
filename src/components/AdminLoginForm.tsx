@@ -57,7 +57,7 @@ const AdminLoginForm = ({
           .from('profiles')
           .select('full_name, role')
           .eq('id', data.session.user.id)
-          .single()
+          .single<{ full_name: string | null; role: string }>()
 
         if (profileError || profile?.role !== 'admin') {
           await supabase.auth.signOut()
@@ -96,7 +96,7 @@ const AdminLoginForm = ({
         .from('profiles')
         .select('full_name, role')
         .eq('id', data.session.user.id)
-        .single()
+        .single<{ full_name: string | null; role: string }>()
 
       if (profileError || profile?.role !== 'admin') {
         await supabase.auth.signOut()

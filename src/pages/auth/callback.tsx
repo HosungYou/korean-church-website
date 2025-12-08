@@ -26,12 +26,12 @@ const AuthCallbackPage = () => {
         if (session?.user) {
           // Check if user is admin
           const { data: adminData, error: adminError } = await supabase
-            .from('admin_users')
-            .select('id, name, role')
-            .eq('email', session.user.email)
-            .single()
+            .from('profiles')
+            .select('id, full_name, role')
+            .eq('id', session.user.id)
+            .single<{ id: string; full_name: string | null; role: string }>()
 
-          if (adminError || !adminData) {
+          if (adminError || !adminData || adminData.role !== 'admin') {
             console.error('Admin check failed:', adminError)
             await supabase.auth.signOut()
             setStatus('error')
@@ -47,7 +47,7 @@ const AuthCallbackPage = () => {
               'adminUser',
               JSON.stringify({
                 email: session.user.email,
-                name: adminData.name || session.user.user_metadata?.full_name || '관리자',
+                name: adminData.full_name || session.user.user_metadata?.full_name || '관리자',
                 photoURL: session.user.user_metadata?.avatar_url,
                 uid: session.user.id,
                 role: adminData.role,
@@ -84,12 +84,12 @@ const AuthCallbackPage = () => {
             if (data.session) {
               // Retry admin check
               const { data: adminData } = await supabase
-                .from('admin_users')
-                .select('id, name, role')
-                .eq('email', data.session.user.email)
-                .single()
+                .from('profiles')
+                .select('id, full_name, role')
+                .eq('id', data.session.user.id)
+                .single<{ id: string; full_name: string | null; role: string }>()
 
-              if (!adminData) {
+              if (!adminData || adminData.role !== 'admin') {
                 await supabase.auth.signOut()
                 setStatus('error')
                 setErrorMessage('권한이 없는 계정입니다.')
@@ -103,7 +103,7 @@ const AuthCallbackPage = () => {
                   'adminUser',
                   JSON.stringify({
                     email: data.session.user.email,
-                    name: adminData.name || data.session.user.user_metadata?.full_name || '관리자',
+                    name: adminData.full_name || data.session.user.user_metadata?.full_name || '관리자',
                     photoURL: data.session.user.user_metadata?.avatar_url,
                     uid: data.session.user.id,
                     role: adminData.role,

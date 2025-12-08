@@ -104,8 +104,8 @@ export const createPost = async (input: CreatePostInput): Promise<string> => {
     payload.scheduled_for = new Date(input.scheduledFor).toISOString()
   }
 
-  const { data, error } = await supabase
-    .from('posts')
+  const { data, error } = await (supabase
+    .from('posts') as any)
     .insert(payload)
     .select('id')
     .single()
@@ -120,8 +120,8 @@ export const createPost = async (input: CreatePostInput): Promise<string> => {
 
 export const updatePost = async (input: UpdatePostInput): Promise<void> => {
   // First, get existing post
-  const { data: existing, error: fetchError } = await supabase
-    .from('posts')
+  const { data: existing, error: fetchError } = await (supabase
+    .from('posts') as any)
     .select('*')
     .eq('id', input.id)
     .single()
@@ -157,8 +157,8 @@ export const updatePost = async (input: UpdatePostInput): Promise<void> => {
     payload.scheduled_for = null
   }
 
-  const { error } = await supabase
-    .from('posts')
+  const { error } = await (supabase
+    .from('posts') as any)
     .update(payload)
     .eq('id', input.id)
 
@@ -169,8 +169,8 @@ export const updatePost = async (input: UpdatePostInput): Promise<void> => {
 }
 
 export const deletePost = async (id: string): Promise<void> => {
-  const { error } = await supabase
-    .from('posts')
+  const { error } = await (supabase
+    .from('posts') as any)
     .delete()
     .eq('id', id)
 
@@ -181,8 +181,8 @@ export const deletePost = async (id: string): Promise<void> => {
 }
 
 export const getPostById = async (id: string): Promise<PostRecord | null> => {
-  const { data, error } = await supabase
-    .from('posts')
+  const { data, error } = await (supabase
+    .from('posts') as any)
     .select('*')
     .eq('id', id)
     .single()
@@ -199,8 +199,8 @@ interface GetPostsOptions {
 }
 
 export const getPosts = async (options?: GetPostsOptions): Promise<PostRecord[]> => {
-  let query = supabase
-    .from('posts')
+  let query = (supabase
+    .from('posts') as any)
     .select('*')
     .order('created_at', { ascending: false })
 
@@ -219,8 +219,8 @@ export const getPosts = async (options?: GetPostsOptions): Promise<PostRecord[]>
 }
 
 export const getPublishedAnnouncements = async (limit = 20): Promise<PostRecord[]> => {
-  const { data, error } = await supabase
-    .from('posts')
+  const { data, error } = await (supabase
+    .from('posts') as any)
     .select('*')
     .eq('type', 'announcement')
     .eq('status', 'published')
@@ -236,8 +236,8 @@ export const getPublishedAnnouncements = async (limit = 20): Promise<PostRecord[
 }
 
 export const getRecentPublishedPosts = async (limit = 6): Promise<PostRecord[]> => {
-  const { data, error } = await supabase
-    .from('posts')
+  const { data, error } = await (supabase
+    .from('posts') as any)
     .select('*')
     .eq('status', 'published')
     .order('published_at', { ascending: false })

@@ -39,7 +39,7 @@ export function useAdminAuth() {
           .from('profiles')
           .select('full_name, role')
           .eq('id', session.user.id)
-          .single()
+          .single<{ full_name: string | null; role: string }>()
 
         if (profileError || profile?.role !== 'admin') {
           await supabase.auth.signOut()

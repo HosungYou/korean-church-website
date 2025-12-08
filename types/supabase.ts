@@ -135,6 +135,67 @@ export interface Database {
           updated_at?: string
         }
       }
+      email_subscribers: {
+        Row: {
+          id: string
+          email: string
+          is_active: boolean
+          subscribed_at: string
+          unsubscribed_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          is_active?: boolean
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          is_active?: boolean
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      newsletter_sent: {
+        Row: {
+          id: string
+          title: string
+          content: string
+          type: 'announcement' | 'event' | 'general'
+          published_at: string
+          recipient_count: number
+          recipients: string[]
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          content: string
+          type: 'announcement' | 'event' | 'general'
+          published_at: string
+          recipient_count: number
+          recipients: string[]
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          content?: string
+          type?: 'announcement' | 'event' | 'general'
+          published_at?: string
+          recipient_count?: number
+          recipients?: string[]
+          created_at?: string
+        }
+      }
       new_families: {
         Row: {
           id: string
