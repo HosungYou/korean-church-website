@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../../lib/supabase'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
+import { createSupabaseClient } from '@/lib/supabaseClient'
 
 interface AdminLoginFormProps {
   showHeader?: boolean
@@ -17,6 +17,7 @@ const AdminLoginForm = ({
   onSuccessRedirect = '/admin/dashboard'
 }: AdminLoginFormProps) => {
   const router = useRouter()
+  const supabase = useMemo(() => createSupabaseClient(), [])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -24,82 +25,56 @@ const AdminLoginForm = ({
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    // Check for existing session
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-
-      if (session?.user) {
-        // Check if user is an admin
-        const isAdmin = await checkAdminUser(session.user.email || '')
-
-        if (isAdmin) {
-          updateLocalStorage(session.user)
-          router.push(onSuccessRedirect)
-        }
-      }
+  const setAdminState = (sessionUser: any, profile?: any) => {
+    if (typeof window === 'undefined') {
+      return
     }
 
-    checkSession()
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          const isAdmin = await checkAdminUser(session.user.email || '')
-
-          if (isAdmin) {
-            updateLocalStorage(session.user)
-            router.push(onSuccessRedirect)
-          } else {
-            await supabase.auth.signOut()
-            setError('권한이 없는 계정입니다. 관리자 계정으로 로그인해주세요.')
-          }
-        } else if (event === 'SIGNED_OUT') {
-          clearLocalStorage()
-        }
-      }
+    window.localStorage.setItem('adminLoggedIn', 'true')
+    window.localStorage.setItem(
+      'adminUser',
+      JSON.stringify({
+        email: sessionUser.email,
+        name: profile?.full_name || sessionUser.user_metadata?.full_name || '관리자',
+        photoURL: sessionUser.user_metadata?.avatar_url || null,
+        uid: sessionUser.id,
+        role: profile?.role ?? null,
+        loginTime: new Date().toISOString()
+      })
     )
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [router, onSuccessRedirect])
-
-  const checkAdminUser = async (email: string): Promise<boolean> => {
-    const { data } = await supabase
-      .from('admin_users')
-      .select('id')
-      .eq('email', email)
-      .single()
-
-    return !!data
+    window.dispatchEvent(new Event('admin-auth-changed'))
   }
 
-  const updateLocalStorage = (user: any) => {
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem('adminLoggedIn', 'true')
-      window.localStorage.setItem(
-        'adminUser',
-        JSON.stringify({
-          email: user.email,
-          name: user.user_metadata?.full_name || user.user_metadata?.name || '관리자',
-          photoURL: user.user_metadata?.avatar_url,
-          uid: user.id,
-          loginTime: new Date().toISOString()
-        })
-      )
-      window.dispatchEvent(new Event('admin-auth-changed'))
-    }
-  }
+  useEffect(() => {
+    const restoreSession = async () => {
+      try {
+        const { data } = await supabase.auth.getSession()
+        if (!data.session) {
+          return
+        }
 
-  const clearLocalStorage = () => {
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem('adminLoggedIn')
-      window.localStorage.removeItem('adminUser')
-      window.dispatchEvent(new Event('admin-auth-changed'))
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('full_name, role')
+          .eq('id', data.session.user.id)
+          .single()
+
+        if (profileError || profile?.role !== 'admin') {
+          await supabase.auth.signOut()
+          return
+        }
+
+        setAdminState(data.session.user, profile)
+        if (router.asPath !== onSuccessRedirect) {
+          await router.replace(onSuccessRedirect)
+        }
+      } catch (sessionError) {
+        console.error('Session restore failed:', sessionError)
+      }
     }
-  }
+
+    restoreSession()
+  }, [router, onSuccessRedirect, supabase])
 
   const handleEmailLogin = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -112,30 +87,25 @@ const AdminLoginForm = ({
         password
       })
 
-      if (signInError) {
-        throw signInError
+      if (signInError || !data.session) {
+        setError(signInError?.message || '로그인에 실패했습니다. 다시 시도해주세요.')
+        return
       }
 
-      if (data.user) {
-        const isAdmin = await checkAdminUser(data.user.email || '')
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('full_name, role')
+        .eq('id', data.session.user.id)
+        .single()
 
-        if (!isAdmin) {
-          await supabase.auth.signOut()
-          setError('권한이 없는 계정입니다. 관리자에게 문의하세요.')
-          return
-        }
-
-        updateLocalStorage(data.user)
-        router.push(onSuccessRedirect)
+      if (profileError || profile?.role !== 'admin') {
+        await supabase.auth.signOut()
+        setError('관리자 권한이 없는 계정입니다.')
+        return
       }
-    } catch (authError: any) {
-      console.error('Email login error:', authError)
 
-      if (authError.message?.includes('Invalid login credentials')) {
-        setError('이메일 또는 비밀번호가 올바르지 않습니다.')
-      } else {
-        setError(`로그인 실패: ${authError.message}`)
-      }
+      setAdminState(data.session.user, profile)
+      await router.replace(onSuccessRedirect)
     } finally {
       setIsLoading(false)
     }
@@ -146,19 +116,21 @@ const AdminLoginForm = ({
     setError('')
 
     try {
-      const { error: signInError } = await supabase.auth.signInWithOAuth({
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/admin/dashboard`
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent'
+          }
         }
       })
 
-      if (signInError) {
-        throw signInError
+      if (oauthError) {
+        console.error('Google login error:', oauthError)
+        setError(oauthError.message)
       }
-    } catch (googleError: any) {
-      console.error('Google login error:', googleError)
-      setError(`로그인 실패: ${googleError.message}`)
     } finally {
       setIsGoogleLoading(false)
     }
@@ -298,12 +270,6 @@ const AdminLoginForm = ({
             {isLoading ? '로그인 중...' : '로그인'}
           </button>
         </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500 font-korean">
-            관리자 계정이 필요하시면 기존 관리자에게 문의하세요.
-          </p>
-        </div>
       </div>
     </div>
   )

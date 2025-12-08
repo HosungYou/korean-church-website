@@ -1,152 +1,172 @@
--- Supabase Database Schema for Korean Church Website
--- Project ID: wesqwvlwieijorayicqf
--- Run this in Supabase SQL Editor
+-- 사용자 프로필 테이블
+CREATE TABLE IF NOT EXISTS profiles (
+  id UUID REFERENCES auth.users PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  full_name TEXT,
+  role TEXT DEFAULT 'user',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
--- Posts table (공지사항, 행사, 일반 게시글)
+-- Posts 테이블 (공지사항, 이벤트, 일반 게시물)
 CREATE TABLE IF NOT EXISTS posts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  title TEXT NOT NULL,
-  content TEXT NOT NULL,
-  type TEXT NOT NULL CHECK (type IN ('announcement', 'event', 'general')) DEFAULT 'announcement',
-  category TEXT CHECK (category IN ('general', 'wednesday', 'sunday', 'bible')) DEFAULT 'general',
-  status TEXT NOT NULL CHECK (status IN ('draft', 'published', 'scheduled')) DEFAULT 'draft',
-  author_email TEXT,
-  author_name TEXT,
-  cover_image_url TEXT,
-  attachment_url TEXT,
-  attachment_name TEXT,
-  excerpt TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  published_at TIMESTAMPTZ,
-  scheduled_for TIMESTAMPTZ
-);
-
--- Email subscribers table (이메일 구독자)
-CREATE TABLE IF NOT EXISTS email_subscribers (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  email TEXT NOT NULL UNIQUE,
-  subscribed_at TIMESTAMPTZ DEFAULT NOW(),
-  is_active BOOLEAN DEFAULT TRUE,
-  unsubscribed_at TIMESTAMPTZ
-);
-
--- Newsletter sent table (발송된 뉴스레터 기록)
-CREATE TABLE IF NOT EXISTS newsletter_sent (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
   content TEXT NOT NULL,
   type TEXT NOT NULL CHECK (type IN ('announcement', 'event', 'general')),
-  published_at TIMESTAMPTZ NOT NULL,
-  sent_at TIMESTAMPTZ DEFAULT NOW(),
-  recipient_count INTEGER NOT NULL DEFAULT 0,
-  recipients TEXT[] DEFAULT '{}'
+  category TEXT DEFAULT 'general' CHECK (category IN ('general', 'wednesday', 'sunday', 'bible')),
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'scheduled')),
+  author_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  author_email TEXT,
+  author_name TEXT,
+  cover_image_url TEXT,
+  excerpt TEXT,
+  attachment_url TEXT,
+  attachment_name TEXT,
+  published_at TIMESTAMP WITH TIME ZONE,
+  scheduled_for TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );
 
--- Admin users table (관리자 사용자)
-CREATE TABLE IF NOT EXISTS admin_users (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  email TEXT NOT NULL UNIQUE,
+-- 기도 요청 테이블
+CREATE TABLE IF NOT EXISTS prayer_requests (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
-  role TEXT NOT NULL CHECK (role IN ('admin', 'editor')) DEFAULT 'admin',
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  last_login TIMESTAMPTZ
+  email TEXT,
+  phone TEXT,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  is_urgent BOOLEAN DEFAULT false,
+  is_private BOOLEAN DEFAULT false,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'completed', 'cancelled')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );
 
--- Create indexes for better query performance
-CREATE INDEX IF NOT EXISTS idx_posts_type ON posts(type);
-CREATE INDEX IF NOT EXISTS idx_posts_category ON posts(category);
-CREATE INDEX IF NOT EXISTS idx_posts_status ON posts(status);
-CREATE INDEX IF NOT EXISTS idx_posts_created_at ON posts(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_posts_published_at ON posts(published_at DESC);
-CREATE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers(email);
-CREATE INDEX IF NOT EXISTS idx_email_subscribers_active ON email_subscribers(is_active);
-CREATE INDEX IF NOT EXISTS idx_admin_users_email ON admin_users(email);
+-- 새가족 등록 테이블
+CREATE TABLE IF NOT EXISTS new_families (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT,
+  phone TEXT NOT NULL,
+  address TEXT,
+  birth_date DATE,
+  gender TEXT CHECK (gender IN ('male', 'female', 'other')),
+  marital_status TEXT CHECK (marital_status IN ('single', 'married', 'divorced', 'widowed')),
+  previous_church TEXT,
+  baptized BOOLEAN DEFAULT false,
+  baptism_date DATE,
+  introduction_method TEXT,
+  notes TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'contacted', 'visiting', 'registered', 'inactive')),
+  assigned_to UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
 
--- Create updated_at trigger function
+-- 인덱스 생성
+CREATE INDEX IF NOT EXISTS idx_posts_status ON posts(status);
+CREATE INDEX IF NOT EXISTS idx_posts_type ON posts(type);
+CREATE INDEX IF NOT EXISTS idx_posts_published_at ON posts(published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_posts_created_at ON posts(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_prayer_requests_status ON prayer_requests(status);
+CREATE INDEX IF NOT EXISTS idx_new_families_status ON new_families(status);
+
+-- RLS (Row Level Security) 정책 활성화
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE prayer_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE new_families ENABLE ROW LEVEL SECURITY;
+
+-- RLS 정책 - profiles
+CREATE POLICY "Public profiles are viewable by everyone" ON profiles
+  FOR SELECT USING (true);
+
+CREATE POLICY "Users can update own profile" ON profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+-- RLS 정책 - posts
+CREATE POLICY "Published posts are viewable by everyone" ON posts
+  FOR SELECT USING (status = 'published' OR auth.uid() IS NOT NULL);
+
+CREATE POLICY "Authenticated users can create posts" ON posts
+  FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Authors can update own posts" ON posts
+  FOR UPDATE USING (author_id = auth.uid() OR
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+
+CREATE POLICY "Authors can delete own posts" ON posts
+  FOR DELETE USING (author_id = auth.uid() OR
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+
+-- RLS 정책 - prayer_requests
+CREATE POLICY "Anyone can create prayer requests" ON prayer_requests
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Public prayer requests are viewable by everyone" ON prayer_requests
+  FOR SELECT USING (is_private = false OR auth.uid() IS NOT NULL);
+
+CREATE POLICY "Admins can update prayer requests" ON prayer_requests
+  FOR UPDATE USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+
+-- RLS 정책 - new_families
+CREATE POLICY "Anyone can register as new family" ON new_families
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Only admins can view new families" ON new_families
+  FOR SELECT USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+
+CREATE POLICY "Only admins can update new families" ON new_families
+  FOR UPDATE USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+
+-- Storage Buckets 생성 SQL (Supabase Dashboard에서 실행)
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('posts', 'posts', true);
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('covers', 'covers', true);
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('documents', 'documents', true);
+
+-- 트리거 함수: updated_at 자동 업데이트
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
+    NEW.updated_at = TIMEZONE('utc', NOW());
+    RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ language 'plpgsql';
 
--- Apply trigger to posts table
-DROP TRIGGER IF EXISTS update_posts_updated_at ON posts;
-CREATE TRIGGER update_posts_updated_at
-  BEFORE UPDATE ON posts
-  FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+-- 트리거 생성
+CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Row Level Security (RLS) Policies
+CREATE TRIGGER update_posts_updated_at BEFORE UPDATE ON posts
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Enable RLS on all tables
-ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE email_subscribers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE newsletter_sent ENABLE ROW LEVEL SECURITY;
-ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
+CREATE TRIGGER update_prayer_requests_updated_at BEFORE UPDATE ON prayer_requests
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Posts policies
--- Anyone can read published posts
-CREATE POLICY "Anyone can read published posts" ON posts
-  FOR SELECT USING (status = 'published');
+CREATE TRIGGER update_new_families_updated_at BEFORE UPDATE ON new_families
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Authenticated users can read all posts
-CREATE POLICY "Authenticated can read all posts" ON posts
-  FOR SELECT TO authenticated USING (true);
+-- 프로필 자동 생성 함수
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name, role)
+  VALUES (
+    new.id,
+    new.email,
+    new.raw_user_meta_data->>'full_name',
+    CASE
+      WHEN new.email = 'newhosung@gmail.com' THEN 'admin'
+      ELSE 'user'
+    END
+  );
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Authenticated users can insert posts
-CREATE POLICY "Authenticated can insert posts" ON posts
-  FOR INSERT TO authenticated WITH CHECK (true);
-
--- Authenticated users can update posts
-CREATE POLICY "Authenticated can update posts" ON posts
-  FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
-
--- Authenticated users can delete posts
-CREATE POLICY "Authenticated can delete posts" ON posts
-  FOR DELETE TO authenticated USING (true);
-
--- Email subscribers policies
--- Authenticated users can manage subscribers
-CREATE POLICY "Authenticated can read subscribers" ON email_subscribers
-  FOR SELECT TO authenticated USING (true);
-
-CREATE POLICY "Anyone can subscribe" ON email_subscribers
-  FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Authenticated can update subscribers" ON email_subscribers
-  FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
-
--- Newsletter sent policies
-CREATE POLICY "Authenticated can manage newsletters" ON newsletter_sent
-  FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
--- Admin users policies
-CREATE POLICY "Authenticated can read admin users" ON admin_users
-  FOR SELECT TO authenticated USING (true);
-
-CREATE POLICY "Authenticated can manage admin users" ON admin_users
-  FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
--- Insert default admin user (update email as needed)
-INSERT INTO admin_users (email, name, role)
-VALUES ('newhosung@gmail.com', '관리자', 'admin')
-ON CONFLICT (email) DO NOTHING;
-
--- Sample announcement post for testing
-INSERT INTO posts (title, content, type, status, author_name, excerpt, published_at)
-VALUES (
-  '환영합니다',
-  '스테이트 칼리지 한인교회 웹사이트에 오신 것을 환영합니다.',
-  'announcement',
-  'published',
-  '관리자',
-  '스테이트 칼리지 한인교회 웹사이트에 오신 것을 환영합니다.',
-  NOW()
-)
-ON CONFLICT DO NOTHING;
+-- 새 사용자 등록 시 프로필 자동 생성 트리거
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();

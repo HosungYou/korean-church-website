@@ -17,6 +17,7 @@ import { sendNewsletterToSubscribers } from '../../../utils/emailService'
 import { getPostById, updatePost, PostRecord, PostCategory } from '../../../utils/postService'
 import { FileUpload } from '../../../components/FileUpload'
 import { UploadResult, deleteFile } from '../../../utils/fileUploadService'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
 
 const formatDateTimeInput = (value?: Date | null): string => {
   if (!value) {
@@ -29,8 +30,7 @@ const formatDateTimeInput = (value?: Date | null): string => {
 const PostEditPage = () => {
   const router = useRouter()
   const { id } = router.query
-  const [user, setUser] = useState<any>(null)
-  const [authLoading, setAuthLoading] = useState(true)
+  const { admin, loading: authLoading } = useAdminAuth()
   const [loadingPost, setLoadingPost] = useState(true)
 
   const [title, setTitle] = useState('')
@@ -77,19 +77,7 @@ const PostEditPage = () => {
   }
 
   useEffect(() => {
-    const adminLoggedIn = typeof window !== 'undefined' ? localStorage.getItem('adminLoggedIn') : null
-    const adminUser = typeof window !== 'undefined' ? localStorage.getItem('adminUser') : null
-
-    if (adminLoggedIn === 'true' && adminUser) {
-      setUser(JSON.parse(adminUser))
-    } else {
-      router.push('/admin/login')
-    }
-    setAuthLoading(false)
-  }, [router])
-
-  useEffect(() => {
-    if (!id || typeof id !== 'string') {
+    if (!admin || !id || typeof id !== 'string') {
       return
     }
 
@@ -121,7 +109,7 @@ const PostEditPage = () => {
     }
 
     fetchPost()
-  }, [id, router])
+  }, [admin, id, router])
 
   const previewData = useMemo(() => ({
     title: title || '제목 없음',
@@ -155,8 +143,8 @@ const PostEditPage = () => {
         type,
         category,
         status: nextStatus,
-        authorEmail: user?.email ?? existingPost.authorEmail ?? null,
-        authorName: user?.name ?? existingPost.authorName ?? user?.email ?? '관리자',
+        authorEmail: admin?.email ?? existingPost.authorEmail ?? null,
+        authorName: admin?.name ?? existingPost.authorName ?? admin?.email ?? '관리자',
         coverImageUrl: coverImage?.url ?? null,
         attachmentUrl: attachment?.url ?? null,
         attachmentName: attachment?.fileName ?? null,
@@ -194,7 +182,7 @@ const PostEditPage = () => {
     )
   }
 
-  if (!user || !existingPost) {
+  if (!admin || !existingPost) {
     return null
   }
 

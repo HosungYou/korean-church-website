@@ -18,12 +18,12 @@ import { sendNewsletterToSubscribers } from '../../../utils/emailService'
 import { createPost } from '../../../utils/postService'
 import { FileUpload } from '../../../components/FileUpload'
 import { UploadResult, deleteFile } from '../../../utils/fileUploadService'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
 
 const NewPostPage = () => {
   const router = useRouter()
   const { type: queryType } = router.query
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const { admin, loading: authLoading } = useAdminAuth()
 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -79,19 +79,6 @@ const NewPostPage = () => {
     }
   }, [router.query])
 
-  useEffect(() => {
-    // localStorage 기반 인증 체크
-    const adminLoggedIn = localStorage.getItem('adminLoggedIn')
-    const adminUser = localStorage.getItem('adminUser')
-    
-    if (adminLoggedIn === 'true' && adminUser) {
-      setUser(JSON.parse(adminUser))
-    } else {
-      router.push('/admin/login')
-    }
-    setLoading(false)
-  }, [router])
-
 
   const handleSave = async (publishStatus: 'draft' | 'published' | 'scheduled') => {
     if (!title || !content) {
@@ -119,8 +106,8 @@ const NewPostPage = () => {
           type,
           category,
           status: publishStatus,
-          authorEmail: user?.email ?? null,
-          authorName: user?.name ?? user?.email ?? '관리자',
+          authorEmail: admin?.email ?? null,
+          authorName: admin?.name ?? admin?.email ?? '관리자',
           coverImageUrl: coverImage?.url ?? null,
           attachmentUrl: attachment?.url ?? null,
           attachmentName: attachment?.fileName ?? null,
@@ -160,7 +147,7 @@ const NewPostPage = () => {
     }
   }
 
-  if (loading) {
+  if (authLoading) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
@@ -170,7 +157,7 @@ const NewPostPage = () => {
     )
   }
 
-  if (!user) {
+  if (!admin) {
     return null
   }
 

@@ -22,6 +22,7 @@ import {
   PostStatus,
   PostType
 } from '../../../utils/postService'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
 
 const formatKoreanDate = (value?: Date | null): string => {
   if (!value) {
@@ -35,8 +36,7 @@ const formatKoreanDate = (value?: Date | null): string => {
 
 const AdminPostsPage = () => {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
-  const [authLoading, setAuthLoading] = useState(true)
+  const { admin, loading } = useAdminAuth()
   const [posts, setPosts] = useState<PostRecord[]>([])
   const [listLoading, setListLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -45,19 +45,7 @@ const AdminPostsPage = () => {
   const [filterCategory, setFilterCategory] = useState<'all' | 'general' | 'wednesday' | 'sunday' | 'bible'>('all')
 
   useEffect(() => {
-    const adminLoggedIn = typeof window !== 'undefined' ? localStorage.getItem('adminLoggedIn') : null
-    const adminUser = typeof window !== 'undefined' ? localStorage.getItem('adminUser') : null
-
-    if (adminLoggedIn === 'true' && adminUser) {
-      setUser(JSON.parse(adminUser))
-    } else {
-      router.push('/admin/login')
-    }
-    setAuthLoading(false)
-  }, [router])
-
-  useEffect(() => {
-    if (!user) {
+    if (!admin) {
       return
     }
 
@@ -74,7 +62,7 @@ const AdminPostsPage = () => {
     }
 
     fetchPosts()
-  }, [user])
+  }, [admin])
 
   const handleDelete = async (id: string) => {
     if (!confirm('선택한 게시글을 삭제하시겠습니까?')) {
@@ -134,7 +122,7 @@ const AdminPostsPage = () => {
     }
   }, [posts])
 
-  if (authLoading) {
+  if (loading) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
@@ -144,7 +132,7 @@ const AdminPostsPage = () => {
     )
   }
 
-  if (!user) {
+  if (!admin) {
     return null
   }
 
