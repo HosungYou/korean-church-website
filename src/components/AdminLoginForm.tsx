@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
-import { createSupabaseClient } from '@/lib/supabaseClient'
+import { supabase } from '../../lib/supabase'
 
 interface AdminLoginFormProps {
   showHeader?: boolean
@@ -17,7 +17,6 @@ const AdminLoginForm = ({
   onSuccessRedirect = '/admin/dashboard'
 }: AdminLoginFormProps) => {
   const router = useRouter()
-  const supabase = useMemo(() => createSupabaseClient(), [])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -74,7 +73,7 @@ const AdminLoginForm = ({
     }
 
     restoreSession()
-  }, [router, onSuccessRedirect, supabase])
+  }, [router, onSuccessRedirect])
 
   const handleEmailLogin = async (event: React.FormEvent) => {
     event.preventDefault()
