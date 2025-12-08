@@ -45,10 +45,10 @@ export function useAdminAuth() {
 
         console.log('[useAdminAuth] Checking admin profile for user:', session.user.id)
         const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('full_name, role')
+          .from('admin_users')
+          .select('name, role')
           .eq('id', session.user.id)
-          .single<{ full_name: string | null; role: string }>()
+          .single<{ name: string | null; role: string }>()
 
         console.log('[useAdminAuth] Profile result:', { profile, error: profileError?.message })
 
@@ -67,7 +67,7 @@ export function useAdminAuth() {
           id: session.user.id,
           email: session.user.email ?? '',
           name:
-            profile?.full_name ||
+            profile?.name ||
             (session.user.user_metadata as any)?.full_name ||
             '관리자',
           role: profile?.role ?? null,

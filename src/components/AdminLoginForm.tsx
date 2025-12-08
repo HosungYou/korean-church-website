@@ -34,7 +34,7 @@ const AdminLoginForm = ({
       'adminUser',
       JSON.stringify({
         email: sessionUser.email,
-        name: profile?.full_name || sessionUser.user_metadata?.full_name || '관리자',
+        name: profile?.name || sessionUser.user_metadata?.full_name || '관리자',
         photoURL: sessionUser.user_metadata?.avatar_url || null,
         uid: sessionUser.id,
         role: profile?.role ?? null,
@@ -53,10 +53,10 @@ const AdminLoginForm = ({
         }
 
         const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('full_name, role')
+          .from('admin_users')
+          .select('name, role')
           .eq('id', data.session.user.id)
-          .single<{ full_name: string | null; role: string }>()
+          .single<{ name: string | null; role: string }>()
 
         if (profileError || profile?.role !== 'admin') {
           await supabase.auth.signOut()
@@ -92,10 +92,10 @@ const AdminLoginForm = ({
       }
 
       const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('full_name, role')
+        .from('admin_users')
+        .select('name, role')
         .eq('id', data.session.user.id)
-        .single<{ full_name: string | null; role: string }>()
+        .single<{ name: string | null; role: string }>()
 
       if (profileError || profile?.role !== 'admin') {
         await supabase.auth.signOut()

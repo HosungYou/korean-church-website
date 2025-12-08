@@ -37,10 +37,10 @@ const AuthCallbackPage = () => {
           console.log('[Callback] Session found, checking admin role...')
           // Check if user is admin
           const { data: adminData, error: adminError } = await supabase
-            .from('profiles')
-            .select('id, full_name, role')
+            .from('admin_users')
+            .select('id, name, role')
             .eq('id', session.user.id)
-            .single<{ id: string; full_name: string | null; role: string }>()
+            .single<{ id: string; name: string | null; role: string }>()
 
           console.log('[Callback] Admin check result:', {
             adminData,
@@ -63,7 +63,7 @@ const AuthCallbackPage = () => {
               'adminUser',
               JSON.stringify({
                 email: session.user.email,
-                name: adminData.full_name || session.user.user_metadata?.full_name || '관리자',
+                name: adminData.name || session.user.user_metadata?.full_name || '관리자',
                 photoURL: session.user.user_metadata?.avatar_url,
                 uid: session.user.id,
                 role: adminData.role,
@@ -107,10 +107,10 @@ const AuthCallbackPage = () => {
             if (data.session) {
               // Retry admin check
               const { data: adminData } = await supabase
-                .from('profiles')
-                .select('id, full_name, role')
+                .from('admin_users')
+                .select('id, name, role')
                 .eq('id', data.session.user.id)
-                .single<{ id: string; full_name: string | null; role: string }>()
+                .single<{ id: string; name: string | null; role: string }>()
 
               if (!adminData || adminData.role !== 'admin') {
                 await supabase.auth.signOut()
@@ -126,7 +126,7 @@ const AuthCallbackPage = () => {
                   'adminUser',
                   JSON.stringify({
                     email: data.session.user.email,
-                    name: adminData.full_name || data.session.user.user_metadata?.full_name || '관리자',
+                    name: adminData.name || data.session.user.user_metadata?.full_name || '관리자',
                     photoURL: data.session.user.user_metadata?.avatar_url,
                     uid: data.session.user.id,
                     role: adminData.role,
