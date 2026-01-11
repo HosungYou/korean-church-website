@@ -142,6 +142,7 @@ export interface Database {
         Row: {
           id: string
           email: string
+          name: string | null
           is_active: boolean
           subscribed_at: string
           unsubscribed_at: string | null
@@ -151,6 +152,7 @@ export interface Database {
         Insert: {
           id?: string
           email: string
+          name?: string | null
           is_active?: boolean
           subscribed_at?: string
           unsubscribed_at?: string | null
@@ -160,12 +162,14 @@ export interface Database {
         Update: {
           id?: string
           email?: string
+          name?: string | null
           is_active?: boolean
           subscribed_at?: string
           unsubscribed_at?: string | null
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
       newsletter_sent: {
         Row: {
@@ -198,6 +202,7 @@ export interface Database {
           recipients?: string[]
           created_at?: string
         }
+        Relationships: []
       }
       new_families: {
         Row: {
@@ -505,33 +510,6 @@ export interface Database {
         }
         Relationships: []
       }
-      email_subscribers: {
-        Row: {
-          id: string
-          email: string
-          name: string | null
-          is_active: boolean
-          subscribed_at: string
-          unsubscribed_at: string | null
-        }
-        Insert: {
-          id?: string
-          email: string
-          name?: string | null
-          is_active?: boolean
-          subscribed_at?: string
-          unsubscribed_at?: string | null
-        }
-        Update: {
-          id?: string
-          email?: string
-          name?: string | null
-          is_active?: boolean
-          subscribed_at?: string
-          unsubscribed_at?: string | null
-        }
-        Relationships: []
-      }
       church_members: {
         Row: {
           id: string
@@ -621,39 +599,6 @@ export interface Database {
           file_url?: string
           thumbnail_url?: string | null
           is_visible?: boolean
-          created_at?: string
-        }
-        Relationships: []
-      }
-      newsletter_sent: {
-        Row: {
-          id: string
-          title: string
-          content: string
-          type: 'announcement' | 'event' | 'general' | 'newsletter' | null
-          recipient_count: number
-          recipients: Json | null
-          sent_at: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          title: string
-          content: string
-          type?: 'announcement' | 'event' | 'general' | 'newsletter' | null
-          recipient_count?: number
-          recipients?: Json | null
-          sent_at?: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          title?: string
-          content?: string
-          type?: 'announcement' | 'event' | 'general' | 'newsletter' | null
-          recipient_count?: number
-          recipients?: Json | null
-          sent_at?: string
           created_at?: string
         }
         Relationships: []

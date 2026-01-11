@@ -158,7 +158,7 @@ export async function deleteNewFamilyRegistration(id: string) {
   return true
 }
 
-// 새가족 등록 통계
+// 새가족 등록 통계 (상태별 카운트)
 export async function getNewFamilyStats() {
   const { count: total } = await supabase
     .from('new_family_registrations')
@@ -169,28 +169,33 @@ export async function getNewFamilyStats() {
     .select('id', { count: 'exact', head: true })
     .eq('status', 'pending')
 
-  // 이번 주 등록 수
-  const oneWeekAgo = new Date()
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-  const { count: thisWeek } = await supabase
+  const { count: contacted } = await supabase
     .from('new_family_registrations')
     .select('id', { count: 'exact', head: true })
-    .gte('submitted_at', oneWeekAgo.toISOString())
+    .eq('status', 'contacted')
 
-  // 이번 달 등록 수
-  const thisMonth = new Date()
-  thisMonth.setDate(1)
-  thisMonth.setHours(0, 0, 0, 0)
-  const { count: monthlyCount } = await supabase
+  const { count: visiting } = await supabase
     .from('new_family_registrations')
     .select('id', { count: 'exact', head: true })
-    .gte('submitted_at', thisMonth.toISOString())
+    .eq('status', 'visiting')
+
+  const { count: registered } = await supabase
+    .from('new_family_registrations')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'registered')
+
+  const { count: inactive } = await supabase
+    .from('new_family_registrations')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'inactive')
 
   return {
     total: total || 0,
     pending: pending || 0,
-    thisWeek: thisWeek || 0,
-    thisMonth: monthlyCount || 0,
+    contacted: contacted || 0,
+    visiting: visiting || 0,
+    registered: registered || 0,
+    inactive: inactive || 0,
   }
 }
 

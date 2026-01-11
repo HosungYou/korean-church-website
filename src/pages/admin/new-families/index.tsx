@@ -102,9 +102,10 @@ const AdminNewFamiliesPage = () => {
   }
 
   const filteredFamilies = families.filter((family) => {
+    const familyName = family.korean_name || family.english_name || ''
     const matchesSearch =
       !searchTerm ||
-      family.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      familyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (family.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (family.phone || '').includes(searchTerm)
 
@@ -242,11 +243,11 @@ const AdminNewFamiliesPage = () => {
                               </div>
                               <div>
                                 <h3 className="text-sm font-medium text-gray-900 font-korean">
-                                  {family.name}
+                                  {family.korean_name || family.english_name}
                                 </h3>
                                 <div className="flex items-center gap-2 text-xs text-gray-500">
                                   <Clock className="w-3 h-3" />
-                                  {formatDate(family.created_at)}
+                                  {formatDate(family.submitted_at)}
                                 </div>
                               </div>
                             </div>
@@ -273,7 +274,7 @@ const AdminNewFamiliesPage = () => {
                       <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-medium text-gray-900 font-korean">상세 정보</h3>
                         <button
-                          onClick={() => handleDelete(selectedFamily.id, selectedFamily.name)}
+                          onClick={() => handleDelete(selectedFamily.id, selectedFamily.korean_name || selectedFamily.english_name || '')}
                           className="text-red-400 hover:text-red-600"
                           title="삭제"
                         >
@@ -284,7 +285,10 @@ const AdminNewFamiliesPage = () => {
                       <div className="space-y-4">
                         <div>
                           <label className="text-xs text-gray-500 font-korean">이름</label>
-                          <p className="text-lg font-medium text-gray-900 font-korean">{selectedFamily.name}</p>
+                          <p className="text-lg font-medium text-gray-900 font-korean">
+                            {selectedFamily.korean_name}
+                            {selectedFamily.english_name && ` (${selectedFamily.english_name})`}
+                          </p>
                         </div>
 
                         {selectedFamily.phone && (
@@ -311,10 +315,16 @@ const AdminNewFamiliesPage = () => {
                           </div>
                         )}
 
-                        {selectedFamily.address && (
+                        {selectedFamily.address_line1 && (
                           <div>
                             <label className="text-xs text-gray-500 font-korean">주소</label>
-                            <p className="text-gray-900 font-korean">{selectedFamily.address}</p>
+                            <p className="text-gray-900 font-korean">
+                              {selectedFamily.address_line1}
+                              {selectedFamily.address_line2 && `, ${selectedFamily.address_line2}`}
+                              {selectedFamily.city && `, ${selectedFamily.city}`}
+                              {selectedFamily.state && `, ${selectedFamily.state}`}
+                              {selectedFamily.zip_code && ` ${selectedFamily.zip_code}`}
+                            </p>
                           </div>
                         )}
 
@@ -338,10 +348,10 @@ const AdminNewFamiliesPage = () => {
                         <div>
                           <label className="text-xs text-gray-500 font-korean">세례 여부</label>
                           <p className="flex items-center gap-2">
-                            {selectedFamily.baptized ? (
+                            {selectedFamily.baptism_date ? (
                               <>
                                 <CheckCircle className="w-4 h-4 text-green-500" />
-                                <span className="text-green-600">세례 받음</span>
+                                <span className="text-green-600">세례 받음 ({selectedFamily.baptism_date})</span>
                               </>
                             ) : (
                               <>
@@ -352,11 +362,20 @@ const AdminNewFamiliesPage = () => {
                           </p>
                         </div>
 
-                        {selectedFamily.notes && (
+                        {selectedFamily.introduction && (
                           <div>
-                            <label className="text-xs text-gray-500 font-korean">메모</label>
+                            <label className="text-xs text-gray-500 font-korean">자기소개</label>
                             <p className="text-gray-900 font-korean text-sm bg-gray-50 p-3 rounded-lg">
-                              {selectedFamily.notes}
+                              {selectedFamily.introduction}
+                            </p>
+                          </div>
+                        )}
+
+                        {selectedFamily.admin_notes && (
+                          <div>
+                            <label className="text-xs text-gray-500 font-korean">관리자 메모</label>
+                            <p className="text-gray-900 font-korean text-sm bg-yellow-50 p-3 rounded-lg">
+                              {selectedFamily.admin_notes}
                             </p>
                           </div>
                         )}
