@@ -8,6 +8,8 @@ import Image from 'next/image'
 import { ArrowRight, Play, Calendar, MapPin, Heart, Users, BookOpen, Phone, Globe, Mail, Bell } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { addEmailSubscriber } from '../utils/emailService'
+import { getActiveSlides } from '../utils/heroSlideService'
+import type { HeroSlide as DBHeroSlide } from '../../types/supabase'
 
 type HeroSlideContent = {
   title: string
@@ -45,7 +47,11 @@ const DEFAULT_HERO_SLIDES: Record<'ko' | 'en', HeroSlideContent[]> = {
   ]
 }
 
-const Home: NextPage = () => {
+interface HomeProps {
+  dbSlides: DBHeroSlide[]
+}
+
+const Home: NextPage<HomeProps> = ({ dbSlides }) => {
   const { t, i18n } = useTranslation(['home', 'common'])
   const [email, setEmail] = useState('')
   const [isSubscribed, setIsSubscribed] = useState(false)
@@ -131,7 +137,7 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <HeroSlider slides={heroSlides} fontClass={fontClass} />
+      <HeroSlider slides={heroSlides} dbSlides={dbSlides} fontClass={fontClass} />
 
       {/* Quick Access Icons */}
       <section className="bg-white py-12 relative overflow-hidden">
@@ -280,11 +286,21 @@ const Home: NextPage = () => {
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getStaticProps: GetStaticProps<HomeProps> = async ({ locale }) => {
+  let dbSlides: DBHeroSlide[] = []
+
+  try {
+    dbSlides = await getActiveSlides()
+  } catch (error) {
+    console.error('Error fetching hero slides:', error)
+  }
+
   return {
     props: {
       ...(await serverSideTranslations(locale ?? 'ko', ['common', 'home'])),
+      dbSlides,
     },
+    revalidate: 300, // 5분마다 재생성
   }
 }
 

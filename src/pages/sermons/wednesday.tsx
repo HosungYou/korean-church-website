@@ -2,40 +2,53 @@ import Layout from '@/components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
-import { Play, User, BookOpen, ArrowRight, Filter, Search, Clock } from 'lucide-react'
-import { useState } from 'react'
-
-interface Sermon {
-  id: number
-  title: string
-  speaker: string
-  date: string
-  scripture: string
-  videoId: string
-  series?: string
-}
+import { User, BookOpen, ArrowRight, Filter, Search, Clock, Loader2, Calendar } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { getSermons } from '../../utils/sermonService'
+import type { Sermon } from '../../../types/supabase'
 
 const WednesdaySermonsPage = () => {
+  const [sermons, setSermons] = useState<Sermon[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedYear, setSelectedYear] = useState('all')
 
-  const sermons: Sermon[] = [
-    { id: 1, title: '욥기 강해 (5)', speaker: '연규홍 목사', date: '2025-08-06', scripture: '욥기 5:1-27', videoId: 'dQw4w9WgXcQ', series: '욥기 강해' },
-    { id: 2, title: '욥기 강해 (4)', speaker: '연규홍 목사', date: '2025-07-30', scripture: '욥기 4:1-21', videoId: 'dQw4w9WgXcQ', series: '욥기 강해' },
-    { id: 3, title: '욥기 강해 (3)', speaker: '연규홍 목사', date: '2025-07-23', scripture: '욥기 3:1-26', videoId: 'dQw4w9WgXcQ', series: '욥기 강해' },
-    { id: 4, title: '욥기 강해 (2)', speaker: '연규홍 목사', date: '2025-07-16', scripture: '욥기 2:1-13', videoId: 'dQw4w9WgXcQ', series: '욥기 강해' },
-    { id: 5, title: '욥기 강해 (1)', speaker: '연규홍 목사', date: '2025-07-09', scripture: '욥기 1:1-22', videoId: 'dQw4w9WgXcQ', series: '욥기 강해' },
-  ]
+  useEffect(() => {
+    const fetchSermons = async () => {
+      try {
+        setLoading(true)
+        const data = await getSermons({ type: 'wednesday', status: 'published' })
+        setSermons(data)
+      } catch (error) {
+        console.error('설교 조회 오류:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const years = ['all', '2025', '2024', '2023']
+    fetchSermons()
+  }, [])
 
-  const filteredSermons = sermons.filter(sermon => {
-    const matchesSearch = sermon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sermon.scripture.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sermon.speaker.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesYear = selectedYear === 'all' || sermon.date.startsWith(selectedYear)
-    return matchesSearch && matchesYear
-  })
+  const years = useMemo(() => {
+    const uniqueYears = ['all', ...Array.from(new Set(sermons.map(s => s.sermon_date.substring(0, 4))))]
+    return uniqueYears.sort((a, b) => (b === 'all' ? -1 : a === 'all' ? 1 : b.localeCompare(a)))
+  }, [sermons])
+
+  const filteredSermons = useMemo(() => {
+    return sermons.filter(sermon => {
+      const matchesSearch =
+        sermon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (sermon.scripture || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (sermon.speaker || '').toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesYear = selectedYear === 'all' || sermon.sermon_date.startsWith(selectedYear)
+      return matchesSearch && matchesYear
+    })
+  }, [sermons, searchTerm, selectedYear])
+
+  const currentSeries = useMemo(() => {
+    const seriesSermon = sermons.find(s => s.series_name)
+    return seriesSermon?.series_name || '수요설교'
+  }, [sermons])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -54,7 +67,7 @@ const WednesdaySermonsPage = () => {
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
               <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-              <h1 className="text-4xl md:text-5xl font-bold text-black font-korean">수요설교 영상</h1>
+              <h1 className="text-4xl md:text-5xl font-bold text-black font-korean">수요설교</h1>
               <div className="w-3 h-3 bg-black rounded-full ml-4"></div>
             </div>
             <p className="text-xl text-gray-600 font-korean max-w-2xl mx-auto">
@@ -86,7 +99,7 @@ const WednesdaySermonsPage = () => {
               <BookOpen className="w-5 h-5 text-black mr-3" />
               <div>
                 <p className="text-sm text-gray-500 font-korean">현재 시리즈</p>
-                <p className="font-semibold text-black font-korean">욥기 강해</p>
+                <p className="font-semibold text-black font-korean">{currentSeries}</p>
               </div>
             </div>
           </div>
@@ -112,7 +125,7 @@ const WednesdaySermonsPage = () => {
             {/* Year Filter */}
             <div className="flex items-center gap-2">
               <Filter className="w-5 h-5 text-gray-500" />
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {years.map((year) => (
                   <button
                     key={year}
@@ -132,7 +145,7 @@ const WednesdaySermonsPage = () => {
         </div>
       </section>
 
-      {/* Sermons Grid */}
+      {/* Sermons List */}
       <section className="bg-gray-50 py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center mb-8">
@@ -141,48 +154,56 @@ const WednesdaySermonsPage = () => {
             <span className="ml-3 text-gray-500 font-korean">({filteredSermons.length}개)</span>
           </div>
 
-          {filteredSermons.length === 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-black" />
+            </div>
+          ) : filteredSermons.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 font-korean">검색 결과가 없습니다.</p>
+              <p className="text-gray-500 font-korean">
+                {sermons.length === 0 ? '등록된 설교가 없습니다.' : '검색 결과가 없습니다.'}
+              </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
               {filteredSermons.map((sermon) => (
-                <div key={sermon.id} className="group bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="flex">
-                    {/* Video Thumbnail */}
-                    <div className="relative w-48 h-32 flex-shrink-0 bg-black">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                          <Play className="w-6 h-6 text-white ml-1" />
-                        </div>
-                      </div>
-                      {sermon.series && (
-                        <div className="absolute top-2 left-2">
-                          <span className="bg-black/80 text-white text-xs px-2 py-1 rounded font-korean">
-                            {sermon.series}
+                <div
+                  key={sermon.id}
+                  className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        {sermon.series_name && (
+                          <span className="bg-black text-white text-xs px-2 py-1 rounded font-korean">
+                            {sermon.series_name}
                           </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 p-4">
-                      <div className="flex items-center mb-2">
-                        <div className="w-1.5 h-1.5 bg-black rounded-full mr-2"></div>
-                        <span className="text-xs text-gray-500 font-korean">{formatDate(sermon.date)}</span>
+                        )}
+                        <span className="text-sm text-gray-500 font-korean flex items-center">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          {formatDate(sermon.sermon_date)}
+                        </span>
                       </div>
-                      <h3 className="text-lg font-bold text-black font-korean mb-1 group-hover:underline">
+                      <h3 className="text-xl font-bold text-black font-korean mb-2">
                         {sermon.title}
                       </h3>
-                      <div className="flex items-center text-sm text-gray-600 mb-2">
-                        <User className="w-4 h-4 mr-1" />
-                        <span className="font-korean">{sermon.speaker}</span>
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                        {sermon.speaker && (
+                          <div className="flex items-center">
+                            <User className="w-4 h-4 mr-1" />
+                            <span className="font-korean">{sermon.speaker}</span>
+                          </div>
+                        )}
+                        {sermon.scripture && (
+                          <div className="flex items-center text-primary">
+                            <BookOpen className="w-4 h-4 mr-1" />
+                            <span className="font-korean">{sermon.scripture}</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <BookOpen className="w-4 h-4 mr-1" />
-                        <span className="font-korean">{sermon.scripture}</span>
-                      </div>
+                      {sermon.description && (
+                        <p className="mt-3 text-gray-600 text-sm line-clamp-2">{sermon.description}</p>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -80,17 +80,18 @@ const navigationConfig: NavItem[] = [
   {
     labelKey: 'nav_groups.worship',
     dropdown: [
-      { labelKey: 'nav_links.sermons_live', href: '/sermons-live' },
       { labelKey: 'nav_links.sermons', href: '/sermons' },
+      { labelKey: 'nav_links.sunday_sermon', href: '/sermons/sunday' },
+      { labelKey: 'nav_links.wednesday_sermon', href: '/sermons/wednesday' },
       { labelKey: 'nav_links.service_info', href: '/about/service-info' },
     ],
   },
   {
-    labelKey: 'nav_groups.growth',
+    labelKey: 'nav_groups.nurturing',
     dropdown: [
       { labelKey: 'nav_links.korean_school', href: '/education/korean-school' },
       { labelKey: 'nav_links.training', href: '/education/training' },
-      { labelKey: 'nav_links.new_family', href: '/new-family-guide' },
+      { labelKey: 'nav_links.bible_reading', href: '/bible-reading' },
     ],
   },
   {
@@ -106,7 +107,6 @@ const navigationConfig: NavItem[] = [
     dropdown: [
       { labelKey: 'nav_links.videos', href: '/sermons' },
       { labelKey: 'nav_links.gallery', href: '/news/gallery' },
-      { labelKey: 'nav_links.upload', href: '/news/gallery' },
     ],
   },
   {
@@ -120,6 +120,7 @@ const navigationConfig: NavItem[] = [
     labelKey: 'nav_groups.about',
     dropdown: [
       { labelKey: 'nav_links.about', href: '/about' },
+      { labelKey: 'nav_links.new_family', href: '/new-family-guide' },
       { labelKey: 'nav_links.history', href: '/about/history' },
       { labelKey: 'nav_links.philosophy', href: '/about/philosophy' },
       { labelKey: 'nav_links.directions', href: '/about/directions' },
@@ -258,7 +259,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Menu as="div" key={item.labelKey} className="relative">
                     <Menu.Button className={`inline-flex items-center px-1 pt-1 text-base font-medium text-primary hover:text-secondary transition-colors ${fontClass}`}>
                       <span>{item.labelKey === 'nav_groups.worship' ? '예배' :
-                        item.labelKey === 'nav_groups.growth' ? '성장' :
+                        item.labelKey === 'nav_groups.nurturing' ? '양육/훈련' :
                           item.labelKey === 'nav_groups.serving' ? '섬김' :
                             item.labelKey === 'nav_groups.media' ? '미디어' :
                               item.labelKey === 'nav_groups.community' ? '소통' :

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../../lib/supabase'
+import supabase from '../../lib/supabase'
 
 export interface AdminUser {
   id: string
@@ -8,6 +8,11 @@ export interface AdminUser {
   name: string
   role?: string | null
   avatarUrl?: string | null
+}
+
+interface ProfileData {
+  full_name: string | null
+  role: string | null
 }
 
 export function useAdminAuth() {
@@ -22,17 +27,9 @@ export function useAdminAuth() {
     const checkSession = async () => {
       try {
         setLoading(true)
-        console.log('[useAdminAuth] Checking session...')
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
 
-        console.log('[useAdminAuth] Session result:', {
-          hasSession: !!sessionData.session,
-          error: sessionError?.message,
-          userId: sessionData.session?.user?.id
-        })
-
         if (sessionError || !sessionData.session) {
-          console.log('[useAdminAuth] No session, redirecting to login')
           if (isMounted) {
             setAdmin(null)
             setError(sessionError?.message || null)
@@ -43,17 +40,13 @@ export function useAdminAuth() {
 
         const session = sessionData.session
 
-        console.log('[useAdminAuth] Checking admin profile for user:', session.user.id)
         const { data: profile, error: profileError } = await supabase
-          .from('admin_users')
-          .select('name, role')
+          .from('profiles')
+          .select('full_name, role')
           .eq('id', session.user.id)
-          .single<{ name: string | null; role: string }>()
+          .single<ProfileData>()
 
-        console.log('[useAdminAuth] Profile result:', { profile, error: profileError?.message })
-
-        if (profileError || profile?.role !== 'admin') {
-          console.log('[useAdminAuth] Not admin or profile error, signing out')
+        if (profileError || !profile || profile.role !== 'admin') {
           await supabase.auth.signOut()
           if (isMounted) {
             setAdmin(null)
@@ -67,7 +60,7 @@ export function useAdminAuth() {
           id: session.user.id,
           email: session.user.email ?? '',
           name:
-            profile?.name ||
+            profile?.full_name ||
             (session.user.user_metadata as any)?.full_name ||
             '관리자',
           role: profile?.role ?? null,

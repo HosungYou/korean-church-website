@@ -1,13 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
-import { supabase } from '../../lib/supabase'
+import { createSupabaseClient } from '../../lib/supabaseClient'
 
 interface AdminLoginFormProps {
   showHeader?: boolean
   className?: string
   cardClassName?: string
   onSuccessRedirect?: string
+}
+
+interface ProfileData {
+  full_name: string | null
+  role: string | null
 }
 
 const AdminLoginForm = ({
@@ -17,6 +22,7 @@ const AdminLoginForm = ({
   onSuccessRedirect = '/admin/dashboard'
 }: AdminLoginFormProps) => {
   const router = useRouter()
+  const supabase = useMemo(() => createSupabaseClient(), [])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -34,7 +40,7 @@ const AdminLoginForm = ({
       'adminUser',
       JSON.stringify({
         email: sessionUser.email,
-        name: profile?.name || sessionUser.user_metadata?.full_name || '관리자',
+        name: profile?.full_name || sessionUser.user_metadata?.full_name || '관리자',
         photoURL: sessionUser.user_metadata?.avatar_url || null,
         uid: sessionUser.id,
         role: profile?.role ?? null,
@@ -53,12 +59,12 @@ const AdminLoginForm = ({
         }
 
         const { data: profile, error: profileError } = await supabase
-          .from('admin_users')
-          .select('name, role')
+          .from('profiles')
+          .select('full_name, role')
           .eq('id', data.session.user.id)
-          .single<{ name: string | null; role: string }>()
+          .single<ProfileData>()
 
-        if (profileError || profile?.role !== 'admin') {
+        if (profileError || !profile || profile.role !== 'admin') {
           await supabase.auth.signOut()
           return
         }
@@ -73,7 +79,7 @@ const AdminLoginForm = ({
     }
 
     restoreSession()
-  }, [router, onSuccessRedirect])
+  }, [router, onSuccessRedirect, supabase])
 
   const handleEmailLogin = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -92,12 +98,12 @@ const AdminLoginForm = ({
       }
 
       const { data: profile, error: profileError } = await supabase
-        .from('admin_users')
-        .select('name, role')
+        .from('profiles')
+        .select('full_name, role')
         .eq('id', data.session.user.id)
-        .single<{ name: string | null; role: string }>()
+        .single<ProfileData>()
 
-      if (profileError || profile?.role !== 'admin') {
+      if (profileError || !profile || profile.role !== 'admin') {
         await supabase.auth.signOut()
         setError('관리자 권한이 없는 계정입니다.')
         return
@@ -133,7 +139,6 @@ const AdminLoginForm = ({
     } finally {
       setIsGoogleLoading(false)
     }
-    // Don't set loading to false here - page will redirect
   }
 
   return (
