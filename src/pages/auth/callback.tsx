@@ -58,12 +58,12 @@ const AuthCallbackPage = () => {
 
         if (session?.user) {
           console.log('[Callback] Session found, checking admin role...')
-          // Check if user is admin from profiles table
+          // Check if user is admin from admin_users table
           const { data: adminData, error: adminError } = await supabase
-            .from('profiles')
-            .select('id, full_name, role')
+            .from('admin_users')
+            .select('id, name, role')
             .eq('id', session.user.id)
-            .single<{ id: string; full_name: string | null; role: string }>()
+            .single<{ id: string; name: string | null; role: string }>()
 
           console.log('[Callback] Admin check result:', {
             adminData,
@@ -86,7 +86,7 @@ const AuthCallbackPage = () => {
               'adminUser',
               JSON.stringify({
                 email: session.user.email,
-                name: adminData.full_name || session.user.user_metadata?.full_name || '관리자',
+                name: adminData.name || session.user.user_metadata?.full_name || '관리자',
                 photoURL: session.user.user_metadata?.avatar_url,
                 uid: session.user.id,
                 role: adminData.role,

@@ -10,8 +10,8 @@ interface AdminLoginFormProps {
   onSuccessRedirect?: string
 }
 
-interface ProfileData {
-  full_name: string | null
+interface AdminUserData {
+  name: string | null
   role: string | null
 }
 
@@ -30,7 +30,7 @@ const AdminLoginForm = ({
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const setAdminState = (sessionUser: any, profile?: any) => {
+  const setAdminState = (sessionUser: any, adminUser?: any) => {
     if (typeof window === 'undefined') {
       return
     }
@@ -40,10 +40,10 @@ const AdminLoginForm = ({
       'adminUser',
       JSON.stringify({
         email: sessionUser.email,
-        name: profile?.full_name || sessionUser.user_metadata?.full_name || '관리자',
+        name: adminUser?.name || sessionUser.user_metadata?.full_name || '관리자',
         photoURL: sessionUser.user_metadata?.avatar_url || null,
         uid: sessionUser.id,
-        role: profile?.role ?? null,
+        role: adminUser?.role ?? null,
         loginTime: new Date().toISOString()
       })
     )
@@ -58,18 +58,18 @@ const AdminLoginForm = ({
           return
         }
 
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('full_name, role')
+        const { data: adminUser, error: adminError } = await supabase
+          .from('admin_users')
+          .select('name, role')
           .eq('id', data.session.user.id)
-          .single<ProfileData>()
+          .single<AdminUserData>()
 
-        if (profileError || !profile || profile.role !== 'admin') {
+        if (adminError || !adminUser || adminUser.role !== 'admin') {
           await supabase.auth.signOut()
           return
         }
 
-        setAdminState(data.session.user, profile)
+        setAdminState(data.session.user, adminUser)
         if (router.asPath !== onSuccessRedirect) {
           await router.replace(onSuccessRedirect)
         }
@@ -97,19 +97,19 @@ const AdminLoginForm = ({
         return
       }
 
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('full_name, role')
+      const { data: adminUser, error: adminError } = await supabase
+        .from('admin_users')
+        .select('name, role')
         .eq('id', data.session.user.id)
-        .single<ProfileData>()
+        .single<AdminUserData>()
 
-      if (profileError || !profile || profile.role !== 'admin') {
+      if (adminError || !adminUser || adminUser.role !== 'admin') {
         await supabase.auth.signOut()
         setError('관리자 권한이 없는 계정입니다.')
         return
       }
 
-      setAdminState(data.session.user, profile)
+      setAdminState(data.session.user, adminUser)
       await router.replace(onSuccessRedirect)
     } finally {
       setIsLoading(false)

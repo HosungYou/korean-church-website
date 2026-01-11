@@ -36,6 +36,33 @@ export interface Database {
         }
         Relationships: []
       }
+      admin_users: {
+        Row: {
+          id: string
+          email: string
+          name: string | null
+          role: string
+          created_at: string
+          last_login: string | null
+        }
+        Insert: {
+          id: string
+          email: string
+          name?: string | null
+          role?: string
+          created_at?: string
+          last_login?: string | null
+        }
+        Update: {
+          id?: string
+          email?: string
+          name?: string | null
+          role?: string
+          created_at?: string
+          last_login?: string | null
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           id: string

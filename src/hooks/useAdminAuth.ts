@@ -10,8 +10,8 @@ export interface AdminUser {
   avatarUrl?: string | null
 }
 
-interface ProfileData {
-  full_name: string | null
+interface AdminUserData {
+  name: string | null
   role: string | null
 }
 
@@ -40,17 +40,17 @@ export function useAdminAuth() {
 
         const session = sessionData.session
 
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('full_name, role')
+        const { data: adminUserData, error: adminError } = await supabase
+          .from('admin_users')
+          .select('name, role')
           .eq('id', session.user.id)
-          .single<ProfileData>()
+          .single<AdminUserData>()
 
-        if (profileError || !profile || profile.role !== 'admin') {
+        if (adminError || !adminUserData || adminUserData.role !== 'admin') {
           await supabase.auth.signOut()
           if (isMounted) {
             setAdmin(null)
-            setError(profileError?.message || '관리자 권한이 없습니다.')
+            setError(adminError?.message || '관리자 권한이 없습니다.')
           }
           router.replace('/admin/login?error=not_admin')
           return
@@ -60,10 +60,10 @@ export function useAdminAuth() {
           id: session.user.id,
           email: session.user.email ?? '',
           name:
-            profile?.full_name ||
+            adminUserData?.name ||
             (session.user.user_metadata as any)?.full_name ||
             '관리자',
-          role: profile?.role ?? null,
+          role: adminUserData?.role ?? null,
           avatarUrl: (session.user.user_metadata as any)?.avatar_url || null
         }
 
