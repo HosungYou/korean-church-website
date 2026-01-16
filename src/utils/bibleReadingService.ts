@@ -352,3 +352,29 @@ export async function getBibleReadingStats(planId: string) {
     progressPercent: totalEntries ? Math.round((completedDays || 0) / totalEntries * 100) : 0,
   }
 }
+
+// ========== 요일 헬퍼 함수 ==========
+
+const DAY_NAMES_KO = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
+
+export function getDayOfWeekKorean(dateString: string): string {
+  const date = new Date(dateString)
+  return DAY_NAMES_KO[date.getDay()]
+}
+
+export function formatDateWithDay(dateString: string): string {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const dayOfWeek = DAY_NAMES_KO[date.getDay()]
+  return `${year}년 ${month}월 ${day}일 ${dayOfWeek}`
+}
+
+export function formatShortDate(dateString: string): string {
+  const date = new Date(dateString)
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const dayOfWeek = DAY_NAMES_KO[date.getDay()].slice(0, 1) // 첫 글자만
+  return `${month}/${day} ${dayOfWeek}`
+}

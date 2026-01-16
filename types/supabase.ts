@@ -466,7 +466,15 @@ export interface Database {
           psalms: string | null
           proverbs: string | null
           notes: string | null
+          // New devotional fields
+          title: string | null
+          scripture_reference: string | null
+          pastor_notes: string | null
+          application: string | null
+          prayer: string | null
+          day_of_week: string | null
           created_at: string
+          updated_at: string | null
         }
         Insert: {
           id?: string
@@ -477,7 +485,15 @@ export interface Database {
           psalms?: string | null
           proverbs?: string | null
           notes?: string | null
+          // New devotional fields
+          title?: string | null
+          scripture_reference?: string | null
+          pastor_notes?: string | null
+          application?: string | null
+          prayer?: string | null
+          day_of_week?: string | null
           created_at?: string
+          updated_at?: string | null
         }
         Update: {
           id?: string
@@ -488,7 +504,15 @@ export interface Database {
           psalms?: string | null
           proverbs?: string | null
           notes?: string | null
+          // New devotional fields
+          title?: string | null
+          scripture_reference?: string | null
+          pastor_notes?: string | null
+          application?: string | null
+          prayer?: string | null
+          day_of_week?: string | null
           created_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
