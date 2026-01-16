@@ -6,6 +6,8 @@ module.exports = {
     locales: ['ko', 'en'],
     localeDetection: false,
   },
-  localePath: path.resolve('./public/locales'),
+  localePath: typeof window === 'undefined'
+    ? path.resolve('./public/locales')
+    : '/locales',
   reloadOnPrerender: process.env.NODE_ENV === 'development',
 }
