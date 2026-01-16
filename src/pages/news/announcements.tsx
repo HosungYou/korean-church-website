@@ -1,12 +1,19 @@
+// ===========================================
+// VS Design Diverge: Announcements Page
+// OKLCH Color System + Editorial Minimalism
+// ===========================================
+
 import { useMemo, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Mail, Bell, Search, Calendar } from 'lucide-react'
+import { Mail, Bell, Search, Calendar, ArrowRight } from 'lucide-react'
 import { addEmailSubscriber } from '../../utils/emailService'
 import { getPublishedAnnouncements, PostRecord } from '../../utils/postService'
 import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
 
 interface SerializedPost {
   id: string
@@ -149,137 +156,233 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
 
   return (
     <Layout>
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-white rounded-full mr-4"></div>
-            <h1 className={`text-4xl font-bold text-white ${fontClass}`}>
-              {t('news:announcements.title')}
-            </h1>
-          </div>
-        </div>
-      </div>
+      {/* Hero Header */}
+      <PageHeader
+        label="Church News"
+        title={t('news:announcements.title')}
+        subtitle="교회 소식과 행사 안내"
+      />
 
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        {/* Email subscription section */}
-        <div className="mb-12 bg-gray-50 rounded-lg p-8">
-          <div className="flex items-center mb-6">
-            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-            <h2 className={`text-2xl font-bold text-black ${fontClass}`}>
-              {t('news:announcements.subscribe.title')}
-            </h2>
-          </div>
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="flex items-center mb-4">
-              <Mail className="w-6 h-6 text-gray-600 mr-3" />
-              <p className={`text-gray-700 ${fontClass}`}>
-                {t('news:announcements.subscribe.description')}
-              </p>
+      {/* Email Subscription Section */}
+      <section className="py-12" style={{ background: 'oklch(0.97 0.005 75)' }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            className="p-8 rounded-sm"
+            style={{
+              background: 'oklch(0.985 0.003 75)',
+              border: '1px solid oklch(0.92 0.005 75)',
+              boxShadow: '0 4px 12px oklch(0.30 0.09 265 / 0.08)'
+            }}
+          >
+            <div className="flex items-center mb-6">
+              <div
+                className="w-12 h-12 rounded-sm flex items-center justify-center mr-4"
+                style={{ background: 'oklch(0.72 0.10 75 / 0.15)' }}
+              >
+                <Mail className="w-5 h-5" style={{ color: 'oklch(0.58 0.11 75)' }} />
+              </div>
+              <div>
+                <h2
+                  className={`text-xl font-bold ${fontClass}`}
+                  style={{ color: 'oklch(0.25 0.05 265)' }}
+                >
+                  {t('news:announcements.subscribe.title')}
+                </h2>
+                <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.55 0.01 75)' }}>
+                  {t('news:announcements.subscribe.description')}
+                </p>
+              </div>
             </div>
-            <form onSubmit={handleSubscribe} className="flex gap-3">
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t('news:announcements.subscribe.placeholder') as string}
-                className={`flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent ${fontClass}`}
+                className={`flex-1 px-4 py-3 rounded-sm transition-all duration-200 focus:outline-none ${fontClass}`}
+                style={{
+                  background: 'oklch(0.97 0.005 75)',
+                  border: '1px solid oklch(0.90 0.01 75)',
+                  color: 'oklch(0.25 0.05 265)'
+                }}
                 required
               />
               <button
                 type="submit"
-                className={`px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center ${fontClass}`}
+                className={`px-6 py-3 rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center ${fontClass}`}
+                style={{
+                  background: 'oklch(0.45 0.12 265)',
+                  color: 'oklch(0.98 0.003 75)'
+                }}
               >
                 <Bell className="w-4 h-4 mr-2" />
                 {t('news:announcements.subscribe.button')}
               </button>
             </form>
             {isSubscribed && (
-              <p className={`mt-4 text-green-600 ${fontClass}`}>
+              <p className={`mt-4 text-sm ${fontClass}`} style={{ color: 'oklch(0.45 0.15 145)' }}>
                 {t('news:announcements.subscribe.success')}
               </p>
             )}
           </div>
         </div>
+      </section>
 
-
-        {/* Search and filter */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+      {/* Search and Filter Section */}
+      <section
+        className="py-8"
+        style={{
+          background: 'oklch(0.985 0.003 75)',
+          borderBottom: '1px solid oklch(0.92 0.005 75)'
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            {/* Search */}
+            <div className="relative flex-1 max-w-md">
+              <Search
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
+                style={{ color: 'oklch(0.55 0.01 75)' }}
+              />
               <input
                 type="text"
                 placeholder={t('news:announcements.search.placeholder') as string}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent ${fontClass}`}
+                className={`w-full pl-12 pr-4 py-3 rounded-sm transition-all duration-200 focus:outline-none ${fontClass}`}
+                style={{
+                  background: 'oklch(0.97 0.005 75)',
+                  border: '1px solid oklch(0.90 0.01 75)',
+                  color: 'oklch(0.25 0.05 265)'
+                }}
               />
             </div>
-            <button
-              className="px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-              type="button"
-              aria-label={t('news:announcements.search.button_label') as string}
-            >
-              <Search className="w-5 h-5" />
-            </button>
-          </div>
 
-          <div className="flex border-b border-gray-200 flex-wrap">
-            {tabOptions.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-6 py-3 ${fontClass} font-medium transition-colors ${
-                  activeTab === tab.key
-                    ? 'text-black border-b-2 border-black'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+            {/* Tab Filter */}
+            <div className="flex gap-2 flex-wrap">
+              {tabOptions.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`px-4 py-2 rounded-sm text-sm font-medium transition-all duration-200 ${fontClass}`}
+                  style={{
+                    background: activeTab === tab.key
+                      ? 'oklch(0.45 0.12 265)'
+                      : 'oklch(0.97 0.005 75)',
+                    color: activeTab === tab.key
+                      ? 'oklch(0.98 0.003 75)'
+                      : 'oklch(0.40 0.05 265)',
+                    border: `1px solid ${activeTab === tab.key ? 'oklch(0.45 0.12 265)' : 'oklch(0.90 0.01 75)'}`
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* 공지사항 목록 */}
-        <div className="bg-white rounded-lg shadow-sm">
+      {/* Announcements List */}
+      <section className="py-16" style={{ background: 'oklch(0.97 0.005 75)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Editorial Section Header */}
+          <div className="mb-12">
+            <div
+              className="h-0.5 w-12 mb-6"
+              style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+            />
+            <div className="flex items-baseline gap-3">
+              <h2
+                className={`font-headline font-bold ${fontClass}`}
+                style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  letterSpacing: '-0.02em',
+                  color: 'oklch(0.25 0.05 265)'
+                }}
+              >
+                공지사항 목록
+              </h2>
+              <span style={{ color: 'oklch(0.55 0.01 75)' }}>
+                ({filteredPosts.length}개)
+              </span>
+            </div>
+          </div>
+
           {filteredPosts.length === 0 ? (
-            <div className={`p-12 text-center text-gray-500 ${fontClass}`}>
+            <div
+              className={`p-16 text-center rounded-sm ${fontClass}`}
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+                color: 'oklch(0.55 0.01 75)'
+              }}
+            >
               {t('news:announcements.empty')}
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
-              {filteredPosts.map((post) => {
+            <div className="space-y-4">
+              {filteredPosts.map((post, index) => {
                 const displayDate = formatDisplayDate(post.publishedAt, i18n.language)
                 const typeLabel = t(`news:post_types.${post.type}`)
                 return (
                   <div
                     key={post.id}
-                    className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+                    className={`p-6 rounded-sm transition-all duration-300 hover:-translate-y-1 cursor-pointer stagger-${(index % 6) + 1}`}
+                    style={{
+                      background: 'oklch(0.985 0.003 75)',
+                      border: '1px solid oklch(0.92 0.005 75)',
+                      boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+                    }}
                     onClick={() => handlePostClick(post.id)}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className={`text-xs px-2 py-1 rounded ${fontClass} ${
-                            post.type === 'announcement' ? 'bg-blue-100 text-blue-700' :
-                            post.type === 'event' ? 'bg-green-100 text-green-700' :
-                            'bg-gray-100 text-gray-700'
-                          }`}>
+                        <div className="flex items-center gap-3 mb-3">
+                          <span
+                            className={`text-xs px-3 py-1 rounded-sm font-medium ${fontClass}`}
+                            style={{
+                              background: post.type === 'announcement'
+                                ? 'oklch(0.45 0.12 265 / 0.1)'
+                                : post.type === 'event'
+                                ? 'oklch(0.72 0.10 75 / 0.9)'
+                                : 'oklch(0.90 0.02 75)',
+                              color: post.type === 'announcement'
+                                ? 'oklch(0.45 0.12 265)'
+                                : post.type === 'event'
+                                ? 'oklch(0.15 0.05 265)'
+                                : 'oklch(0.40 0.02 75)'
+                            }}
+                          >
                             {typeLabel}
                           </span>
                           {displayDate && (
-                            <div className={`flex items-center text-sm text-gray-500 ${fontClass}`}>
+                            <div
+                              className={`flex items-center text-sm ${fontClass}`}
+                              style={{ color: 'oklch(0.55 0.01 75)' }}
+                            >
                               <Calendar className="w-4 h-4 mr-1" />
                               <span>{displayDate}</span>
                             </div>
                           )}
                         </div>
-                        <h3 className={`text-lg font-semibold text-gray-900 mb-1 ${fontClass}`}>
+                        <h3
+                          className={`text-xl font-bold mb-2 ${fontClass}`}
+                          style={{ color: 'oklch(0.25 0.05 265)' }}
+                        >
                           {post.title}
                         </h3>
-                        <p className={`text-sm text-gray-600 line-clamp-2 ${fontClass}`}>{post.excerpt}</p>
+                        <p
+                          className={`text-sm line-clamp-2 ${fontClass}`}
+                          style={{ color: 'oklch(0.55 0.01 75)' }}
+                        >
+                          {post.excerpt}
+                        </p>
                       </div>
+                      <ArrowRight
+                        className="w-5 h-5 ml-4 flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1"
+                        style={{ color: 'oklch(0.45 0.12 265)' }}
+                      />
                     </div>
                   </div>
                 )
@@ -287,7 +390,72 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
             </div>
           )}
         </div>
-      </div>
+      </section>
+
+      {/* Related Links */}
+      <section className="py-16" style={{ background: 'oklch(0.985 0.003 75)' }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <div
+              className="h-0.5 w-12 mb-6"
+              style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+            />
+            <h2
+              className={`font-headline font-bold ${fontClass}`}
+              style={{
+                fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                letterSpacing: '-0.02em',
+                color: 'oklch(0.25 0.05 265)'
+              }}
+            >
+              관련 페이지
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { href: '/news/bulletin', title: '주보', desc: '주일예배 주보 다운로드' },
+              { href: '/news/gallery', title: '행사사진', desc: '교회 행사 사진 갤러리' },
+              { href: '/sermons/sunday', title: '주일설교', desc: '주일예배 설교 영상' }
+            ].map((link, index) => (
+              <Link key={link.href} href={link.href} className={`group block stagger-${index + 1}`}>
+                <div
+                  className="p-6 rounded-sm transition-all duration-300 hover:-translate-y-1"
+                  style={{
+                    background: 'oklch(0.97 0.005 75)',
+                    border: '1px solid oklch(0.92 0.005 75)'
+                  }}
+                >
+                  <div className="flex items-center mb-4">
+                    <div
+                      className="w-2 h-2 rounded-full mr-3"
+                      style={{ background: 'oklch(0.72 0.10 75)' }}
+                    />
+                    <h3
+                      className={`text-lg font-semibold ${fontClass}`}
+                      style={{ color: 'oklch(0.25 0.05 265)' }}
+                    >
+                      {link.title}
+                    </h3>
+                  </div>
+                  <p
+                    className={`text-sm mb-4 ${fontClass}`}
+                    style={{ color: 'oklch(0.55 0.01 75)' }}
+                  >
+                    {link.desc}
+                  </p>
+                  <div
+                    className={`flex items-center text-sm font-medium ${fontClass}`}
+                    style={{ color: 'oklch(0.45 0.12 265)' }}
+                  >
+                    자세히 보기
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
     </Layout>
   )
 }

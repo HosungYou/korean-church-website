@@ -1,10 +1,17 @@
+// ===========================================
+// VS Design Diverge: Bulletin Page
+// OKLCH Color System + Editorial Minimalism
+// ===========================================
+
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useState, useEffect, useMemo } from 'react'
-import { Download, FileText, Calendar, Filter, Loader2 } from 'lucide-react'
+import { Download, FileText, Calendar, Filter, Loader2, ArrowRight } from 'lucide-react'
 import { getBulletins, getBulletinsByYear } from '../../utils/bulletinService'
 import type { Bulletin } from '../../../types/supabase'
+import Link from 'next/link'
 
 const BulletinPage = () => {
   const [bulletins, setBulletins] = useState<Bulletin[]>([])
@@ -71,36 +78,38 @@ const BulletinPage = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-6">
-              <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-              <h1 className="text-4xl md:text-5xl font-bold text-black font-korean">주보</h1>
-              <div className="w-3 h-3 bg-black rounded-full ml-4"></div>
-            </div>
-            <p className="text-xl text-gray-600 font-korean max-w-2xl mx-auto">
-              매주 주일예배 주보를 다운로드하실 수 있습니다
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Hero Header */}
+      <PageHeader
+        label="Weekly Bulletin"
+        title="주보"
+        subtitle="매주 주일예배 주보를 다운로드하실 수 있습니다"
+      />
 
       {/* Filter Section */}
-      <section className="bg-gray-50 py-6 border-b border-gray-200">
+      <section
+        className="py-8"
+        style={{
+          background: 'oklch(0.985 0.003 75)',
+          borderBottom: '1px solid oklch(0.92 0.005 75)'
+        }}
+      >
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 flex-wrap">
-            <Filter className="w-5 h-5 text-gray-500" />
-            <span className="text-sm text-gray-600 font-korean">년도:</span>
+            <Filter className="w-5 h-5" style={{ color: 'oklch(0.55 0.01 75)' }} />
+            <span className="text-sm font-korean" style={{ color: 'oklch(0.55 0.01 75)' }}>년도:</span>
             <div className="flex gap-2 flex-wrap">
               <button
                 onClick={() => setSelectedYear(null)}
-                className={`px-4 py-2 rounded-lg font-korean text-sm transition-colors ${
-                  selectedYear === null
-                    ? 'bg-black text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
-                }`}
+                className="px-4 py-2 rounded-sm font-korean text-sm transition-all duration-200"
+                style={{
+                  background: selectedYear === null
+                    ? 'oklch(0.45 0.12 265)'
+                    : 'oklch(0.97 0.005 75)',
+                  color: selectedYear === null
+                    ? 'oklch(0.98 0.003 75)'
+                    : 'oklch(0.40 0.05 265)',
+                  border: `1px solid ${selectedYear === null ? 'oklch(0.45 0.12 265)' : 'oklch(0.90 0.01 75)'}`
+                }}
               >
                 전체
               </button>
@@ -108,11 +117,16 @@ const BulletinPage = () => {
                 <button
                   key={year}
                   onClick={() => setSelectedYear(year)}
-                  className={`px-4 py-2 rounded-lg font-korean text-sm transition-colors ${
-                    selectedYear === year
-                      ? 'bg-black text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
-                  }`}
+                  className="px-4 py-2 rounded-sm font-korean text-sm transition-all duration-200"
+                  style={{
+                    background: selectedYear === year
+                      ? 'oklch(0.45 0.12 265)'
+                      : 'oklch(0.97 0.005 75)',
+                    color: selectedYear === year
+                      ? 'oklch(0.98 0.003 75)'
+                      : 'oklch(0.40 0.05 265)',
+                    border: `1px solid ${selectedYear === year ? 'oklch(0.45 0.12 265)' : 'oklch(0.90 0.01 75)'}`
+                  }}
                 >
                   {year} ({yearCounts[year]})
                 </button>
@@ -123,39 +137,70 @@ const BulletinPage = () => {
       </section>
 
       {/* Bulletin List */}
-      <section className="bg-white py-12">
+      <section className="py-16" style={{ background: 'oklch(0.97 0.005 75)' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-8">
-            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-            <h2 className="text-2xl font-bold text-black font-korean">주보 목록</h2>
-            <span className="ml-3 text-gray-500 font-korean">({bulletins.length}개)</span>
+          {/* Editorial Section Header */}
+          <div className="mb-12">
+            <div
+              className="h-0.5 w-12 mb-6"
+              style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+            />
+            <div className="flex items-baseline gap-3">
+              <h2
+                className="font-headline font-bold font-korean"
+                style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  letterSpacing: '-0.02em',
+                  color: 'oklch(0.25 0.05 265)'
+                }}
+              >
+                주보 목록
+              </h2>
+              <span style={{ color: 'oklch(0.55 0.01 75)' }}>
+                ({bulletins.length}개)
+              </span>
+            </div>
           </div>
 
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-black" />
+              <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'oklch(0.45 0.12 265)' }} />
             </div>
           ) : bulletins.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 font-korean">등록된 주보가 없습니다.</p>
+            <div
+              className="text-center py-16 rounded-sm"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)'
+              }}
+            >
+              <FileText className="w-16 h-16 mx-auto mb-4" style={{ color: 'oklch(0.85 0.01 75)' }} />
+              <p className="font-korean" style={{ color: 'oklch(0.55 0.01 75)' }}>등록된 주보가 없습니다.</p>
             </div>
           ) : (
             <div className="space-y-4">
-              {bulletins.map((bulletin) => (
+              {bulletins.map((bulletin, index) => (
                 <div
                   key={bulletin.id}
-                  className="flex items-center justify-between bg-gray-50 p-4 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+                  className={`flex items-center justify-between p-5 rounded-sm transition-all duration-300 hover:-translate-y-1 stagger-${(index % 6) + 1}`}
+                  style={{
+                    background: 'oklch(0.985 0.003 75)',
+                    border: '1px solid oklch(0.92 0.005 75)',
+                    boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+                  }}
                 >
                   <div className="flex items-center">
-                    <div className="w-12 h-12 bg-black/5 rounded-lg flex items-center justify-center mr-4">
-                      <FileText className="w-6 h-6 text-black/60" />
+                    <div
+                      className="w-12 h-12 rounded-sm flex items-center justify-center mr-4"
+                      style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+                    >
+                      <FileText className="w-5 h-5" style={{ color: 'oklch(0.45 0.12 265)' }} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold font-korean text-black">
+                      <h3 className="text-lg font-semibold font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
                         {bulletin.title || `${formatDate(bulletin.bulletin_date)} 주보`}
                       </h3>
-                      <div className="flex items-center text-sm text-gray-500">
+                      <div className="flex items-center text-sm" style={{ color: 'oklch(0.55 0.01 75)' }}>
                         <Calendar className="w-4 h-4 mr-1" />
                         <span className="font-korean">{formatDate(bulletin.bulletin_date)}</span>
                       </div>
@@ -166,18 +211,87 @@ const BulletinPage = () => {
                       href={bulletin.file_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="flex items-center px-4 py-2 rounded-sm transition-all duration-300 hover:scale-105"
+                      style={{
+                        background: 'oklch(0.45 0.12 265)',
+                        color: 'oklch(0.98 0.003 75)'
+                      }}
                     >
                       <Download className="w-5 h-5 mr-2" />
                       <span className="font-korean">다운로드</span>
                     </a>
                   ) : (
-                    <span className="text-gray-400 text-sm font-korean">파일 없음</span>
+                    <span className="text-sm font-korean" style={{ color: 'oklch(0.70 0.01 75)' }}>파일 없음</span>
                   )}
                 </div>
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Related Links */}
+      <section className="py-16" style={{ background: 'oklch(0.985 0.003 75)' }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <div
+              className="h-0.5 w-12 mb-6"
+              style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+            />
+            <h2
+              className="font-headline font-bold font-korean"
+              style={{
+                fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                letterSpacing: '-0.02em',
+                color: 'oklch(0.25 0.05 265)'
+              }}
+            >
+              관련 페이지
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { href: '/news/announcements', title: '공지사항', desc: '교회 소식과 공지' },
+              { href: '/news/gallery', title: '행사사진', desc: '교회 행사 사진 갤러리' },
+              { href: '/sermons/sunday', title: '주일설교', desc: '주일예배 설교 영상' }
+            ].map((link, index) => (
+              <Link key={link.href} href={link.href} className={`group block stagger-${index + 1}`}>
+                <div
+                  className="p-6 rounded-sm transition-all duration-300 hover:-translate-y-1"
+                  style={{
+                    background: 'oklch(0.97 0.005 75)',
+                    border: '1px solid oklch(0.92 0.005 75)'
+                  }}
+                >
+                  <div className="flex items-center mb-4">
+                    <div
+                      className="w-2 h-2 rounded-full mr-3"
+                      style={{ background: 'oklch(0.72 0.10 75)' }}
+                    />
+                    <h3
+                      className="text-lg font-semibold font-korean"
+                      style={{ color: 'oklch(0.25 0.05 265)' }}
+                    >
+                      {link.title}
+                    </h3>
+                  </div>
+                  <p
+                    className="text-sm mb-4 font-korean"
+                    style={{ color: 'oklch(0.55 0.01 75)' }}
+                  >
+                    {link.desc}
+                  </p>
+                  <div
+                    className="flex items-center text-sm font-medium font-korean"
+                    style={{ color: 'oklch(0.45 0.12 265)' }}
+                  >
+                    자세히 보기
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
     </Layout>

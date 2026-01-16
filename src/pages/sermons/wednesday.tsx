@@ -1,4 +1,10 @@
+// ===========================================
+// VS Design Diverge: Wednesday Sermons Page
+// OKLCH Color System + Editorial Minimalism
+// ===========================================
+
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
@@ -61,45 +67,110 @@ const WednesdaySermonsPage = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-6">
-              <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-              <h1 className="text-4xl md:text-5xl font-bold text-black font-korean">수요설교</h1>
-              <div className="w-3 h-3 bg-black rounded-full ml-4"></div>
-            </div>
-            <p className="text-xl text-gray-600 font-korean max-w-2xl mx-auto">
-              말씀 중심의 수요예배 설교말씀
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Hero Header */}
+      <PageHeader
+        label="Wednesday Worship"
+        title="수요설교"
+        subtitle="말씀 중심의 수요예배 설교말씀"
+      />
 
-      {/* Service Info */}
-      <section className="bg-gray-50 py-8">
+      {/* Service Info - Editorial Cards */}
+      <section
+        className="py-12"
+        style={{ background: 'oklch(0.97 0.005 75)' }}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex items-center justify-center bg-white rounded-lg p-4 shadow-sm">
-              <Clock className="w-5 h-5 text-black mr-3" />
+            {/* Time Card */}
+            <div
+              className="flex items-center p-6 rounded-sm transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded-sm flex items-center justify-center mr-4"
+                style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+              >
+                <Clock className="w-5 h-5" style={{ color: 'oklch(0.45 0.12 265)' }} />
+              </div>
               <div>
-                <p className="text-sm text-gray-500 font-korean">예배 시간</p>
-                <p className="font-semibold text-black font-korean">매주 수요일 저녁 7:30</p>
+                <p
+                  className="text-xs font-medium tracking-wider uppercase"
+                  style={{ color: 'oklch(0.55 0.01 75)' }}
+                >
+                  예배 시간
+                </p>
+                <p
+                  className="font-semibold"
+                  style={{ color: 'oklch(0.25 0.05 265)' }}
+                >
+                  매주 수요일 저녁 7:30
+                </p>
               </div>
             </div>
-            <div className="flex items-center justify-center bg-white rounded-lg p-4 shadow-sm">
-              <User className="w-5 h-5 text-black mr-3" />
+
+            {/* Speaker Card */}
+            <div
+              className="flex items-center p-6 rounded-sm transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded-sm flex items-center justify-center mr-4"
+                style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+              >
+                <User className="w-5 h-5" style={{ color: 'oklch(0.45 0.12 265)' }} />
+              </div>
               <div>
-                <p className="text-sm text-gray-500 font-korean">설교자</p>
-                <p className="font-semibold text-black font-korean">연규홍 목사</p>
+                <p
+                  className="text-xs font-medium tracking-wider uppercase"
+                  style={{ color: 'oklch(0.55 0.01 75)' }}
+                >
+                  설교자
+                </p>
+                <p
+                  className="font-semibold"
+                  style={{ color: 'oklch(0.25 0.05 265)' }}
+                >
+                  연규홍 목사
+                </p>
               </div>
             </div>
-            <div className="flex items-center justify-center bg-white rounded-lg p-4 shadow-sm">
-              <BookOpen className="w-5 h-5 text-black mr-3" />
+
+            {/* Series Card */}
+            <div
+              className="flex items-center p-6 rounded-sm transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded-sm flex items-center justify-center mr-4"
+                style={{ background: 'oklch(0.72 0.10 75 / 0.15)' }}
+              >
+                <BookOpen className="w-5 h-5" style={{ color: 'oklch(0.58 0.11 75)' }} />
+              </div>
               <div>
-                <p className="text-sm text-gray-500 font-korean">현재 시리즈</p>
-                <p className="font-semibold text-black font-korean">{currentSeries}</p>
+                <p
+                  className="text-xs font-medium tracking-wider uppercase"
+                  style={{ color: 'oklch(0.55 0.01 75)' }}
+                >
+                  현재 시리즈
+                </p>
+                <p
+                  className="font-semibold"
+                  style={{ color: 'oklch(0.25 0.05 265)' }}
+                >
+                  {currentSeries}
+                </p>
               </div>
             </div>
           </div>
@@ -107,34 +178,53 @@ const WednesdaySermonsPage = () => {
       </section>
 
       {/* Filter Section */}
-      <section className="bg-white py-8 border-b border-gray-200">
+      <section
+        className="py-8"
+        style={{
+          background: 'oklch(0.985 0.003 75)',
+          borderBottom: '1px solid oklch(0.92 0.005 75)'
+        }}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
+                style={{ color: 'oklch(0.55 0.01 75)' }}
+              />
               <input
                 type="text"
                 placeholder="설교 제목, 성경 구절로 검색..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent font-korean"
+                className="w-full pl-12 pr-4 py-3 rounded-sm transition-all duration-200 focus:outline-none"
+                style={{
+                  background: 'oklch(0.97 0.005 75)',
+                  border: '1px solid oklch(0.90 0.01 75)',
+                  color: 'oklch(0.25 0.05 265)'
+                }}
               />
             </div>
 
             {/* Year Filter */}
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-gray-500" />
+            <div className="flex items-center gap-3">
+              <Filter className="w-5 h-5" style={{ color: 'oklch(0.55 0.01 75)' }} />
               <div className="flex gap-2 flex-wrap">
                 {years.map((year) => (
                   <button
                     key={year}
                     onClick={() => setSelectedYear(year)}
-                    className={`px-4 py-2 rounded-lg font-korean text-sm transition-colors ${
-                      selectedYear === year
-                        ? 'bg-black text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
+                    className="px-4 py-2 rounded-sm text-sm font-medium transition-all duration-200"
+                    style={{
+                      background: selectedYear === year
+                        ? 'oklch(0.45 0.12 265)'
+                        : 'oklch(0.97 0.005 75)',
+                      color: selectedYear === year
+                        ? 'oklch(0.98 0.003 75)'
+                        : 'oklch(0.40 0.05 265)',
+                      border: `1px solid ${selectedYear === year ? 'oklch(0.45 0.12 265)' : 'oklch(0.90 0.01 75)'}`
+                    }}
                   >
                     {year === 'all' ? '전체' : year}
                   </button>
@@ -146,63 +236,116 @@ const WednesdaySermonsPage = () => {
       </section>
 
       {/* Sermons List */}
-      <section className="bg-gray-50 py-12">
+      <section
+        className="py-16"
+        style={{ background: 'oklch(0.97 0.005 75)' }}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-8">
-            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-            <h2 className="text-2xl font-bold text-black font-korean">설교 목록</h2>
-            <span className="ml-3 text-gray-500 font-korean">({filteredSermons.length}개)</span>
+          {/* Editorial Section Header */}
+          <div className="mb-12">
+            <div
+              className="h-0.5 w-12 mb-6"
+              style={{
+                background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))'
+              }}
+            />
+            <div className="flex items-baseline gap-3">
+              <h2
+                className="font-headline font-bold"
+                style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  letterSpacing: '-0.02em',
+                  color: 'oklch(0.25 0.05 265)'
+                }}
+              >
+                설교 목록
+              </h2>
+              <span style={{ color: 'oklch(0.55 0.01 75)' }}>
+                ({filteredSermons.length}개)
+              </span>
+            </div>
           </div>
 
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-black" />
+              <Loader2
+                className="w-8 h-8 animate-spin"
+                style={{ color: 'oklch(0.45 0.12 265)' }}
+              />
             </div>
           ) : filteredSermons.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500 font-korean">
+            <div className="text-center py-16">
+              <p style={{ color: 'oklch(0.55 0.01 75)' }}>
                 {sermons.length === 0 ? '등록된 설교가 없습니다.' : '검색 결과가 없습니다.'}
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredSermons.map((sermon) => (
+              {filteredSermons.map((sermon, index) => (
                 <div
                   key={sermon.id}
-                  className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
+                  className={`p-6 rounded-sm transition-all duration-300 hover:-translate-y-1 stagger-${(index % 6) + 1}`}
+                  style={{
+                    background: 'oklch(0.985 0.003 75)',
+                    border: '1px solid oklch(0.92 0.005 75)',
+                    boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+                  }}
                 >
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         {sermon.series_name && (
-                          <span className="bg-black text-white text-xs px-2 py-1 rounded font-korean">
+                          <span
+                            className="text-xs px-2 py-1 rounded-sm font-medium"
+                            style={{
+                              background: 'oklch(0.72 0.10 75 / 0.9)',
+                              color: 'oklch(0.15 0.05 265)'
+                            }}
+                          >
                             {sermon.series_name}
                           </span>
                         )}
-                        <span className="text-sm text-gray-500 font-korean flex items-center">
+                        <span
+                          className="text-sm flex items-center"
+                          style={{ color: 'oklch(0.55 0.01 75)' }}
+                        >
                           <Calendar className="w-4 h-4 mr-1" />
                           {formatDate(sermon.sermon_date)}
                         </span>
                       </div>
-                      <h3 className="text-xl font-bold text-black font-korean mb-2">
+                      <h3
+                        className="text-xl font-bold mb-2"
+                        style={{ color: 'oklch(0.25 0.05 265)' }}
+                      >
                         {sermon.title}
                       </h3>
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                      <div className="flex flex-wrap items-center gap-4 text-sm">
                         {sermon.speaker && (
-                          <div className="flex items-center">
+                          <div
+                            className="flex items-center"
+                            style={{ color: 'oklch(0.45 0.05 265)' }}
+                          >
                             <User className="w-4 h-4 mr-1" />
-                            <span className="font-korean">{sermon.speaker}</span>
+                            <span>{sermon.speaker}</span>
                           </div>
                         )}
                         {sermon.scripture && (
-                          <div className="flex items-center text-primary">
+                          <div
+                            className="flex items-center"
+                            style={{ color: 'oklch(0.45 0.12 265)' }}
+                          >
                             <BookOpen className="w-4 h-4 mr-1" />
-                            <span className="font-korean">{sermon.scripture}</span>
+                            <span>{sermon.scripture}</span>
                           </div>
                         )}
                       </div>
                       {sermon.description && (
-                        <p className="mt-3 text-gray-600 text-sm line-clamp-2">{sermon.description}</p>
+                        <p
+                          className="mt-3 text-sm line-clamp-2"
+                          style={{ color: 'oklch(0.55 0.01 75)' }}
+                        >
+                          {sermon.description}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -213,54 +356,78 @@ const WednesdaySermonsPage = () => {
         </div>
       </section>
 
-      {/* Related Links */}
-      <section className="bg-white py-12">
+      {/* Related Links - Editorial Style */}
+      <section
+        className="py-16"
+        style={{ background: 'oklch(0.985 0.003 75)' }}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-8">
-            <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-            <h2 className="text-2xl font-bold text-black font-korean">관련 페이지</h2>
+          {/* Editorial Section Header */}
+          <div className="mb-12">
+            <div
+              className="h-0.5 w-12 mb-6"
+              style={{
+                background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))'
+              }}
+            />
+            <h2
+              className="font-headline font-bold"
+              style={{
+                fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                letterSpacing: '-0.02em',
+                color: 'oklch(0.25 0.05 265)'
+              }}
+            >
+              관련 페이지
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Link href="/sermons" className="group block">
-              <div className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
-                <div className="flex items-center mb-4">
-                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
-                  <h3 className="text-lg font-semibold text-black font-korean">설교 안내</h3>
+            {[
+              { href: '/sermons', title: '설교 안내', desc: '설교 시리즈 및 설교자 정보' },
+              { href: '/sermons/sunday', title: '주일설교 영상', desc: '주일예배 설교 영상 보기' },
+              { href: '/about/service-info', title: '예배안내', desc: '예배 시간 및 장소 안내' }
+            ].map((link, index) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`group block stagger-${index + 1}`}
+              >
+                <div
+                  className="p-6 rounded-sm transition-all duration-300 hover:-translate-y-1"
+                  style={{
+                    background: 'oklch(0.97 0.005 75)',
+                    border: '1px solid oklch(0.92 0.005 75)'
+                  }}
+                >
+                  <div className="flex items-center mb-4">
+                    <div
+                      className="w-2 h-2 rounded-full mr-3"
+                      style={{ background: 'oklch(0.72 0.10 75)' }}
+                    />
+                    <h3
+                      className="text-lg font-semibold"
+                      style={{ color: 'oklch(0.25 0.05 265)' }}
+                    >
+                      {link.title}
+                    </h3>
+                  </div>
+                  <p
+                    className="text-sm mb-4"
+                    style={{ color: 'oklch(0.55 0.01 75)' }}
+                  >
+                    {link.desc}
+                  </p>
+                  <div
+                    className="flex items-center text-sm font-medium"
+                    style={{ color: 'oklch(0.45 0.12 265)' }}
+                  >
+                    자세히 보기
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </div>
                 </div>
-                <p className="text-gray-600 font-korean text-sm mb-3">설교 시리즈 및 설교자 정보</p>
-                <div className="flex items-center text-black font-korean text-sm">
-                  자세히 보기
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </div>
-              </div>
-            </Link>
-            <Link href="/sermons/sunday" className="group block">
-              <div className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
-                <div className="flex items-center mb-4">
-                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
-                  <h3 className="text-lg font-semibold text-black font-korean">주일설교 영상</h3>
-                </div>
-                <p className="text-gray-600 font-korean text-sm mb-3">주일예배 설교 영상 보기</p>
-                <div className="flex items-center text-black font-korean text-sm">
-                  자세히 보기
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </div>
-              </div>
-            </Link>
-            <Link href="/about/service-info" className="group block">
-              <div className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
-                <div className="flex items-center mb-4">
-                  <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
-                  <h3 className="text-lg font-semibold text-black font-korean">예배안내</h3>
-                </div>
-                <p className="text-gray-600 font-korean text-sm mb-3">예배 시간 및 장소 안내</p>
-                <div className="flex items-center text-black font-korean text-sm">
-                  자세히 보기
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </div>
-              </div>
-            </Link>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

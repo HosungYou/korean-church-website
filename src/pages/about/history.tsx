@@ -1,3 +1,8 @@
+// ===========================================
+// VS Design Diverge: History Page
+// OKLCH Color System + Editorial Minimalism
+// ===========================================
+
 import Layout from '@/components/Layout'
 import PageHeader from '@/components/PageHeader'
 import { GetStaticProps } from 'next'
@@ -346,58 +351,136 @@ const HistoryPage = () => {
       <PageHeader
         title="교회 역사"
         subtitle="1981년부터 현재까지, 하나님의 은혜 가운데 걸어온 우리 교회의 발자취"
+        label="Our History"
         height="h-96"
       />
 
-      <div className="bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 font-korean mb-4">
+      {/* Main Content Section */}
+      <section style={{ background: 'oklch(0.97 0.005 75)' }} className="py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Editorial Section Header */}
+          <div className="mb-16">
+            <div
+              className="h-0.5 w-12 mb-6"
+              style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+            />
+            <span
+              className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
+              style={{ color: 'oklch(0.72 0.10 75)' }}
+            >
+              Since 1981
+            </span>
+            <h2
+              className="font-headline font-bold mb-4"
+              style={{
+                fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                letterSpacing: '-0.02em',
+                color: 'oklch(0.25 0.05 265)'
+              }}
+            >
               40년 넘는 역사와 전통
             </h2>
-            <p className="text-lg text-gray-600 font-korean">
+            <p
+              className="max-w-2xl leading-relaxed"
+              style={{ color: 'oklch(0.55 0.01 75)' }}
+            >
               하나님의 인도하심 가운데 성장해온 우리 교회의 역사를 소개합니다
             </p>
           </div>
 
+          {/* Timeline */}
           <div className="flow-root">
             <ul className="-mb-8">
               {timeline.map((yearData, yearIdx) => (
                 <li key={yearData.year}>
                   <div className="relative pb-12">
+                    {/* Timeline connector line */}
                     {yearIdx !== timeline.length - 1 ? (
-                      <span className="absolute left-8 top-8 -ml-px h-full w-0.5 bg-gray-300" aria-hidden="true" />
+                      <span
+                        className="absolute left-8 top-8 -ml-px h-full w-0.5"
+                        style={{ background: 'oklch(0.88 0.01 75)' }}
+                        aria-hidden="true"
+                      />
                     ) : null}
 
                     <div className="relative">
                       {/* Year Header */}
                       <div className="flex items-center mb-6">
-                        <span className="h-16 w-16 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center ring-8 ring-white shadow-lg">
-                          <span className="text-white font-bold text-xl">{yearData.year.slice(2)}</span>
+                        <span
+                          className="h-16 w-16 rounded-sm flex items-center justify-center"
+                          style={{
+                            background: 'linear-gradient(135deg, oklch(0.45 0.12 265), oklch(0.35 0.10 265))',
+                            boxShadow: '0 0 0 4px oklch(0.97 0.005 75), 0 4px 12px oklch(0.30 0.09 265 / 0.15)'
+                          }}
+                        >
+                          <span
+                            className="font-bold text-xl"
+                            style={{ color: 'oklch(0.98 0.003 75)' }}
+                          >
+                            {yearData.year.slice(2)}
+                          </span>
                         </span>
-                        <h3 className="ml-6 text-3xl font-bold text-gray-900 font-korean">
-                          {yearData.year}년
-                        </h3>
+                        <div className="ml-6">
+                          <h3
+                            className="font-headline font-bold"
+                            style={{
+                              fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+                              letterSpacing: '-0.01em',
+                              color: 'oklch(0.25 0.05 265)'
+                            }}
+                          >
+                            {yearData.year}년
+                          </h3>
+                        </div>
                       </div>
 
                       {/* Events for this year */}
-                      <div className="ml-20 space-y-6">
+                      <div className="ml-20 space-y-4">
                         {yearData.events.map((event, eventIdx) => (
-                          <div key={eventIdx} className="bg-white rounded-lg shadow-md p-6">
-                            <h4 className="text-xl font-semibold text-gray-900 font-korean mb-2">
+                          <div
+                            key={eventIdx}
+                            className="rounded-sm p-6 transition-all duration-300 hover:translate-y-[-2px]"
+                            style={{
+                              background: 'oklch(0.985 0.003 75)',
+                              border: '1px solid oklch(0.92 0.005 75)',
+                              boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+                            }}
+                          >
+                            <h4
+                              className="font-semibold mb-2"
+                              style={{
+                                fontSize: '1.125rem',
+                                color: 'oklch(0.30 0.09 265)'
+                              }}
+                            >
                               {event.title}
                             </h4>
-                            <p className="text-gray-600 font-korean mb-4">
+                            <p
+                              className="leading-relaxed mb-4"
+                              style={{ color: 'oklch(0.55 0.01 75)' }}
+                            >
                               {event.description}
                             </p>
 
                             {/* Images Grid */}
                             {event.images && event.images.length > 0 && (
-                              <div className={`grid gap-4 mt-4 ${event.images.length === 1 ? 'grid-cols-1' : event.images.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                              <div
+                                className={`grid gap-3 mt-4 ${
+                                  event.images.length === 1
+                                    ? 'grid-cols-1'
+                                    : event.images.length === 2
+                                    ? 'grid-cols-2'
+                                    : 'grid-cols-3'
+                                }`}
+                              >
                                 {event.images.map((image, imgIdx) => (
                                   <div
                                     key={imgIdx}
-                                    className="relative h-48 bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                                    className="relative h-48 rounded-sm overflow-hidden cursor-pointer transition-all duration-300 hover:opacity-90"
+                                    style={{
+                                      background: 'oklch(0.92 0.005 75)',
+                                      boxShadow: '0 2px 6px oklch(0.30 0.09 265 / 0.08)'
+                                    }}
                                     onClick={() => setSelectedImage(image)}
                                   >
                                     <Image
@@ -420,12 +503,13 @@ const HistoryPage = () => {
             </ul>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Image Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'oklch(0.15 0.05 265 / 0.9)' }}
           onClick={() => setSelectedImage(null)}
         >
           <div className="relative max-w-5xl max-h-[90vh]">
@@ -434,10 +518,14 @@ const HistoryPage = () => {
               alt="확대된 이미지"
               width={1200}
               height={800}
-              className="object-contain"
+              className="object-contain rounded-sm"
             />
             <button
-              className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75"
+              className="absolute top-4 right-4 rounded-sm p-2 transition-all duration-200"
+              style={{
+                background: 'oklch(0.15 0.05 265 / 0.6)',
+                color: 'oklch(0.98 0.003 75)'
+              }}
               onClick={() => setSelectedImage(null)}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
