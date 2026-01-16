@@ -10,7 +10,7 @@ Korean Church Website 프로젝트의 아키텍처 결정 기록입니다.
 |----|------|------|------|
 | [ADR-001](./ADR-001_supabase-auth.md) | Supabase Auth 도입 | ✅ Accepted | 2025-01-16 |
 | [ADR-002](./ADR-002_i18n-strategy.md) | i18n 전략 (next-i18next) | ✅ Accepted | 2025-01-16 |
-| [ADR-003](./ADR-003_firebase-firestore.md) | Firebase Firestore 데이터 모델 | ✅ Accepted | 2025-01-16 |
+| [ADR-003](./ADR-003_supabase-postgresql.md) | Supabase PostgreSQL 데이터베이스 | ✅ Accepted | 2025-01-16 |
 
 ---
 
