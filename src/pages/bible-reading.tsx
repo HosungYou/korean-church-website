@@ -56,6 +56,7 @@ export default function BibleReadingPage({ initialPlan, initialEntries }: BibleR
       }
     }
     loadPlans()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Load monthly data
@@ -364,7 +365,7 @@ export default function BibleReadingPage({ initialPlan, initialEntries }: BibleR
                         className="font-headline font-black text-2xl md:text-3xl"
                         style={{ color: 'oklch(0.22 0.07 265)', letterSpacing: '-0.02em' }}
                       >
-                        "{displayedReading.title}"
+                        &ldquo;{displayedReading.title}&rdquo;
                       </h2>
                     )}
                   </div>
