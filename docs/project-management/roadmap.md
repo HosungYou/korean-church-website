@@ -11,7 +11,7 @@ Korean Church Website 개발 로드맵입니다.
 - [x] Next.js 14 + TypeScript 기반 구축
 - [x] Tailwind CSS 스타일링
 - [x] Supabase Auth (Google OAuth)
-- [x] Firebase Firestore 데이터베이스
+- [x] Supabase PostgreSQL 데이터베이스
 - [x] 한영 이중언어 (next-i18next)
 - [x] 관리자 대시보드 기본 구조
 - [x] 게시글 CRUD (공지사항, 이벤트, 일반)

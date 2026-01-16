@@ -52,8 +52,8 @@
 - **Lucide React**: 아이콘 라이브러리
 
 ### Backend & Database
-- **Firebase Firestore**: NoSQL 데이터베이스
-- **Firebase Admin SDK**: 서버사이드 인증/권한
+- **Supabase PostgreSQL**: 관계형 데이터베이스
+- **Supabase Auth**: 인증 (Google OAuth)
 - **Vercel**: 배포 및 호스팅
 
 ### 개발 도구
@@ -170,7 +170,7 @@ pages/
 ### 확장성
 - **새 페이지**: 기존 패턴 활용
 - **새 기능**: 컴포넌트 재사용
-- **API 확장**: Firebase 스키마 확장
+- **API 확장**: Supabase 테이블 확장
 
 ---
 

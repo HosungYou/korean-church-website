@@ -51,18 +51,17 @@ src/hooks/
 
 ### Negative
 - ⚠️ Firebase Auth 대비 커뮤니티 크기 작음
-- ⚠️ Firebase와 별도 서비스 관리 필요
 
 ### Neutral
-- 📝 Firebase Firestore는 데이터베이스로 유지
-- 📝 인증(Supabase)과 데이터(Firebase) 분리 구조
+- 📝 Supabase PostgreSQL과 완전 통합 (단일 플랫폼)
+- 📝 인증과 데이터베이스가 동일 서비스에서 관리됨
 
 ## Alternatives Considered
 
 ### Firebase Authentication
-- **장점**: Firebase Firestore와 통합
+- **장점**: 대규모 커뮤니티, 풍부한 문서
 - **단점**: Google OAuth 설정이 더 복잡
-- **결론**: Supabase의 더 간단한 OAuth 설정 선호
+- **결론**: Supabase의 더 간단한 OAuth 설정 및 PostgreSQL 통합 선호
 
 ### NextAuth.js
 - **장점**: Next.js 생태계 표준
