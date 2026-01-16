@@ -1,38 +1,42 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
-import Layout from '../../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import {
   Plus,
   Edit,
   Trash2,
-  ArrowLeft,
   Image,
-  Loader2,
   Eye,
   EyeOff,
   GripVertical,
   Save,
   X,
   Upload,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Layers,
+  CheckCircle,
+  ArrowRight,
 } from 'lucide-react'
-import Link from 'next/link'
+import AdminLayout from '@/components/AdminLayout'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import {
-  getActiveSlides,
   getAllSlides,
   createSlide,
   updateSlide,
   deleteSlide,
-  uploadSlideImage
+  uploadSlideImage,
 } from '../../../utils/heroSlideService'
 import type { HeroSlide, HeroSlideInsert } from '../../../../types/supabase'
 
+// ===========================================
+// VS Design Diverge: Slide Management
+// Editorial Grid + OKLCH Color System
+// ===========================================
+
 const AdminSlidesPage = () => {
   const router = useRouter()
-  const { admin, loading } = useAdminAuth()
+  const { admin } = useAdminAuth()
   const [slides, setSlides] = useState<HeroSlide[]>([])
   const [listLoading, setListLoading] = useState(true)
   const [editingSlide, setEditingSlide] = useState<HeroSlide | null>(null)
@@ -47,7 +51,7 @@ const AdminSlidesPage = () => {
     image_url: '',
     link_url: '',
     is_active: true,
-    sort_order: 0
+    sort_order: 0,
   })
 
   useEffect(() => {
@@ -91,7 +95,7 @@ const AdminSlidesPage = () => {
       image_url: '',
       link_url: '',
       is_active: true,
-      sort_order: slides.length
+      sort_order: slides.length,
     })
     setIsCreating(true)
   }
@@ -104,7 +108,7 @@ const AdminSlidesPage = () => {
       image_url: slide.image_url,
       link_url: slide.link_url || '',
       is_active: slide.is_active,
-      sort_order: slide.sort_order
+      sort_order: slide.sort_order,
     })
     setIsCreating(true)
   }
@@ -158,255 +162,419 @@ const AdminSlidesPage = () => {
     }
   }
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="h-10 w-10 animate-spin text-black" />
-        </div>
-      </Layout>
-    )
+  const stats = {
+    total: slides.length,
+    active: slides.filter((s) => s.is_active).length,
+    inactive: slides.filter((s) => !s.is_active).length,
   }
 
-  if (!admin) return null
+  const statsCards = [
+    { name: '총 슬라이드', value: stats.total, icon: Layers },
+    { name: '활성화', value: stats.active, icon: Eye },
+    { name: '비활성화', value: stats.inactive, icon: EyeOff },
+  ]
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <Link href="/admin/dashboard" className="mr-4">
-                  <ArrowLeft className="w-5 h-5 text-gray-600 hover:text-black transition-colors" />
-                </Link>
-                <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-                <h1 className="text-xl font-bold text-gray-900 font-korean">슬라이더/배너 관리</h1>
+    <AdminLayout title="슬라이더 관리" subtitle="히어로 배너 슬라이드를 관리하세요">
+      {/* Action Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div className="flex items-center">
+          <div
+            className="h-0.5 w-8 mr-4"
+            style={{
+              background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))',
+            }}
+          />
+          <span className="text-sm font-medium" style={{ color: 'oklch(0.55 0.01 75)' }}>
+            {slides.length}개의 슬라이드
+          </span>
+        </div>
+        <button
+          onClick={handleCreate}
+          className="inline-flex items-center px-5 py-2.5 rounded-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+          style={{
+            background: 'oklch(0.45 0.12 265)',
+            color: 'oklch(0.98 0.003 75)',
+          }}
+        >
+          <Plus className="w-4 h-4 mr-2" />새 슬라이드
+        </button>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        {statsCards.map((stat, index) => {
+          const Icon = stat.icon
+          return (
+            <div
+              key={stat.name}
+              className={`p-5 rounded-sm stagger-${index + 1}`}
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+              }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div
+                  className="w-10 h-10 rounded-sm flex items-center justify-center"
+                  style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+                >
+                  <Icon className="w-5 h-5" style={{ color: 'oklch(0.45 0.12 265)' }} />
+                </div>
               </div>
-              <button
-                onClick={handleCreate}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800"
+              <p className="text-xs font-medium mb-1" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                {stat.name}
+              </p>
+              <span
+                className="font-headline font-bold text-2xl"
+                style={{ color: 'oklch(0.22 0.07 265)' }}
               >
-                <Plus className="w-4 h-4 mr-2" />
-                <span className="font-korean">새 슬라이드</span>
+                {listLoading ? '—' : stat.value}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Edit Form Modal */}
+      {isCreating && (
+        <div
+          className="rounded-sm p-6 mb-6"
+          style={{
+            background: 'oklch(0.985 0.003 75)',
+            border: '1px solid oklch(0.92 0.005 75)',
+          }}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2
+              className="font-headline font-bold text-lg"
+              style={{ color: 'oklch(0.22 0.07 265)' }}
+            >
+              {editingSlide ? '슬라이드 수정' : '새 슬라이드 추가'}
+            </h2>
+            <button
+              onClick={() => {
+                setIsCreating(false)
+                setEditingSlide(null)
+              }}
+              className="p-2 rounded-sm transition-colors"
+              style={{ color: 'oklch(0.50 0.01 75)' }}
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Image Upload */}
+            <div>
+              <label
+                className="block text-sm font-medium mb-2"
+                style={{ color: 'oklch(0.35 0.02 75)' }}
+              >
+                배경 이미지 *
+              </label>
+              <div
+                className="relative aspect-video rounded-sm overflow-hidden"
+                style={{ background: 'oklch(0.92 0.01 265)' }}
+              >
+                {formData.image_url ? (
+                  <>
+                    <img
+                      src={formData.image_url}
+                      alt="슬라이드 미리보기"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => setFormData({ ...formData, image_url: '' })}
+                      className="absolute top-2 right-2 p-1.5 rounded-sm transition-colors"
+                      style={{
+                        background: 'oklch(0.55 0.18 25)',
+                        color: 'oklch(0.98 0.003 75)',
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </>
+                ) : (
+                  <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer transition-colors hover:bg-[oklch(0.90_0.01_265)]">
+                    <Upload className="w-10 h-10 mb-2" style={{ color: 'oklch(0.55 0.01 75)' }} />
+                    <span className="text-sm" style={{ color: 'oklch(0.50 0.01 75)' }}>
+                      이미지 업로드
+                    </span>
+                    <span className="text-xs mt-1" style={{ color: 'oklch(0.60 0.01 75)' }}>
+                      권장: 1920x600px
+                    </span>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+                {uploading && (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{ background: 'oklch(0.15 0.05 265 / 0.7)' }}
+                  >
+                    <div
+                      className="w-8 h-8 rounded-sm animate-pulse"
+                      style={{ background: 'oklch(0.72 0.10 75)' }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Text Info */}
+            <div className="space-y-4">
+              <div>
+                <label
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: 'oklch(0.35 0.02 75)' }}
+                >
+                  제목
+                </label>
+                <input
+                  type="text"
+                  value={formData.title || ''}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="슬라이드 제목"
+                  className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none"
+                  style={{
+                    background: 'oklch(0.97 0.005 265)',
+                    border: '1px solid oklch(0.90 0.01 265)',
+                    color: 'oklch(0.25 0.02 75)',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: 'oklch(0.35 0.02 75)' }}
+                >
+                  부제목
+                </label>
+                <input
+                  type="text"
+                  value={formData.subtitle || ''}
+                  onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                  placeholder="슬라이드 부제목"
+                  className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none"
+                  style={{
+                    background: 'oklch(0.97 0.005 265)',
+                    border: '1px solid oklch(0.90 0.01 265)',
+                    color: 'oklch(0.25 0.02 75)',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: 'oklch(0.35 0.02 75)' }}
+                >
+                  <LinkIcon className="w-4 h-4 inline mr-1" />
+                  링크 URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.link_url || ''}
+                  onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
+                  placeholder="https://..."
+                  className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none"
+                  style={{
+                    background: 'oklch(0.97 0.005 265)',
+                    border: '1px solid oklch(0.90 0.01 265)',
+                    color: 'oklch(0.25 0.02 75)',
+                  }}
+                />
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="is_active"
+                  checked={formData.is_active || false}
+                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                  className="h-4 w-4 rounded-sm"
+                  style={{ accentColor: 'oklch(0.45 0.12 265)' }}
+                />
+                <label
+                  htmlFor="is_active"
+                  className="ml-2 block text-sm"
+                  style={{ color: 'oklch(0.45 0.01 75)' }}
+                >
+                  활성화
+                </label>
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={saving}
+                className="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-sm font-medium transition-all duration-300 disabled:opacity-50 hover:-translate-y-0.5"
+                style={{
+                  background: 'oklch(0.72 0.10 75)',
+                  color: 'oklch(0.15 0.05 265)',
+                }}
+              >
+                {saving ? (
+                  <>
+                    <div
+                      className="w-4 h-4 mr-2 rounded-full animate-spin"
+                      style={{
+                        border: '2px solid oklch(0.15 0.05 265)',
+                        borderTopColor: 'transparent',
+                      }}
+                    />
+                    저장 중...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    {editingSlide ? '수정하기' : '추가하기'}
+                  </>
+                )}
               </button>
             </div>
           </div>
         </div>
+      )}
 
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            {/* 편집 폼 */}
-            {isCreating && (
-              <div className="bg-white shadow rounded-lg p-6 mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-medium text-gray-900 font-korean">
-                    {editingSlide ? '슬라이드 수정' : '새 슬라이드 추가'}
-                  </h2>
-                  <button
-                    onClick={() => {
-                      setIsCreating(false)
-                      setEditingSlide(null)
-                    }}
-                    className="text-gray-400 hover:text-gray-600"
+      {/* Slides List */}
+      <div
+        className="rounded-sm overflow-hidden"
+        style={{
+          background: 'oklch(0.985 0.003 75)',
+          border: '1px solid oklch(0.92 0.005 75)',
+        }}
+      >
+        <div
+          className="px-6 py-4"
+          style={{ borderBottom: '1px solid oklch(0.92 0.005 75)' }}
+        >
+          <h2
+            className="font-headline font-bold text-lg"
+            style={{ color: 'oklch(0.22 0.07 265)' }}
+          >
+            슬라이드 목록
+          </h2>
+        </div>
+
+        {listLoading ? (
+          <div className="p-12 flex flex-col items-center justify-center">
+            <div
+              className="w-10 h-10 rounded-sm mb-4 animate-pulse"
+              style={{ background: 'oklch(0.45 0.12 265)' }}
+            />
+            <p className="text-sm font-medium" style={{ color: 'oklch(0.55 0.01 75)' }}>
+              슬라이드 로딩 중...
+            </p>
+          </div>
+        ) : slides.length === 0 ? (
+          <div className="p-12 text-center">
+            <div
+              className="w-16 h-16 rounded-sm mx-auto mb-4 flex items-center justify-center"
+              style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+            >
+              <Image className="w-8 h-8" style={{ color: 'oklch(0.45 0.12 265)' }} />
+            </div>
+            <p className="text-sm font-medium mb-2" style={{ color: 'oklch(0.45 0.01 75)' }}>
+              등록된 슬라이드가 없습니다
+            </p>
+            <p className="text-xs" style={{ color: 'oklch(0.55 0.01 75)' }}>
+              새 슬라이드를 추가해보세요
+            </p>
+          </div>
+        ) : (
+          <div className="divide-y" style={{ borderColor: 'oklch(0.92 0.005 75)' }}>
+            {slides.map((slide, index) => (
+              <div
+                key={slide.id}
+                className={`p-4 flex items-center gap-4 transition-colors stagger-${(index % 6) + 1}`}
+                style={{
+                  background: slide.is_active ? 'transparent' : 'oklch(0.97 0.005 265)',
+                }}
+              >
+                <div className="flex-shrink-0" style={{ color: 'oklch(0.60 0.01 75)' }}>
+                  <GripVertical className="w-5 h-5 cursor-move" />
+                </div>
+                <div
+                  className="flex-shrink-0 text-sm font-medium w-8"
+                  style={{ color: 'oklch(0.55 0.01 75)' }}
+                >
+                  #{index + 1}
+                </div>
+                <div
+                  className="flex-shrink-0 w-40 h-24 rounded-sm overflow-hidden"
+                  style={{ background: 'oklch(0.92 0.01 265)' }}
+                >
+                  <img
+                    src={slide.image_url || ''}
+                    alt={slide.title || '슬라이드'}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3
+                    className="text-sm font-medium truncate"
+                    style={{ color: 'oklch(0.25 0.02 75)' }}
                   >
-                    <X className="w-5 h-5" />
+                    {slide.title || '(제목 없음)'}
+                  </h3>
+                  {slide.subtitle && (
+                    <p className="text-sm truncate" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                      {slide.subtitle}
+                    </p>
+                  )}
+                  {slide.link_url && (
+                    <p className="text-xs truncate" style={{ color: 'oklch(0.45 0.12 265)' }}>
+                      {slide.link_url}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => toggleActive(slide)}
+                    className="p-2 rounded-sm transition-all duration-200 hover:-translate-y-0.5"
+                    style={{
+                      background: slide.is_active
+                        ? 'oklch(0.55 0.15 145 / 0.15)'
+                        : 'oklch(0.55 0.01 75 / 0.1)',
+                      color: slide.is_active ? 'oklch(0.45 0.15 145)' : 'oklch(0.50 0.01 75)',
+                    }}
+                  >
+                    {slide.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                  </button>
+                  <button
+                    onClick={() => handleEdit(slide)}
+                    className="p-2 rounded-sm transition-all duration-200 hover:-translate-y-0.5"
+                    style={{
+                      background: 'oklch(0.45 0.12 265 / 0.1)',
+                      color: 'oklch(0.45 0.12 265)',
+                    }}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(slide.id)}
+                    className="p-2 rounded-sm transition-all duration-200 hover:-translate-y-0.5"
+                    style={{
+                      background: 'oklch(0.55 0.18 25 / 0.1)',
+                      color: 'oklch(0.50 0.18 25)',
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* 이미지 업로드 */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
-                      배경 이미지 *
-                    </label>
-                    <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                      {formData.image_url ? (
-                        <>
-                          <img
-                            src={formData.image_url}
-                            alt="슬라이드 미리보기"
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            onClick={() => setFormData({ ...formData, image_url: '' })}
-                            className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </>
-                      ) : (
-                        <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors">
-                          <Upload className="w-10 h-10 text-gray-400 mb-2" />
-                          <span className="text-sm text-gray-500 font-korean">이미지 업로드</span>
-                          <span className="text-xs text-gray-400">권장: 1920x600px</span>
-                          <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {uploading && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                          <Loader2 className="w-8 h-8 text-white animate-spin" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* 텍스트 정보 */}
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 font-korean mb-1">
-                        제목
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.title || ''}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        placeholder="슬라이드 제목"
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black font-korean"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 font-korean mb-1">
-                        부제목
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.subtitle || ''}
-                        onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-                        placeholder="슬라이드 부제목"
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black font-korean"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 font-korean mb-1">
-                        <LinkIcon className="w-4 h-4 inline mr-1" />
-                        링크 URL
-                      </label>
-                      <input
-                        type="url"
-                        value={formData.link_url || ''}
-                        onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
-                        placeholder="https://..."
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
-                      />
-                    </div>
-
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="is_active"
-                        checked={formData.is_active || false}
-                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                        className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
-                      />
-                      <label htmlFor="is_active" className="ml-2 block text-sm text-gray-700 font-korean">
-                        활성화
-                      </label>
-                    </div>
-
-                    <button
-                      onClick={handleSubmit}
-                      disabled={saving}
-                      className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 disabled:opacity-50"
-                    >
-                      {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                      <span className="font-korean">{editingSlide ? '수정하기' : '추가하기'}</span>
-                    </button>
-                  </div>
-                </div>
               </div>
-            )}
-
-            {/* 슬라이드 목록 */}
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900 font-korean">
-                  슬라이드 목록 ({slides.length}개)
-                </h2>
-              </div>
-
-              {listLoading ? (
-                <div className="p-12 flex justify-center">
-                  <Loader2 className="h-8 w-8 animate-spin text-black" />
-                </div>
-              ) : slides.length === 0 ? (
-                <div className="p-12 text-center text-gray-500 font-korean">
-                  <Image className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p>등록된 슬라이드가 없습니다.</p>
-                </div>
-              ) : (
-                <div className="divide-y divide-gray-200">
-                  {slides.map((slide, index) => (
-                    <div
-                      key={slide.id}
-                      className={`p-4 flex items-center gap-4 ${!slide.is_active ? 'bg-gray-50' : ''}`}
-                    >
-                      <div className="flex-shrink-0 text-gray-400 cursor-move">
-                        <GripVertical className="w-5 h-5" />
-                      </div>
-                      <div className="flex-shrink-0 text-sm text-gray-500 w-8">
-                        #{index + 1}
-                      </div>
-                      <div className="flex-shrink-0 w-40 h-24 rounded-lg overflow-hidden bg-gray-100">
-                        <img
-                          src={slide.image_url || ''}
-                          alt={slide.title || '슬라이드'}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-gray-900 truncate font-korean">
-                          {slide.title || '(제목 없음)'}
-                        </h3>
-                        {slide.subtitle && (
-                          <p className="text-sm text-gray-500 truncate">{slide.subtitle}</p>
-                        )}
-                        {slide.link_url && (
-                          <p className="text-xs text-blue-500 truncate">{slide.link_url}</p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => toggleActive(slide)}
-                          className={`p-2 rounded-full ${
-                            slide.is_active
-                              ? 'bg-green-100 text-green-600 hover:bg-green-200'
-                              : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-                          }`}
-                        >
-                          {slide.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                        </button>
-                        <button
-                          onClick={() => handleEdit(slide)}
-                          className="p-2 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(slide.id)}
-                          className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
-    </Layout>
+    </AdminLayout>
   )
 }
 

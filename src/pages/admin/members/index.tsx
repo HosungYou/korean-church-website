@@ -1,23 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import Layout from '../../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import {
   Plus,
   Edit,
   Trash2,
-  ArrowLeft,
   Users,
-  Loader2,
   Search,
   Download,
   Phone,
   Mail,
   User,
-  Calendar
+  Calendar,
+  UserCheck,
+  UserPlus,
+  ArrowRight,
 } from 'lucide-react'
 import Link from 'next/link'
+import AdminLayout from '@/components/AdminLayout'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import {
   getAllMembers,
@@ -25,28 +26,33 @@ import {
   getMemberStats,
   exportMembersToCSV,
   type MemberType,
-  type MemberStatus
+  type MemberStatus,
 } from '../../../utils/memberService'
 import type { ChurchMember } from '../../../../types/supabase'
+
+// ===========================================
+// VS Design Diverge: Member Management
+// Editorial Table + OKLCH Color System
+// ===========================================
 
 const memberTypeLabels: Record<MemberType, string> = {
   member: '성도',
   deacon: '집사',
   elder: '장로',
   pastor: '목사',
-  staff: '교역자'
+  staff: '교역자',
 }
 
-const statusLabels: Record<MemberStatus, string> = {
-  active: '활동',
-  inactive: '비활동',
-  transferred: '이적',
-  deceased: '사망'
+const statusConfig: Record<MemberStatus, { label: string; bg: string; color: string }> = {
+  active: { label: '활동', bg: 'oklch(0.55 0.15 145 / 0.15)', color: 'oklch(0.40 0.15 145)' },
+  inactive: { label: '비활동', bg: 'oklch(0.60 0.01 75 / 0.15)', color: 'oklch(0.50 0.01 75)' },
+  transferred: { label: '이적', bg: 'oklch(0.75 0.12 85 / 0.15)', color: 'oklch(0.50 0.12 85)' },
+  deceased: { label: '사망', bg: 'oklch(0.55 0.18 25 / 0.15)', color: 'oklch(0.50 0.18 25)' },
 }
 
 const AdminMembersPage = () => {
   const router = useRouter()
-  const { admin, loading } = useAdminAuth()
+  const { admin } = useAdminAuth()
   const [members, setMembers] = useState<ChurchMember[]>([])
   const [listLoading, setListLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -57,7 +63,7 @@ const AdminMembersPage = () => {
     active: 0,
     baptized: 0,
     newThisMonth: 0,
-    byType: {} as Record<MemberType, number>
+    byType: {} as Record<MemberType, number>,
   })
 
   useEffect(() => {
@@ -68,10 +74,7 @@ const AdminMembersPage = () => {
   const fetchData = async () => {
     try {
       setListLoading(true)
-      const [membersData, statsData] = await Promise.all([
-        getAllMembers(),
-        getMemberStats()
-      ])
+      const [membersData, statsData] = await Promise.all([getAllMembers(), getMemberStats()])
       setMembers(membersData)
       setStats(statsData)
     } catch (error) {
@@ -110,263 +113,358 @@ const AdminMembersPage = () => {
     }
   }
 
-  const filteredMembers = members.filter((member) => {
-    const matchesSearch =
-      !searchTerm ||
-      member.korean_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (member.english_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (member.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (member.phone || '').includes(searchTerm)
+  const filteredMembers = useMemo(() => {
+    return members.filter((member) => {
+      const matchesSearch =
+        !searchTerm ||
+        member.korean_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (member.english_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (member.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (member.phone || '').includes(searchTerm)
 
-    const matchesType = filterType === 'all' || member.member_type === filterType
-    const matchesStatus = filterStatus === 'all' || member.status === filterStatus
+      const matchesType = filterType === 'all' || member.member_type === filterType
+      const matchesStatus = filterStatus === 'all' || member.status === filterStatus
 
-    return matchesSearch && matchesType && matchesStatus
-  })
+      return matchesSearch && matchesType && matchesStatus
+    })
+  }, [members, searchTerm, filterType, filterStatus])
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="h-10 w-10 animate-spin text-black" />
-        </div>
-      </Layout>
-    )
-  }
-
-  if (!admin) return null
+  const statsCards = [
+    { name: '총 교인', value: stats.total, icon: Users },
+    { name: '활동 교인', value: stats.active, icon: UserCheck },
+    { name: '세례 교인', value: stats.baptized, icon: User },
+    { name: '이번 달 등록', value: stats.newThisMonth, icon: UserPlus },
+  ]
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <Link href="/admin/dashboard" className="mr-4">
-                  <ArrowLeft className="w-5 h-5 text-gray-600 hover:text-black transition-colors" />
-                </Link>
-                <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-                <h1 className="text-xl font-bold text-gray-900 font-korean">교인 관리</h1>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleExport}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  <span className="font-korean">CSV 내보내기</span>
-                </button>
-                <Link
-                  href="/admin/members/new"
-                  className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  <span className="font-korean">새 교인</span>
-                </Link>
-              </div>
-            </div>
-          </div>
+    <AdminLayout title="교인 관리" subtitle="교인 정보를 관리하세요">
+      {/* Action Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div className="flex items-center">
+          <div
+            className="h-0.5 w-8 mr-4"
+            style={{
+              background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))',
+            }}
+          />
+          <span className="text-sm font-medium" style={{ color: 'oklch(0.55 0.01 75)' }}>
+            {filteredMembers.length}명의 교인
+          </span>
         </div>
-
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            {/* 통계 */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-white overflow-hidden shadow rounded-lg p-4">
-                <div className="text-sm font-medium text-gray-500 font-korean">총 교인</div>
-                <div className="mt-1 text-2xl font-semibold text-gray-900">{stats.total}</div>
-              </div>
-              <div className="bg-white overflow-hidden shadow rounded-lg p-4">
-                <div className="text-sm font-medium text-gray-500 font-korean">활동 교인</div>
-                <div className="mt-1 text-2xl font-semibold text-green-600">{stats.active}</div>
-              </div>
-              <div className="bg-white overflow-hidden shadow rounded-lg p-4">
-                <div className="text-sm font-medium text-gray-500 font-korean">세례 교인</div>
-                <div className="mt-1 text-2xl font-semibold text-blue-600">{stats.baptized}</div>
-              </div>
-              <div className="bg-white overflow-hidden shadow rounded-lg p-4">
-                <div className="text-sm font-medium text-gray-500 font-korean">이번 달 등록</div>
-                <div className="mt-1 text-2xl font-semibold text-purple-600">{stats.newThisMonth}</div>
-              </div>
-            </div>
-
-            {/* 검색 및 필터 */}
-            <div className="bg-white shadow rounded-lg p-4 mb-6">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="이름, 이메일, 전화번호로 검색..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-black focus:border-black font-korean"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <select
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value as 'all' | MemberType)}
-                    className="block w-full md:w-32 px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black font-korean"
-                  >
-                    <option value="all">모든 직분</option>
-                    <option value="member">성도</option>
-                    <option value="deacon">집사</option>
-                    <option value="elder">장로</option>
-                    <option value="pastor">목사</option>
-                    <option value="staff">교역자</option>
-                  </select>
-                </div>
-                <div>
-                  <select
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value as 'all' | MemberStatus)}
-                    className="block w-full md:w-32 px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black font-korean"
-                  >
-                    <option value="all">모든 상태</option>
-                    <option value="active">활동</option>
-                    <option value="inactive">비활동</option>
-                    <option value="transferred">이적</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* 교인 목록 */}
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-              {listLoading ? (
-                <div className="p-12 flex justify-center">
-                  <Loader2 className="h-8 w-8 animate-spin text-black" />
-                </div>
-              ) : filteredMembers.length === 0 ? (
-                <div className="p-12 text-center text-gray-500 font-korean">
-                  <Users className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p>등록된 교인이 없습니다.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-korean">
-                          이름
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-korean">
-                          직분
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-korean">
-                          연락처
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-korean">
-                          상태
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-korean">
-                          등록일
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          관리
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {filteredMembers.map((member) => (
-                        <tr key={member.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                {member.profile_image_url ? (
-                                  <img
-                                    src={member.profile_image_url}
-                                    alt=""
-                                    className="h-10 w-10 rounded-full object-cover"
-                                  />
-                                ) : (
-                                  <User className="w-5 h-5 text-gray-400" />
-                                )}
-                              </div>
-                              <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900 font-korean">
-                                  {member.korean_name}
-                                </div>
-                                {member.english_name && (
-                                  <div className="text-sm text-gray-500">{member.english_name}</div>
-                                )}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {memberTypeLabels[member.member_type as MemberType]}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">
-                              {member.phone && (
-                                <div className="flex items-center">
-                                  <Phone className="w-3 h-3 mr-1 text-gray-400" />
-                                  {member.phone}
-                                </div>
-                              )}
-                              {member.email && (
-                                <div className="flex items-center text-gray-500">
-                                  <Mail className="w-3 h-3 mr-1 text-gray-400" />
-                                  {member.email}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                member.status === 'active'
-                                  ? 'bg-green-100 text-green-800'
-                                  : member.status === 'inactive'
-                                  ? 'bg-gray-100 text-gray-800'
-                                  : member.status === 'transferred'
-                                  ? 'bg-yellow-100 text-yellow-800'
-                                  : 'bg-red-100 text-red-800'
-                              }`}
-                            >
-                              {statusLabels[member.status as MemberStatus]}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <Calendar className="w-3 h-3 inline mr-1" />
-                            {member.registered_date}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => router.push(`/admin/members/${member.id}`)}
-                                className="text-gray-400 hover:text-gray-600"
-                                title="편집"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(member.id, member.korean_name)}
-                                className="text-red-400 hover:text-red-600"
-                                title="삭제"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="flex gap-3">
+          <button
+            onClick={handleExport}
+            className="inline-flex items-center px-5 py-2.5 rounded-sm font-medium transition-all duration-300 hover:-translate-y-0.5"
+            style={{
+              background: 'oklch(0.97 0.005 265)',
+              border: '1px solid oklch(0.90 0.01 265)',
+              color: 'oklch(0.35 0.02 75)',
+            }}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            CSV 내보내기
+          </button>
+          <Link
+            href="/admin/members/new"
+            className="inline-flex items-center px-5 py-2.5 rounded-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+            style={{
+              background: 'oklch(0.45 0.12 265)',
+              color: 'oklch(0.98 0.003 75)',
+            }}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            새 교인
+          </Link>
         </div>
       </div>
-    </Layout>
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {statsCards.map((stat, index) => {
+          const Icon = stat.icon
+          return (
+            <div
+              key={stat.name}
+              className={`p-5 rounded-sm stagger-${index + 1}`}
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+              }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div
+                  className="w-10 h-10 rounded-sm flex items-center justify-center"
+                  style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+                >
+                  <Icon className="w-5 h-5" style={{ color: 'oklch(0.45 0.12 265)' }} />
+                </div>
+              </div>
+              <p className="text-xs font-medium mb-1" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                {stat.name}
+              </p>
+              <span
+                className="font-headline font-bold text-2xl"
+                style={{ color: 'oklch(0.22 0.07 265)' }}
+              >
+                {listLoading ? '—' : stat.value}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Search and Filters */}
+      <div
+        className="p-6 rounded-sm mb-6"
+        style={{
+          background: 'oklch(0.985 0.003 75)',
+          border: '1px solid oklch(0.92 0.005 75)',
+        }}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="md:col-span-2">
+            <div className="relative">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                style={{ color: 'oklch(0.50 0.01 75)' }}
+              />
+              <input
+                type="text"
+                placeholder="이름, 이메일, 전화번호로 검색..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="block w-full pl-10 pr-4 py-2.5 rounded-sm transition-all duration-200 focus:outline-none"
+                style={{
+                  background: 'oklch(0.97 0.005 265)',
+                  border: '1px solid oklch(0.90 0.01 265)',
+                  color: 'oklch(0.25 0.02 75)',
+                }}
+              />
+            </div>
+          </div>
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value as 'all' | MemberType)}
+            className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none appearance-none cursor-pointer"
+            style={{
+              background: 'oklch(0.97 0.005 265)',
+              border: '1px solid oklch(0.90 0.01 265)',
+              color: 'oklch(0.35 0.02 75)',
+            }}
+          >
+            <option value="all">모든 직분</option>
+            <option value="member">성도</option>
+            <option value="deacon">집사</option>
+            <option value="elder">장로</option>
+            <option value="pastor">목사</option>
+            <option value="staff">교역자</option>
+          </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value as 'all' | MemberStatus)}
+            className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none appearance-none cursor-pointer"
+            style={{
+              background: 'oklch(0.97 0.005 265)',
+              border: '1px solid oklch(0.90 0.01 265)',
+              color: 'oklch(0.35 0.02 75)',
+            }}
+          >
+            <option value="all">모든 상태</option>
+            <option value="active">활동</option>
+            <option value="inactive">비활동</option>
+            <option value="transferred">이적</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Members Table */}
+      <div
+        className="rounded-sm overflow-hidden"
+        style={{
+          background: 'oklch(0.985 0.003 75)',
+          border: '1px solid oklch(0.92 0.005 75)',
+        }}
+      >
+        {listLoading ? (
+          <div className="p-12 flex flex-col items-center justify-center">
+            <div
+              className="w-10 h-10 rounded-sm mb-4 animate-pulse"
+              style={{ background: 'oklch(0.45 0.12 265)' }}
+            />
+            <p className="text-sm font-medium" style={{ color: 'oklch(0.55 0.01 75)' }}>
+              교인 로딩 중...
+            </p>
+          </div>
+        ) : filteredMembers.length === 0 ? (
+          <div className="p-12 text-center">
+            <div
+              className="w-16 h-16 rounded-sm mx-auto mb-4 flex items-center justify-center"
+              style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+            >
+              <Users className="w-8 h-8" style={{ color: 'oklch(0.45 0.12 265)' }} />
+            </div>
+            <p className="text-sm font-medium mb-2" style={{ color: 'oklch(0.45 0.01 75)' }}>
+              등록된 교인이 없습니다
+            </p>
+            <p className="text-xs" style={{ color: 'oklch(0.55 0.01 75)' }}>
+              새 교인을 등록하세요
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead style={{ background: 'oklch(0.97 0.005 265)' }}>
+                <tr>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                    style={{ color: 'oklch(0.50 0.01 75)' }}
+                  >
+                    이름
+                  </th>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                    style={{ color: 'oklch(0.50 0.01 75)' }}
+                  >
+                    직분
+                  </th>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                    style={{ color: 'oklch(0.50 0.01 75)' }}
+                  >
+                    연락처
+                  </th>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                    style={{ color: 'oklch(0.50 0.01 75)' }}
+                  >
+                    상태
+                  </th>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                    style={{ color: 'oklch(0.50 0.01 75)' }}
+                  >
+                    등록일
+                  </th>
+                  <th
+                    className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider"
+                    style={{ color: 'oklch(0.50 0.01 75)' }}
+                  >
+                    관리
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y" style={{ borderColor: 'oklch(0.92 0.005 75)' }}>
+                {filteredMembers.map((member, index) => (
+                  <tr
+                    key={member.id}
+                    className={`transition-colors hover:bg-[oklch(0.97_0.005_265)] stagger-${(index % 6) + 1}`}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div
+                          className="flex-shrink-0 h-10 w-10 rounded-sm flex items-center justify-center"
+                          style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+                        >
+                          {member.profile_image_url ? (
+                            <img
+                              src={member.profile_image_url}
+                              alt=""
+                              className="h-10 w-10 rounded-sm object-cover"
+                            />
+                          ) : (
+                            <User className="w-5 h-5" style={{ color: 'oklch(0.45 0.12 265)' }} />
+                          )}
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium" style={{ color: 'oklch(0.25 0.02 75)' }}>
+                            {member.korean_name}
+                          </div>
+                          {member.english_name && (
+                            <div className="text-sm" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                              {member.english_name}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className="px-2.5 py-1 rounded-sm text-xs font-medium"
+                        style={{
+                          background: 'oklch(0.45 0.12 265 / 0.1)',
+                          color: 'oklch(0.45 0.12 265)',
+                        }}
+                      >
+                        {memberTypeLabels[member.member_type as MemberType]}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm">
+                        {member.phone && (
+                          <div className="flex items-center" style={{ color: 'oklch(0.35 0.02 75)' }}>
+                            <Phone className="w-3 h-3 mr-1.5" style={{ color: 'oklch(0.55 0.01 75)' }} />
+                            {member.phone}
+                          </div>
+                        )}
+                        {member.email && (
+                          <div className="flex items-center" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                            <Mail className="w-3 h-3 mr-1.5" style={{ color: 'oklch(0.55 0.01 75)' }} />
+                            {member.email}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className="px-2.5 py-1 rounded-sm text-xs font-medium"
+                        style={{
+                          background: statusConfig[member.status as MemberStatus].bg,
+                          color: statusConfig[member.status as MemberStatus].color,
+                        }}
+                      >
+                        {statusConfig[member.status as MemberStatus].label}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                      <div className="flex items-center">
+                        <Calendar className="w-3.5 h-3.5 mr-1.5" style={{ color: 'oklch(0.55 0.01 75)' }} />
+                        {member.registered_date}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => router.push(`/admin/members/${member.id}`)}
+                          className="p-2 rounded-sm transition-all duration-200 hover:-translate-y-0.5"
+                          style={{
+                            background: 'oklch(0.45 0.12 265 / 0.1)',
+                            color: 'oklch(0.45 0.12 265)',
+                          }}
+                          title="편집"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(member.id, member.korean_name)}
+                          className="p-2 rounded-sm transition-all duration-200 hover:-translate-y-0.5"
+                          style={{
+                            background: 'oklch(0.55 0.18 25 / 0.1)',
+                            color: 'oklch(0.50 0.18 25)',
+                          }}
+                          title="삭제"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </AdminLayout>
   )
 }
 
