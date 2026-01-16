@@ -666,8 +666,8 @@ export interface Database {
           baptism_date: string | null
           gender: string | null
           country: string | null
-          address_line1: string
-          address_line2: string | null
+          address1: string
+          address2: string | null
           city: string
           state: string
           zip_code: string
@@ -691,8 +691,8 @@ export interface Database {
           baptism_date?: string | null
           gender?: string | null
           country?: string | null
-          address_line1: string
-          address_line2?: string | null
+          address1: string
+          address2?: string | null
           city: string
           state: string
           zip_code: string
@@ -716,8 +716,8 @@ export interface Database {
           baptism_date?: string | null
           gender?: string | null
           country?: string | null
-          address_line1?: string
-          address_line2?: string | null
+          address1?: string
+          address2?: string | null
           city?: string
           state?: string
           zip_code?: string

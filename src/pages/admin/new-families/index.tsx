@@ -391,14 +391,14 @@ const AdminNewFamiliesPage = () => {
                     </div>
                   )}
 
-                  {selectedFamily.address_line1 && (
+                  {selectedFamily.address1 && (
                     <div>
                       <label className="text-xs" style={{ color: 'oklch(0.55 0.01 75)' }}>
                         주소
                       </label>
                       <p className="text-sm" style={{ color: 'oklch(0.35 0.02 75)' }}>
-                        {selectedFamily.address_line1}
-                        {selectedFamily.address_line2 && `, ${selectedFamily.address_line2}`}
+                        {selectedFamily.address1}
+                        {selectedFamily.address2 && `, ${selectedFamily.address2}`}
                         {selectedFamily.city && `, ${selectedFamily.city}`}
                         {selectedFamily.state && `, ${selectedFamily.state}`}
                         {selectedFamily.zip_code && ` ${selectedFamily.zip_code}`}

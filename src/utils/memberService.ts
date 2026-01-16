@@ -214,7 +214,7 @@ export async function getMemberStats() {
   const { count: newThisMonth } = await supabase
     .from('church_members')
     .select('*', { count: 'exact', head: true })
-    .gte('membership_date', thisMonth.toISOString().split('T')[0])
+    .gte('registered_date', thisMonth.toISOString().split('T')[0])
 
   return {
     total: total ?? 0,
