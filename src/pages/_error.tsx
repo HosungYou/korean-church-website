@@ -1,4 +1,5 @@
 import { NextPageContext } from 'next'
+import Link from 'next/link'
 
 interface ErrorProps {
   statusCode?: number
@@ -25,7 +26,7 @@ function Error({ statusCode }: ErrorProps) {
           ? `서버에서 ${statusCode} 오류가 발생했습니다.`
           : '클라이언트에서 오류가 발생했습니다.'}
       </p>
-      <a
+      <Link
         href="/"
         style={{
           marginTop: '2rem',
@@ -37,7 +38,7 @@ function Error({ statusCode }: ErrorProps) {
         }}
       >
         홈으로 돌아가기
-      </a>
+      </Link>
     </div>
   )
 }

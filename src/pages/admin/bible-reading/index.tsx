@@ -103,6 +103,7 @@ const AdminBibleReadingPage = () => {
   useEffect(() => {
     if (!selectedPlan) return
     loadMonthEntries()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPlan, year, month])
 
   const fetchPlans = async () => {
