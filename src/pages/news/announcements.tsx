@@ -58,15 +58,29 @@ const AnnouncementsPage = ({ posts: initialPosts }: AnnouncementsPageProps) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<AnnouncementTab>('all')
 
+  const serializePost = (post: PostRecord): SerializedPost => ({
+    id: post.id,
+    title: post.title,
+    type: post.type,
+    content: post.content,
+    excerpt: post.excerpt ?? null,
+    coverImageUrl: post.coverImageUrl ?? null,
+    publishedAt: post.publishedAt
+      ? post.publishedAt.toISOString()
+      : post.updatedAt
+      ? post.updatedAt.toISOString()
+      : post.createdAt
+      ? post.createdAt.toISOString()
+      : null,
+    createdAt: post.createdAt ? post.createdAt.toISOString() : null
+  })
+
   // 클라이언트 사이드에서 최신 데이터 가져오기
   useEffect(() => {
     const fetchLatestPosts = async () => {
       try {
-        const response = await fetch('/api/posts/announcements')
-        if (response.ok) {
-          const data = await response.json()
-          setPosts(data.posts)
-        }
+        const latest = await getPublishedAnnouncements(30)
+        setPosts(latest.map(serializePost))
       } catch (error) {
         console.error('Failed to fetch latest announcements:', error)
       }

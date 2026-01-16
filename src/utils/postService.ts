@@ -235,6 +235,26 @@ export const getPublishedAnnouncements = async (limit = 20): Promise<PostRecord[
   return (data || []).map(mapPostRow)
 }
 
+export const getPublishedPostsByCategory = async (
+  category: PostCategory,
+  limit = 20
+): Promise<PostRecord[]> => {
+  const { data, error } = await (supabase
+    .from('posts') as any)
+    .select('*')
+    .eq('category', category)
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    console.error('Get posts by category error:', error)
+    return []
+  }
+
+  return (data || []).map(mapPostRow)
+}
+
 export const getRecentPublishedPosts = async (limit = 6): Promise<PostRecord[]> => {
   const { data, error } = await (supabase
     .from('posts') as any)

@@ -151,15 +151,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, [])
 
   // 현재 언어 설정 (기본값: 한국어)
-  const currentLanguage = i18n.language || 'ko'
+  const currentLanguage = router.locale || i18n.language || 'ko'
   const fontClass = currentLanguage === 'ko' ? 'font-korean' : 'font-english'
 
-  // 초기 언어를 한국어로 설정 (한 번만 실행)
+  // 라우터 로케일과 i18n 언어를 동기화
   useEffect(() => {
-    if (!i18n.language) {
-      i18n.changeLanguage('ko')
+    const activeLocale = router.locale || 'ko'
+    if (i18n.language !== activeLocale) {
+      i18n.changeLanguage(activeLocale)
     }
-  }, [i18n])
+  }, [i18n, router.locale])
 
   const languageShortLabels: Record<string, string> = {
     ko: t('language.short_ko', { defaultValue: '한' }),
@@ -244,7 +245,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng)
+    if (router.locale === lng) {
+      return
+    }
+    router.push(router.asPath, router.asPath, { locale: lng })
   }
 
   // Nav label translations

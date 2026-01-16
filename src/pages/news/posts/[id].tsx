@@ -182,9 +182,8 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  // 기본 언어를 한국어로 강제 설정
-  const currentLocale = 'ko'
+export const getServerSideProps: GetServerSideProps = async ({ params, locale }) => {
+  const currentLocale = locale ?? 'ko'
   const id = params?.id as string
 
   if (!id) {

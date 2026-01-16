@@ -4,25 +4,24 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import { useState, useEffect } from 'react'
 import { FileText, Calendar, BookOpen, Download } from 'lucide-react'
+import { getPublishedPostsByCategory, PostCategory, PostRecord } from '../utils/postService'
 
-interface Post {
+interface ResourcePost {
   id: string
   title: string
   content: string
-  type: string
-  category: string
+  category: PostCategory
   excerpt?: string
-  coverImageUrl?: string
-  attachments?: Array<{name: string, url: string, size: string}>
-  important?: boolean
-  publishedAt: string
-  createdAt: string
+  attachmentUrl?: string | null
+  attachmentName?: string | null
+  publishedAt: string | null
+  createdAt: string | null
 }
 
 const Resources: NextPage = () => {
   const { t, i18n } = useTranslation(['common'])
   const [activeTab, setActiveTab] = useState('wednesday')
-  const [posts, setPosts] = useState<Post[]>([])
+  const [posts, setPosts] = useState<ResourcePost[]>([])
   const [loading, setLoading] = useState(true)
   const [backgroundImage, setBackgroundImage] = useState('')
 
@@ -46,13 +45,24 @@ const Resources: NextPage = () => {
     { id: 'bible', name: i18n.language === 'ko' ? '성경통독 자료' : 'Bible Reading', icon: BookOpen },
   ]
 
+  const serializePost = (post: PostRecord): ResourcePost => ({
+    id: post.id,
+    title: post.title,
+    content: post.content,
+    category: post.category ?? 'general',
+    excerpt: post.excerpt ?? undefined,
+    attachmentUrl: post.attachmentUrl ?? null,
+    attachmentName: post.attachmentName ?? null,
+    publishedAt: post.publishedAt ? post.publishedAt.toISOString() : null,
+    createdAt: post.createdAt ? post.createdAt.toISOString() : null
+  })
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/posts/resources?category=${activeTab}`)
-        const data = await response.json()
-        setPosts(data.posts || [])
+        const data = await getPublishedPostsByCategory(activeTab as PostCategory, 50)
+        setPosts(data.map(serializePost))
       } catch (error) {
         console.error('Failed to fetch posts:', error)
         setPosts([])
@@ -162,7 +172,9 @@ const Resources: NextPage = () => {
                     {resource.title}
                   </h2>
                   <span className="text-sm text-gray-500">
-                    {new Date(resource.publishedAt).toLocaleDateString(i18n.language === 'ko' ? 'ko-KR' : 'en-US')}
+                    {new Date(resource.publishedAt || resource.createdAt || Date.now()).toLocaleDateString(
+                      i18n.language === 'ko' ? 'ko-KR' : 'en-US'
+                    )}
                   </span>
                 </div>
                 <p className={`text-gray-700 ${
@@ -172,33 +184,27 @@ const Resources: NextPage = () => {
                 </p>
 
                 {/* File Attachments */}
-                {resource.attachments && resource.attachments.length > 0 && (
+                {resource.attachmentUrl && (
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <p className={`text-sm font-medium text-gray-700 mb-2 ${
                       i18n.language === 'ko' ? 'font-korean' : 'font-english'
                     }`}>
                       {i18n.language === 'ko' ? '첨부파일' : 'Attachments'}
                     </p>
-                    <div className="space-y-2">
-                      {resource.attachments.map((file, index) => (
-                        <a
-                          key={index}
-                          href={file.url}
-                          className="flex items-center justify-between p-2 bg-gray-50 rounded-md hover:bg-gray-100 transition-all"
-                          download
-                        >
-                          <div className="flex items-center">
-                            <Download className="w-4 h-4 text-gray-500 mr-2" />
-                            <span className={`text-sm text-gray-700 ${
-                              i18n.language === 'ko' ? 'font-korean' : 'font-english'
-                            }`}>
-                              {file.name}
-                            </span>
-                          </div>
-                          <span className="text-xs text-gray-500">{file.size}</span>
-                        </a>
-                      ))}
-                    </div>
+                    <a
+                      href={resource.attachmentUrl}
+                      className="flex items-center justify-between p-2 bg-gray-50 rounded-md hover:bg-gray-100 transition-all"
+                      download
+                    >
+                      <div className="flex items-center">
+                        <Download className="w-4 h-4 text-gray-500 mr-2" />
+                        <span className={`text-sm text-gray-700 ${
+                          i18n.language === 'ko' ? 'font-korean' : 'font-english'
+                        }`}>
+                          {resource.attachmentName || (i18n.language === 'ko' ? '첨부파일' : 'Attachment')}
+                        </span>
+                      </div>
+                    </a>
                   </div>
                 )}
               </div>
