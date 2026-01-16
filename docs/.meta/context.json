@@ -1,0 +1,41 @@
+{
+  "project": {
+    "name": "korean-church-website",
+    "type": "next.js-webapp",
+    "version": "1.0.0",
+    "description": "한영 이중언어 교회 웹사이트"
+  },
+  "tech_stack": {
+    "frontend": ["next.js@14", "typescript", "tailwindcss"],
+    "auth": ["supabase-auth", "google-oauth"],
+    "database": ["firebase-firestore"],
+    "i18n": ["next-i18next"],
+    "deployment": ["vercel"]
+  },
+  "agents": {
+    "available": [
+      "F1-FrontendAgent",
+      "F2-AuthAgent",
+      "F3-FirestoreAgent",
+      "F4-i18nAgent",
+      "F5-ContentAgent",
+      "F6-AdminAgent",
+      "F7-SEOAgent"
+    ],
+    "last_used": []
+  },
+  "session": {
+    "current_id": null,
+    "history": []
+  },
+  "action_items": {
+    "open_count": 0,
+    "in_progress_count": 0,
+    "last_updated": null
+  },
+  "metadata": {
+    "created_at": "2025-01-16T00:00:00Z",
+    "last_updated": "2025-01-16T00:00:00Z",
+    "schema_version": "1.0"
+  }
+}
