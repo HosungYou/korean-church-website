@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import Layout from '../../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import {
@@ -9,17 +8,22 @@ import {
   Trash2,
   Search,
   Calendar,
-  ArrowLeft,
   Image,
-  Loader2,
   Eye,
   EyeOff,
-  FolderOpen
+  FolderOpen,
+  ArrowRight,
 } from 'lucide-react'
 import Link from 'next/link'
+import AdminLayout from '@/components/AdminLayout'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { getAllAlbums, deleteAlbum } from '../../../utils/galleryService'
 import type { GalleryAlbum } from '../../../../types/supabase'
+
+// ===========================================
+// VS Design Diverge: Gallery Management
+// Editorial Grid + OKLCH Color System
+// ===========================================
 
 const formatKoreanDate = (dateString?: string | null): string => {
   if (!dateString) return ''
@@ -29,7 +33,7 @@ const formatKoreanDate = (dateString?: string | null): string => {
 
 const AdminGalleryPage = () => {
   const router = useRouter()
-  const { admin, loading } = useAdminAuth()
+  const { admin } = useAdminAuth()
   const [albums, setAlbums] = useState<GalleryAlbum[]>([])
   const [listLoading, setListLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -60,7 +64,6 @@ const AdminGalleryPage = () => {
     try {
       await deleteAlbum(id)
       setAlbums((prev) => prev.filter((album) => album.id !== id))
-      alert('앨범이 삭제되었습니다.')
     } catch (error) {
       console.error('삭제 오류:', error)
       alert('삭제 중 오류가 발생했습니다.')
@@ -100,236 +103,336 @@ const AdminGalleryPage = () => {
     return { total, visible, totalPhotos, thisYear }
   }, [albums])
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="h-10 w-10 animate-spin text-black" />
-        </div>
-      </Layout>
-    )
-  }
-
-  if (!admin) return null
+  const statsCards = [
+    {
+      name: '총 앨범',
+      value: stats.total,
+      icon: FolderOpen,
+    },
+    {
+      name: '공개 앨범',
+      value: stats.visible,
+      icon: Eye,
+    },
+    {
+      name: '총 사진',
+      value: stats.totalPhotos,
+      icon: Image,
+    },
+    {
+      name: '올해 앨범',
+      value: stats.thisYear,
+      icon: Calendar,
+    },
+  ]
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <Link href="/admin/dashboard" className="mr-4">
-                  <ArrowLeft className="w-5 h-5 text-gray-600 hover:text-black transition-colors" />
-                </Link>
-                <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-                <h1 className="text-xl font-bold text-gray-900 font-korean">갤러리 관리</h1>
-              </div>
-              <Link
-                href="/admin/gallery/new"
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                <span className="font-korean">새 앨범</span>
-              </Link>
-            </div>
-          </div>
+    <AdminLayout title="갤러리 관리" subtitle="사진 앨범을 관리하세요">
+      {/* Action Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div className="flex items-center">
+          <div
+            className="h-0.5 w-8 mr-4"
+            style={{
+              background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))',
+            }}
+          />
+          <span
+            className="text-sm font-medium"
+            style={{ color: 'oklch(0.55 0.01 75)' }}
+          >
+            {filteredAlbums.length}개의 앨범
+          </span>
         </div>
+        <Link
+          href="/admin/gallery/new"
+          className="inline-flex items-center px-5 py-2.5 rounded-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+          style={{
+            background: 'oklch(0.45 0.12 265)',
+            color: 'oklch(0.98 0.003 75)',
+          }}
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          새 앨범
+        </Link>
+      </div>
 
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            {/* 통계 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <FolderOpen className="h-6 w-6 text-gray-400" />
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate font-korean">총 앨범</dt>
-                        <dd className="text-lg font-medium text-gray-900">{stats.total}</dd>
-                      </dl>
-                    </div>
-                  </div>
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {statsCards.map((stat, index) => {
+          const Icon = stat.icon
+          return (
+            <div
+              key={stat.name}
+              className={`p-5 rounded-sm stagger-${index + 1}`}
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+              }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div
+                  className="w-10 h-10 rounded-sm flex items-center justify-center"
+                  style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+                >
+                  <Icon className="w-5 h-5" style={{ color: 'oklch(0.45 0.12 265)' }} />
                 </div>
               </div>
-
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <Eye className="h-6 w-6 text-green-400" />
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate font-korean">공개 앨범</dt>
-                        <dd className="text-lg font-medium text-gray-900">{stats.visible}</dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <Image className="h-6 w-6 text-blue-400" />
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate font-korean">총 사진</dt>
-                        <dd className="text-lg font-medium text-gray-900">{stats.totalPhotos}</dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <Calendar className="h-6 w-6 text-purple-400" />
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate font-korean">올해 앨범</dt>
-                        <dd className="text-lg font-medium text-gray-900">{stats.thisYear}</dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <p
+                className="text-xs font-medium mb-1"
+                style={{ color: 'oklch(0.55 0.01 75)' }}
+              >
+                {stat.name}
+              </p>
+              <span
+                className="font-headline font-bold text-2xl"
+                style={{ color: 'oklch(0.22 0.07 265)' }}
+              >
+                {listLoading ? '—' : stat.value}
+              </span>
             </div>
+          )
+        })}
+      </div>
 
-            {/* 검색 및 필터 */}
-            <div className="bg-white shadow rounded-lg p-6 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="md:col-span-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="앨범 제목으로 검색..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-black focus:border-black font-korean"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <select
-                    value={filterYear}
-                    onChange={(e) => setFilterYear(e.target.value)}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black font-korean"
-                  >
-                    <option value="all">모든 연도</option>
-                    {years.map((year) => (
-                      <option key={year} value={year}>
-                        {year}년
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <select
-                    value={filterVisibility}
-                    onChange={(e) => setFilterVisibility(e.target.value as 'all' | 'visible' | 'hidden')}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black font-korean"
-                  >
-                    <option value="all">모든 상태</option>
-                    <option value="visible">공개</option>
-                    <option value="hidden">비공개</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* 앨범 목록 */}
-            <div className="bg-white shadow rounded-lg">
-              {listLoading ? (
-                <div className="p-12 flex justify-center">
-                  <Loader2 className="h-8 w-8 animate-spin text-black" />
-                </div>
-              ) : filteredAlbums.length === 0 ? (
-                <div className="p-12 text-center text-gray-500 font-korean">등록된 앨범이 없습니다.</div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-                  {filteredAlbums.map((album) => (
-                    <div
-                      key={album.id}
-                      className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-                    >
-                      {/* 커버 이미지 */}
-                      <div className="aspect-video bg-gray-100 relative">
-                        {album.cover_image_url ? (
-                          <img
-                            src={album.cover_image_url}
-                            alt={album.title}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Image className="w-12 h-12 text-gray-300" />
-                          </div>
-                        )}
-                        {!album.is_visible && (
-                          <div className="absolute top-2 right-2 bg-gray-900 bg-opacity-75 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-                            <EyeOff className="w-3 h-3" />
-                            비공개
-                          </div>
-                        )}
-                      </div>
-
-                      {/* 정보 */}
-                      <div className="p-4">
-                        <h3 className="text-lg font-semibold text-gray-900 font-korean mb-1">
-                          {album.title}
-                        </h3>
-                        <div className="flex items-center text-sm text-gray-500 gap-3 mb-3">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {formatKoreanDate(album.album_date)}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Image className="w-4 h-4" />
-                            {album.photo_count || 0}장
-                          </span>
-                        </div>
-                        {album.description && (
-                          <p className="text-sm text-gray-600 line-clamp-2 mb-3">{album.description}</p>
-                        )}
-
-                        {/* 액션 버튼 */}
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => router.push(`/admin/gallery/${album.id}`)}
-                            className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                          >
-                            <Edit className="w-4 h-4 mr-1" />
-                            <span className="font-korean">편집</span>
-                          </button>
-                          <button
-                            onClick={() => handleDelete(album.id, album.title)}
-                            className="inline-flex items-center justify-center px-3 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+      {/* Search and Filters */}
+      <div
+        className="p-6 rounded-sm mb-6"
+        style={{
+          background: 'oklch(0.985 0.003 75)',
+          border: '1px solid oklch(0.92 0.005 75)',
+        }}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Search Input */}
+          <div className="md:col-span-2">
+            <div className="relative">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                style={{ color: 'oklch(0.50 0.01 75)' }}
+              />
+              <input
+                type="text"
+                placeholder="앨범 제목으로 검색..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="block w-full pl-10 pr-4 py-2.5 rounded-sm transition-all duration-200 focus:outline-none"
+                style={{
+                  background: 'oklch(0.97 0.005 265)',
+                  border: '1px solid oklch(0.90 0.01 265)',
+                  color: 'oklch(0.25 0.02 75)',
+                }}
+              />
             </div>
           </div>
+
+          {/* Year Filter */}
+          <select
+            value={filterYear}
+            onChange={(e) => setFilterYear(e.target.value)}
+            className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none appearance-none cursor-pointer"
+            style={{
+              background: 'oklch(0.97 0.005 265)',
+              border: '1px solid oklch(0.90 0.01 265)',
+              color: 'oklch(0.35 0.02 75)',
+            }}
+          >
+            <option value="all">모든 연도</option>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}년
+              </option>
+            ))}
+          </select>
+
+          {/* Visibility Filter */}
+          <select
+            value={filterVisibility}
+            onChange={(e) => setFilterVisibility(e.target.value as 'all' | 'visible' | 'hidden')}
+            className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none appearance-none cursor-pointer"
+            style={{
+              background: 'oklch(0.97 0.005 265)',
+              border: '1px solid oklch(0.90 0.01 265)',
+              color: 'oklch(0.35 0.02 75)',
+            }}
+          >
+            <option value="all">모든 상태</option>
+            <option value="visible">공개</option>
+            <option value="hidden">비공개</option>
+          </select>
         </div>
       </div>
-    </Layout>
+
+      {/* Albums Grid */}
+      <div
+        className="rounded-sm overflow-hidden"
+        style={{
+          background: 'oklch(0.985 0.003 75)',
+          border: '1px solid oklch(0.92 0.005 75)',
+        }}
+      >
+        {listLoading ? (
+          <div className="p-12 flex flex-col items-center justify-center">
+            <div
+              className="w-10 h-10 rounded-sm mb-4 animate-pulse"
+              style={{ background: 'oklch(0.45 0.12 265)' }}
+            />
+            <p
+              className="text-sm font-medium"
+              style={{ color: 'oklch(0.55 0.01 75)' }}
+            >
+              앨범 로딩 중...
+            </p>
+          </div>
+        ) : filteredAlbums.length === 0 ? (
+          <div className="p-12 text-center">
+            <div
+              className="w-16 h-16 rounded-sm mx-auto mb-4 flex items-center justify-center"
+              style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+            >
+              <Image className="w-8 h-8" style={{ color: 'oklch(0.45 0.12 265)' }} />
+            </div>
+            <p
+              className="text-sm font-medium mb-2"
+              style={{ color: 'oklch(0.45 0.01 75)' }}
+            >
+              등록된 앨범이 없습니다
+            </p>
+            <p
+              className="text-xs"
+              style={{ color: 'oklch(0.55 0.01 75)' }}
+            >
+              새 앨범을 만들어 사진을 업로드하세요
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+            {filteredAlbums.map((album, index) => (
+              <div
+                key={album.id}
+                className={`group rounded-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 stagger-${(index % 6) + 1}`}
+                style={{
+                  background: 'oklch(0.97 0.005 265)',
+                  border: '1px solid oklch(0.90 0.01 265)',
+                }}
+              >
+                {/* Cover Image */}
+                <div className="aspect-video relative overflow-hidden">
+                  {album.cover_image_url ? (
+                    <img
+                      src={album.cover_image_url}
+                      alt={album.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{ background: 'oklch(0.92 0.01 265)' }}
+                    >
+                      <Image className="w-12 h-12" style={{ color: 'oklch(0.70 0.01 75)' }} />
+                    </div>
+                  )}
+
+                  {/* Visibility Badge */}
+                  {!album.is_visible && (
+                    <div
+                      className="absolute top-3 right-3 px-2.5 py-1 rounded-sm flex items-center gap-1.5 text-xs font-medium"
+                      style={{
+                        background: 'oklch(0.20 0.05 265 / 0.85)',
+                        color: 'oklch(0.85 0.01 75)',
+                      }}
+                    >
+                      <EyeOff className="w-3 h-3" />
+                      비공개
+                    </div>
+                  )}
+
+                  {/* Hover Overlay */}
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                    style={{ background: 'oklch(0.15 0.05 265 / 0.6)' }}
+                  >
+                    <button
+                      onClick={() => router.push(`/admin/gallery/${album.id}`)}
+                      className="inline-flex items-center px-4 py-2 rounded-sm font-medium text-sm transition-all duration-200 hover:-translate-y-0.5"
+                      style={{
+                        background: 'oklch(0.72 0.10 75)',
+                        color: 'oklch(0.15 0.05 265)',
+                      }}
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      편집하기
+                    </button>
+                  </div>
+                </div>
+
+                {/* Info */}
+                <div className="p-4">
+                  <h3
+                    className="font-headline font-bold text-lg mb-2 line-clamp-1"
+                    style={{ color: 'oklch(0.22 0.07 265)' }}
+                  >
+                    {album.title}
+                  </h3>
+
+                  <div className="flex items-center gap-4 mb-3">
+                    <span
+                      className="flex items-center gap-1.5 text-xs"
+                      style={{ color: 'oklch(0.55 0.01 75)' }}
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                      {formatKoreanDate(album.album_date)}
+                    </span>
+                    <span
+                      className="flex items-center gap-1.5 text-xs"
+                      style={{ color: 'oklch(0.55 0.01 75)' }}
+                    >
+                      <Image className="w-3.5 h-3.5" />
+                      {album.photo_count || 0}장
+                    </span>
+                  </div>
+
+                  {album.description && (
+                    <p
+                      className="text-sm line-clamp-2 mb-4"
+                      style={{ color: 'oklch(0.50 0.01 75)' }}
+                    >
+                      {album.description}
+                    </p>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => router.push(`/admin/gallery/${album.id}`)}
+                      className="flex-1 group/btn inline-flex items-center justify-center px-4 py-2 rounded-sm font-medium text-sm transition-all duration-200 hover:-translate-y-0.5"
+                      style={{
+                        background: 'oklch(0.45 0.12 265)',
+                        color: 'oklch(0.98 0.003 75)',
+                      }}
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      편집
+                      <ArrowRight className="w-4 h-4 ml-2 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(album.id, album.title)}
+                      className="inline-flex items-center justify-center px-3 py-2 rounded-sm font-medium text-sm transition-all duration-200 hover:-translate-y-0.5"
+                      style={{
+                        background: 'oklch(0.55 0.18 25 / 0.1)',
+                        color: 'oklch(0.50 0.18 25)',
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </AdminLayout>
   )
 }
 

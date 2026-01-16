@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
+import { Lock, Mail, Eye, EyeOff, Church } from 'lucide-react'
 import { createSupabaseClient } from '../../lib/supabaseClient'
+import type { AdminUser as AdminUserRow } from '../../types/supabase'
+
+// ===========================================
+// VS Design Diverge: Admin Login Form
+// OKLCH Color System + Editorial Style
+// ===========================================
 
 interface AdminLoginFormProps {
   showHeader?: boolean
@@ -12,7 +18,7 @@ interface AdminLoginFormProps {
 
 interface AdminUserData {
   name: string | null
-  role: string | null
+  role: AdminUserRow['role'] | null
 }
 
 const AdminLoginForm = ({
@@ -64,7 +70,7 @@ const AdminLoginForm = ({
           .eq('id', data.session.user.id)
           .single<AdminUserData>()
 
-        if (adminError || !adminUser || adminUser.role !== 'admin') {
+        if (adminError || !adminUser || (adminUser.role !== 'admin' && adminUser.role !== 'super_admin')) {
           await supabase.auth.signOut()
           return
         }
@@ -145,30 +151,53 @@ const AdminLoginForm = ({
     <div className={className}>
       {showHeader && (
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-4">
-            <Lock className="w-8 h-8 text-white" />
+          <div
+            className="w-16 h-16 rounded-sm flex items-center justify-center mb-4"
+            style={{ background: 'oklch(0.45 0.12 265)' }}
+          >
+            <Lock className="w-8 h-8" style={{ color: 'oklch(0.72 0.10 75)' }} />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 font-korean">관리자 로그인</h2>
-          <p className="mt-2 text-sm text-gray-600 font-korean">
+          <h2
+            className="font-headline font-bold text-2xl"
+            style={{ color: 'oklch(0.98 0.003 75)' }}
+          >
+            관리자 로그인
+          </h2>
+          <p
+            className="mt-2 text-sm"
+            style={{ color: 'oklch(0.60 0.01 75)' }}
+          >
             교회 웹사이트 관리 시스템에 접속하세요
           </p>
         </div>
       )}
 
       <div
-        className={`bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 ${cardClassName}`.trim()}
+        className={`py-8 px-6 rounded-sm ${cardClassName}`.trim()}
+        style={{
+          background: 'oklch(0.20 0.04 265)',
+          border: '1px solid oklch(0.30 0.06 265)',
+        }}
       >
+        {/* Google Login Button */}
         <div className="mb-6">
           <button
             type="button"
             onClick={handleGoogleLogin}
             disabled={isGoogleLoading}
-            className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex justify-center items-center py-3 px-4 rounded-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5"
+            style={{
+              background: 'oklch(0.98 0.003 75)',
+              color: 'oklch(0.25 0.02 75)',
+            }}
           >
             {isGoogleLoading ? (
               <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-700 mr-2" />
-                <span className="font-korean">Google 로그인 중...</span>
+                <div
+                  className="animate-spin rounded-full h-5 w-5 mr-2"
+                  style={{ border: '2px solid oklch(0.45 0.12 265)', borderTopColor: 'transparent' }}
+                />
+                <span className="font-medium">Google 로그인 중...</span>
               </>
             ) : (
               <>
@@ -190,35 +219,63 @@ const AdminLoginForm = ({
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                <span className="font-korean">Google 계정으로 로그인</span>
+                <span className="font-medium">Google 계정으로 로그인</span>
               </>
             )}
           </button>
         </div>
 
+        {/* Divider */}
         <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
+            <div
+              className="w-full h-px"
+              style={{ background: 'oklch(0.35 0.05 265)' }}
+            />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500 font-korean">또는 이메일로 로그인</span>
+            <span
+              className="px-3"
+              style={{
+                background: 'oklch(0.20 0.04 265)',
+                color: 'oklch(0.55 0.01 75)',
+              }}
+            >
+              또는 이메일로 로그인
+            </span>
           </div>
         </div>
 
-        <form className="space-y-6" onSubmit={handleEmailLogin}>
+        <form className="space-y-5" onSubmit={handleEmailLogin}>
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-sm text-red-600 font-korean">{error}</p>
+            <div
+              className="rounded-sm p-4"
+              style={{
+                background: 'oklch(0.35 0.12 25 / 0.2)',
+                border: '1px solid oklch(0.50 0.15 25)',
+              }}
+            >
+              <p
+                className="text-sm"
+                style={{ color: 'oklch(0.75 0.12 25)' }}
+              >
+                {error}
+              </p>
             </div>
           )}
 
+          {/* Email Field */}
           <div>
-            <label htmlFor="admin-email" className="block text-sm font-medium text-gray-700 font-korean">
+            <label
+              htmlFor="admin-email"
+              className="block text-sm font-medium mb-2"
+              style={{ color: 'oklch(0.80 0.01 75)' }}
+            >
               이메일 주소
             </label>
-            <div className="mt-1 relative">
+            <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
+                <Mail className="h-5 w-5" style={{ color: 'oklch(0.50 0.01 75)' }} />
               </div>
               <input
                 id="admin-email"
@@ -228,22 +285,29 @@ const AdminLoginForm = ({
                 required
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black/20 font-korean"
+                className="w-full pl-10 pr-4 py-3 rounded-sm transition-all duration-200 focus:outline-none"
+                style={{
+                  background: 'oklch(0.15 0.04 265)',
+                  border: '1px solid oklch(0.30 0.06 265)',
+                  color: 'oklch(0.98 0.003 75)',
+                }}
                 placeholder="admin@example.com"
               />
             </div>
           </div>
 
+          {/* Password Field */}
           <div>
             <label
               htmlFor="admin-password"
-              className="block text-sm font-medium text-gray-700 font-korean"
+              className="block text-sm font-medium mb-2"
+              style={{ color: 'oklch(0.80 0.01 75)' }}
             >
               비밀번호
             </label>
-            <div className="mt-1 relative">
+            <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
+                <Lock className="h-5 w-5" style={{ color: 'oklch(0.50 0.01 75)' }} />
               </div>
               <input
                 id="admin-password"
@@ -253,13 +317,19 @@ const AdminLoginForm = ({
                 required
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black/20 font-korean"
+                className="w-full pl-10 pr-12 py-3 rounded-sm transition-all duration-200 focus:outline-none"
+                style={{
+                  background: 'oklch(0.15 0.04 265)',
+                  border: '1px solid oklch(0.30 0.06 265)',
+                  color: 'oklch(0.98 0.003 75)',
+                }}
                 placeholder="비밀번호를 입력하세요"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center transition-colors"
+                style={{ color: 'oklch(0.50 0.01 75)' }}
                 aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 표시'}
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -267,12 +337,27 @@ const AdminLoginForm = ({
             </div>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:bg-gray-600 font-korean transition-colors"
+            className="w-full flex justify-center py-3 px-4 rounded-sm font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 hover:shadow-lg"
+            style={{
+              background: 'oklch(0.72 0.10 75)',
+              color: 'oklch(0.15 0.05 265)',
+            }}
           >
-            {isLoading ? '로그인 중...' : '로그인'}
+            {isLoading ? (
+              <>
+                <div
+                  className="animate-spin rounded-full h-5 w-5 mr-2"
+                  style={{ border: '2px solid oklch(0.15 0.05 265)', borderTopColor: 'transparent' }}
+                />
+                로그인 중...
+              </>
+            ) : (
+              '로그인'
+            )}
           </button>
         </form>
       </div>

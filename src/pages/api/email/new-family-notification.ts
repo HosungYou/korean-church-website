@@ -35,7 +35,11 @@ export default async function handler(
       return res.status(400).json({ error: 'Registration data is required' })
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL || 'KyuHongYeon@gmail.com'
+    const adminEmail = process.env.ADMIN_EMAIL
+    if (!adminEmail) {
+      console.error('ADMIN_EMAIL environment variable is not set')
+      return res.status(500).json({ error: 'Admin email not configured' })
+    }
     const resendApiKey = process.env.RESEND_API_KEY
 
     // 이메일 내용 생성
@@ -70,19 +74,16 @@ export default async function handler(
 
       return res.status(200).json({ success: true, emailSent: true })
     } else {
-      // API 키가 없으면 로그만 출력
+      // API 키가 없으면 로그만 출력 (PII 제외)
       console.log('=== 새가족 등록 알림 ===')
-      console.log(`수신자: ${adminEmail}`)
-      console.log(`새가족: ${registration.korean_name}`)
-      console.log(`연락처: ${registration.phone}`)
-      console.log(`이메일: ${registration.email || '없음'}`)
-      console.log(`지역: ${registration.city}, ${registration.state}`)
+      console.log(`등록 ID: ${registration.id}`)
+      console.log('RESEND_API_KEY가 설정되지 않아 이메일이 발송되지 않았습니다.')
       console.log('========================')
 
       return res.status(200).json({
         success: true,
         emailSent: false,
-        message: 'RESEND_API_KEY가 설정되지 않아 이메일이 발송되지 않았습니다. 콘솔 로그를 확인하세요.'
+        message: 'RESEND_API_KEY가 설정되지 않아 이메일이 발송되지 않았습니다.'
       })
     }
   } catch (error) {

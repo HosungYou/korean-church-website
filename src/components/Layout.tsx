@@ -4,8 +4,13 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { Menu, Transition } from '@headlessui/react'
-import { ChevronDownIcon, Menu as MenuIcon, X as XIcon, Home, ChevronRight } from 'lucide-react'
+import { ChevronDownIcon, Menu as MenuIcon, X as XIcon, ChevronRight } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+
+// ===========================================
+// VS Design Diverge: Editorial Minimalism
+// Glass Header + Animated Nav + Refined Footer
+// ===========================================
 
 interface NavItem {
   labelKey: string
@@ -134,6 +139,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [adminSession, setAdminSession] = useState<{ email?: string; name?: string } | null>(null)
+  const [scrolled, setScrolled] = useState(false)
+
+  // Scroll detection for header style change
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // 현재 언어 설정 (기본값: 한국어)
   const currentLanguage = i18n.language || 'ko'
@@ -145,6 +160,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       i18n.changeLanguage('ko')
     }
   }, [i18n])
+
   const languageShortLabels: Record<string, string> = {
     ko: t('language.short_ko', { defaultValue: '한' }),
     en: t('language.short_en', { defaultValue: 'EN' }),
@@ -231,65 +247,109 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     i18n.changeLanguage(lng)
   }
 
+  // Nav label translations
+  const getNavLabel = (labelKey: string): string => {
+    const labelMap: Record<string, string> = {
+      'nav_groups.worship': '예배',
+      'nav_groups.nurturing': '양육/훈련',
+      'nav_groups.serving': '섬김',
+      'nav_groups.media': '미디어',
+      'nav_groups.community': '소통',
+      'nav_groups.about': '교회안내',
+    }
+    return labelMap[labelKey] || t(labelKey)
+  }
+
   return (
-    <div className="min-h-screen bg-background text-primary font-english">
-      <header className="bg-white/80 sticky top-0 z-50 backdrop-blur-md border-b border-primary/5">
+    <div className="min-h-screen bg-church-neutral-50 font-korean">
+      {/* Glass Header */}
+      <header
+        className={`sticky top-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? 'header-glass shadow-church'
+            : 'bg-transparent'
+        }`}
+      >
+        {/* Gold Accent Line */}
+        <div
+          className="absolute top-0 left-0 right-0 h-0.5"
+          style={{
+            background: 'linear-gradient(90deg, oklch(0.72 0.10 75) 0%, oklch(0.45 0.12 265) 50%, transparent 100%)',
+          }}
+        />
+
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-20 justify-between items-center">
-            {/* ... (Logo section unchanged, mostly) ... */}
+          <div className="flex h-24 justify-between items-center">
+            {/* Logo */}
             <div className="flex-shrink-0">
-              <Link href="/" className="flex items-center">
-                <div className="relative h-12 w-32">
+              <Link href="/" className="flex items-center group">
+                <div className="relative h-14 w-36 transition-transform duration-300 group-hover:scale-105">
                   <Image
                     src="/images/logo.png"
                     alt="Church Logo"
                     fill
                     priority
                     className="object-contain"
-                    sizes="128px"
+                    sizes="144px"
                   />
                 </div>
               </Link>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex lg:items-center lg:space-x-8">
+            <div className="hidden lg:flex lg:items-center lg:space-x-1">
               {navigationItems.map((item) =>
                 item.dropdown ? (
                   <Menu as="div" key={item.labelKey} className="relative">
-                    <Menu.Button className={`inline-flex items-center px-1 pt-1 text-base font-medium text-primary hover:text-secondary transition-colors ${fontClass}`}>
-                      <span>{item.labelKey === 'nav_groups.worship' ? '예배' :
-                        item.labelKey === 'nav_groups.nurturing' ? '양육/훈련' :
-                          item.labelKey === 'nav_groups.serving' ? '섬김' :
-                            item.labelKey === 'nav_groups.media' ? '미디어' :
-                              item.labelKey === 'nav_groups.community' ? '소통' :
-                                item.labelKey === 'nav_groups.about' ? '교회안내' :
-                                  t(item.labelKey)}</span>
-                      <ChevronDownIcon className="ml-1 h-5 w-5" />
+                    <Menu.Button
+                      className={`nav-link inline-flex items-center px-4 py-2 text-sm font-medium tracking-wide transition-all duration-300 ${fontClass}`}
+                      style={{ color: 'var(--church-primary-700)' }}
+                    >
+                      <span>{getNavLabel(item.labelKey)}</span>
+                      <ChevronDownIcon className="ml-1 h-4 w-4 opacity-60" />
                     </Menu.Button>
                     <Transition
                       as={Fragment}
                       enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
+                      enterFrom="opacity-0 translate-y-2"
                       enterTo="opacity-100 translate-y-0"
                       leave="transition ease-in duration-150"
                       leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
+                      leaveTo="opacity-0 translate-y-2"
                     >
-                      <Menu.Items className="absolute -right-4 top-full mt-4 w-64 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                        {item.dropdown.map((subItem) => (
-                          <Menu.Item key={subItem.labelKey}>
-                            {({ active }) => (
-                              <Link
-                                href={subItem.href!}
-                                className={`${active ? 'bg-primary/5 text-primary' : 'text-gray-700'
-                                  } block px-4 py-2 text-base ${fontClass}`}
-                              >
-                                {t(subItem.labelKey)}
-                              </Link>
-                            )}
-                          </Menu.Item>
-                        ))}
+                      <Menu.Items
+                        className="absolute -right-4 top-full mt-3 w-56 origin-top-right overflow-hidden focus:outline-none z-50"
+                        style={{
+                          background: 'var(--church-neutral-50)',
+                          boxShadow: 'var(--shadow-card)',
+                          borderRadius: '0',
+                        }}
+                      >
+                        {/* Dropdown accent line */}
+                        <div
+                          className="h-0.5 w-full"
+                          style={{
+                            background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))',
+                          }}
+                        />
+                        <div className="py-2">
+                          {item.dropdown.map((subItem) => (
+                            <Menu.Item key={subItem.labelKey}>
+                              {({ active }) => (
+                                <Link
+                                  href={subItem.href!}
+                                  className={`block px-5 py-2.5 text-sm transition-all duration-200 ${fontClass}`}
+                                  style={{
+                                    color: active ? 'var(--church-primary-500)' : 'var(--church-primary-700)',
+                                    background: active ? 'oklch(0.97 0.01 265)' : 'transparent',
+                                  }}
+                                >
+                                  {t(subItem.labelKey)}
+                                </Link>
+                              )}
+                            </Menu.Item>
+                          ))}
+                        </div>
                       </Menu.Items>
                     </Transition>
                   </Menu>
@@ -297,7 +357,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Link
                     key={item.labelKey}
                     href={item.href!}
-                    className={`px-1 pt-1 text-base font-medium text-primary hover:text-secondary transition-colors ${fontClass}`}
+                    className={`nav-link px-4 py-2 text-sm font-medium tracking-wide transition-all duration-300 ${fontClass}`}
+                    style={{ color: 'var(--church-primary-700)' }}
                   >
                     {t(item.labelKey)}
                   </Link>
@@ -306,19 +367,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
 
             {/* Admin / Language / Mobile Menu */}
-            <div className="flex items-center">
-              <div className="hidden lg:flex items-center space-x-3 mr-4">
+            <div className="flex items-center space-x-3">
+              {/* Admin Buttons - Desktop */}
+              <div className="hidden lg:flex items-center space-x-2">
                 {adminSession ? (
                   <>
                     <button
                       onClick={handleAdminNavigate}
-                      className={`px-3 py-1.5 text-sm font-medium rounded-md border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors ${fontClass}`}
+                      className={`px-4 py-2 text-xs font-medium tracking-wide transition-all duration-300 ${fontClass}`}
+                      style={{
+                        color: 'var(--church-primary-600)',
+                        border: '1px solid oklch(0.45 0.12 265 / 0.2)',
+                      }}
                     >
                       {t('admin.dashboard')}
                     </button>
                     <button
                       onClick={handleAdminLogout}
-                      className={`px-3 py-1.5 text-sm font-medium rounded-md border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors ${fontClass}`}
+                      className={`px-4 py-2 text-xs font-medium tracking-wide transition-all duration-300 ${fontClass}`}
+                      style={{
+                        color: 'var(--church-primary-600)',
+                        border: '1px solid oklch(0.45 0.12 265 / 0.2)',
+                      }}
                     >
                       {t('admin.logout')}
                     </button>
@@ -326,30 +396,53 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 ) : (
                   <button
                     onClick={handleAdminNavigate}
-                    className={`px-3 py-1.5 text-sm font-medium rounded-md border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors ${fontClass}`}
+                    className={`px-4 py-2 text-xs font-medium tracking-wide transition-all duration-300 ${fontClass}`}
+                    style={{
+                      color: 'var(--church-primary-600)',
+                      border: '1px solid oklch(0.45 0.12 265 / 0.2)',
+                    }}
                   >
                     {t('admin.login')}
                   </button>
                 )}
               </div>
-              <div className="hidden sm:flex items-center space-x-2 mr-4">
-                <button
-                  onClick={() => changeLanguage('ko')}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md border ${i18n.language === 'ko' ? 'bg-primary text-white border-primary' : 'text-primary border-primary/20 hover:bg-primary/5'
-                    } ${fontClass}`}
+
+              {/* Language Switcher */}
+              <div className="hidden sm:flex items-center">
+                <div
+                  className="flex overflow-hidden"
+                  style={{ border: '1px solid oklch(0.45 0.12 265 / 0.15)' }}
                 >
-                  {languageShortLabels.ko}
-                </button>
-                <button
-                  onClick={() => changeLanguage('en')}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md border ${i18n.language === 'en' ? 'bg-primary text-white border-primary' : 'text-primary border-primary/20 hover:bg-primary/5'
-                    } ${fontClass}`}
-                >
-                  {languageShortLabels.en}
-                </button>
+                  <button
+                    onClick={() => changeLanguage('ko')}
+                    className={`px-3 py-1.5 text-xs font-medium tracking-wider transition-all duration-300 ${fontClass}`}
+                    style={{
+                      background: i18n.language === 'ko' ? 'var(--church-primary-500)' : 'transparent',
+                      color: i18n.language === 'ko' ? 'var(--church-neutral-50)' : 'var(--church-primary-600)',
+                    }}
+                  >
+                    {languageShortLabels.ko}
+                  </button>
+                  <button
+                    onClick={() => changeLanguage('en')}
+                    className={`px-3 py-1.5 text-xs font-medium tracking-wider transition-all duration-300 ${fontClass}`}
+                    style={{
+                      background: i18n.language === 'en' ? 'var(--church-primary-500)' : 'transparent',
+                      color: i18n.language === 'en' ? 'var(--church-neutral-50)' : 'var(--church-primary-600)',
+                    }}
+                  >
+                    {languageShortLabels.en}
+                  </button>
+                </div>
               </div>
+
+              {/* Mobile Menu Button */}
               <div className="lg:hidden">
-                <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-primary">
+                <button
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="p-2 transition-colors duration-300"
+                  style={{ color: 'var(--church-primary-700)' }}
+                >
                   <MenuIcon className="h-6 w-6" />
                 </button>
               </div>
@@ -360,134 +453,214 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Mobile Menu */}
       <Transition.Root show={mobileMenuOpen} as={Fragment}>
-        <div className="lg:hidden" >
+        <div className="lg:hidden">
           <Transition.Child
             as={Fragment}
-            enter="ease-in-out duration-500"
+            enter="ease-in-out duration-400"
             enterFrom="opacity-0"
             enterTo="opacity-100"
-            leave="ease-in-out duration-500"
+            leave="ease-in-out duration-400"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-40 transition-opacity" onClick={() => setMobileMenuOpen(false)} />
+            <div
+              className="fixed inset-0 transition-opacity z-40"
+              style={{ background: 'oklch(0.15 0.05 265 / 0.6)' }}
+              onClick={() => setMobileMenuOpen(false)}
+            />
           </Transition.Child>
 
-          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-            <div className="flex items-center justify-between p-4 border-b">
-              <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-                <div className="relative h-10 w-28">
-                  <Image
-                    src="/images/logo.png"
-                    alt="Church Logo"
-                    fill
-                    className="object-contain"
-                    sizes="112px"
-                  />
-                </div>
-              </Link>
-              <button type="button" className="-m-2.5 rounded-md p-2.5 text-gray-700" onClick={() => setMobileMenuOpen(false)}>
-                <XIcon className="h-6 w-6" />
-              </button>
-            </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-gray-500/10">
-                <div className="space-y-2 py-6">
-                  {navigationItems.map((item) => (
-                    <div key={item.labelKey} className="px-4">
-                      {item.dropdown ? (
-                        <div>
-                          <p className={`${fontClass} font-semibold text-lg py-2 text-primary`}>{t(item.labelKey)}</p>
-                          <div className="pl-2 border-l border-primary/20">
-                            {item.dropdown.map((subItem) => (
-                              <Link
-                                key={subItem.labelKey}
-                                href={subItem.href!}
-                                className={`block rounded-lg py-2 pl-4 pr-3 text-base ${fontClass} text-gray-600 hover:bg-gray-50`}
-                                onClick={() => setMobileMenuOpen(false)}
-                              >
-                                {t(subItem.labelKey)}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      ) : (
-                        <Link
-                          href={item.href!}
-                          className={`-mx-3 block rounded-lg px-3 py-2.5 text-base ${fontClass} font-semibold leading-7 text-primary hover:bg-gray-50`}
-                          onClick={() => setMobileMenuOpen(false)}
+          <Transition.Child
+            as={Fragment}
+            enter="transform transition ease-out duration-400"
+            enterFrom="translate-x-full"
+            enterTo="translate-x-0"
+            leave="transform transition ease-in duration-300"
+            leaveFrom="translate-x-0"
+            leaveTo="translate-x-full"
+          >
+            <div
+              className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto sm:max-w-sm"
+              style={{ background: 'var(--church-neutral-50)' }}
+            >
+              {/* Mobile Header */}
+              <div
+                className="flex items-center justify-between p-5"
+                style={{ borderBottom: '1px solid oklch(0.92 0.005 75)' }}
+              >
+                <Link href="/" onClick={() => setMobileMenuOpen(false)}>
+                  <div className="relative h-10 w-28">
+                    <Image
+                      src="/images/logo.png"
+                      alt="Church Logo"
+                      fill
+                      className="object-contain"
+                      sizes="112px"
+                    />
+                  </div>
+                </Link>
+                <button
+                  type="button"
+                  className="p-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ color: 'var(--church-primary-700)' }}
+                >
+                  <XIcon className="h-6 w-6" />
+                </button>
+              </div>
+
+              {/* Mobile Nav Items */}
+              <div className="px-5 py-6 space-y-1">
+                {navigationItems.map((item) => (
+                  <div key={item.labelKey}>
+                    {item.dropdown ? (
+                      <div className="mb-4">
+                        <p
+                          className={`${fontClass} font-bold text-sm tracking-wide uppercase mb-3`}
+                          style={{ color: 'var(--church-accent)' }}
                         >
-                          {t(item.labelKey)}
-                        </Link>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {/* Mobile Admin/Lang unchanged mostly but using primary color tokens */}
-                <div className="px-4 py-6 space-y-3">
-                  {adminSession ? (
-                    <>
-                      <button
-                        onClick={handleMobileAdminNavigate}
-                        className={`w-full px-4 py-2 rounded-md border border-primary/20 text-left ${fontClass} text-primary hover:bg-primary hover:text-white transition-colors`}
+                          {getNavLabel(item.labelKey)}
+                        </p>
+                        <div
+                          className="pl-4 space-y-1"
+                          style={{ borderLeft: '2px solid oklch(0.72 0.10 75 / 0.3)' }}
+                        >
+                          {item.dropdown.map((subItem) => (
+                            <Link
+                              key={subItem.labelKey}
+                              href={subItem.href!}
+                              className={`block py-2 text-sm transition-colors duration-200 ${fontClass}`}
+                              style={{ color: 'var(--church-primary-700)' }}
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {t(subItem.labelKey)}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.href!}
+                        className={`block py-3 text-base font-medium ${fontClass}`}
+                        style={{ color: 'var(--church-primary-800)' }}
+                        onClick={() => setMobileMenuOpen(false)}
                       >
-                        {t('admin.dashboard')}
-                      </button>
-                      <button
-                        onClick={handleMobileAdminLogout}
-                        className={`w-full px-4 py-2 rounded-md border border-primary/20 text-left ${fontClass} text-primary hover:bg-primary hover:text-white transition-colors`}
-                      >
-                        {t('admin.logout')}
-                      </button>
-                    </>
-                  ) : (
+                        {t(item.labelKey)}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Mobile Admin */}
+              <div
+                className="px-5 py-4 space-y-2"
+                style={{ borderTop: '1px solid oklch(0.92 0.005 75)' }}
+              >
+                {adminSession ? (
+                  <>
                     <button
                       onClick={handleMobileAdminNavigate}
-                      className={`w-full px-4 py-2 rounded-md border border-primary/20 text-left ${fontClass} text-primary hover:bg-primary hover:text-white transition-colors`}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-colors duration-200 ${fontClass}`}
+                      style={{
+                        color: 'var(--church-primary-700)',
+                        border: '1px solid oklch(0.45 0.12 265 / 0.2)',
+                      }}
                     >
-                      {t('admin.login')}
+                      {t('admin.dashboard')}
                     </button>
-                  )}
-                </div>
-                <div className="py-6 px-4 flex items-center space-x-2">
+                    <button
+                      onClick={handleMobileAdminLogout}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-colors duration-200 ${fontClass}`}
+                      style={{
+                        color: 'var(--church-primary-700)',
+                        border: '1px solid oklch(0.45 0.12 265 / 0.2)',
+                      }}
+                    >
+                      {t('admin.logout')}
+                    </button>
+                  </>
+                ) : (
                   <button
-                    onClick={() => { changeLanguage('ko'); setMobileMenuOpen(false); }}
-                    className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${i18n.language === 'ko' ? 'bg-primary text-white border-primary' : 'text-primary border-primary/20 hover:bg-primary/5'
-                      } ${fontClass}`}
+                    onClick={handleMobileAdminNavigate}
+                    className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-colors duration-200 ${fontClass}`}
+                    style={{
+                      color: 'var(--church-primary-700)',
+                      border: '1px solid oklch(0.45 0.12 265 / 0.2)',
+                    }}
                   >
-                    {languageFullLabels.ko}
+                    {t('admin.login')}
                   </button>
-                  <button
-                    onClick={() => { changeLanguage('en'); setMobileMenuOpen(false); }}
-                    className={`w-full px-3 py-1.5 text-sm font-medium rounded-md border ${i18n.language === 'en' ? 'bg-primary text-white border-primary' : 'text-primary border-primary/20 hover:bg-primary/5'
-                      } ${fontClass}`}
-                  >
-                    {languageFullLabels.en}
-                  </button>
-                </div>
+                )}
+              </div>
+
+              {/* Mobile Language */}
+              <div
+                className="px-5 py-4 flex space-x-2"
+                style={{ borderTop: '1px solid oklch(0.92 0.005 75)' }}
+              >
+                <button
+                  onClick={() => { changeLanguage('ko'); setMobileMenuOpen(false); }}
+                  className={`flex-1 px-4 py-2.5 text-sm font-medium transition-all duration-200 ${fontClass}`}
+                  style={{
+                    background: i18n.language === 'ko' ? 'var(--church-primary-500)' : 'transparent',
+                    color: i18n.language === 'ko' ? 'var(--church-neutral-50)' : 'var(--church-primary-600)',
+                    border: '1px solid oklch(0.45 0.12 265 / 0.2)',
+                  }}
+                >
+                  {languageFullLabels.ko}
+                </button>
+                <button
+                  onClick={() => { changeLanguage('en'); setMobileMenuOpen(false); }}
+                  className={`flex-1 px-4 py-2.5 text-sm font-medium transition-all duration-200 ${fontClass}`}
+                  style={{
+                    background: i18n.language === 'en' ? 'var(--church-primary-500)' : 'transparent',
+                    color: i18n.language === 'en' ? 'var(--church-neutral-50)' : 'var(--church-primary-600)',
+                    border: '1px solid oklch(0.45 0.12 265 / 0.2)',
+                  }}
+                >
+                  {languageFullLabels.en}
+                </button>
               </div>
             </div>
-          </div>
+          </Transition.Child>
         </div>
       </Transition.Root>
 
       {/* Breadcrumb Navigation */}
       {router.pathname !== '/' && (
-        <nav className="bg-gray-50/50 border-b border-gray-100 py-3 backdrop-blur-sm">
+        <nav
+          className="py-4"
+          style={{
+            background: 'var(--church-neutral-100)',
+            borderBottom: '1px solid oklch(0.92 0.005 75)',
+          }}
+        >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-center space-x-2 text-sm">
               {breadcrumbs.map((crumb, index) => (
                 <React.Fragment key={crumb.name}>
-                  {index > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
-                  {crumb.href ? (
+                  {index > 0 && (
+                    <ChevronRight
+                      className="h-3.5 w-3.5"
+                      style={{ color: 'var(--church-secondary-400)' }}
+                    />
+                  )}
+                  {crumb.href && index < breadcrumbs.length - 1 ? (
                     <Link
                       href={crumb.href}
-                      className={`text-gray-500 hover:text-primary transition-colors ${fontClass}`}
+                      className={`transition-colors duration-200 hover:underline ${fontClass}`}
+                      style={{ color: 'var(--church-secondary-500)' }}
                     >
                       {crumb.name}
                     </Link>
                   ) : (
-                    <span className={`text-primary font-medium ${fontClass}`}>{crumb.name}</span>
+                    <span
+                      className={`font-medium ${fontClass}`}
+                      style={{ color: 'var(--church-primary-700)' }}
+                    >
+                      {crumb.name}
+                    </span>
                   )}
                 </React.Fragment>
               ))}
@@ -498,37 +671,140 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       <main>{children}</main>
 
-      <footer className="bg-primary text-white border-t border-primary/20">
-        <div className="mx-auto max-w-7xl px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              <h3 className={`text-xl font-serif font-bold mb-4 text-white ${fontClass}`}>{t('church_name', { defaultValue: '스테이트 칼리지 한인교회' })}</h3>
-              <p className={`text-gray-300 ${fontClass}`}>{t('full_address', { defaultValue: '758 Glenn Rd, State College, PA 16803' })}</p>
-              <p className={`text-gray-300 mt-2 ${fontClass}`}>
-                <span className="font-semibold text-secondary">{t('phone', { defaultValue: '전화' })}:</span> {t('phone_number', { defaultValue: '814-380-9393' })}
-              </p>
-              <p className={`text-gray-300 ${fontClass}`}>
-                <span className="font-semibold text-secondary">{t('email', { defaultValue: '이메일' })}:</span> {t('email_address', { defaultValue: 'KyuHongYeon@gmail.com' })}
-              </p>
+      {/* Footer - Editorial Style with Grain */}
+      <footer
+        className="relative overflow-hidden"
+        style={{ background: 'var(--church-neutral-950)' }}
+      >
+        {/* Grain Overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+        />
+
+        {/* Gold Accent Line */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px"
+          style={{
+            background: 'linear-gradient(90deg, transparent, oklch(0.72 0.10 75), transparent)',
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8 py-16 lg:py-20">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16">
+            {/* Church Info - 5 cols */}
+            <div className="md:col-span-5">
+              <h3
+                className={`font-headline font-bold text-2xl mb-6 ${fontClass}`}
+                style={{ color: 'var(--church-neutral-50)' }}
+              >
+                {t('church_name', { defaultValue: '스테이트 칼리지 한인교회' })}
+              </h3>
+              <div className="space-y-3">
+                <p
+                  className={`text-sm leading-relaxed ${fontClass}`}
+                  style={{ color: 'var(--church-secondary-300)' }}
+                >
+                  {t('full_address', { defaultValue: '758 Glenn Rd, State College, PA 16803' })}
+                </p>
+                <p className={`text-sm ${fontClass}`} style={{ color: 'var(--church-secondary-300)' }}>
+                  <span style={{ color: 'var(--church-accent)' }}>
+                    {t('phone', { defaultValue: '전화' })}:
+                  </span>{' '}
+                  {t('phone_number', { defaultValue: '814-380-9393' })}
+                </p>
+                <p className={`text-sm ${fontClass}`} style={{ color: 'var(--church-secondary-300)' }}>
+                  <span style={{ color: 'var(--church-accent)' }}>
+                    {t('email', { defaultValue: '이메일' })}:
+                  </span>{' '}
+                  {t('email_address', { defaultValue: 'KyuHongYeon@gmail.com' })}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className={`text-lg font-semibold mb-4 text-secondary ${fontClass}`}>{t('service_times', { defaultValue: '예배 시간' })}</h3>
-              <p className={`text-gray-300 ${fontClass}`}><span className="text-white font-medium">{t('sunday', { defaultValue: '주일' })}:</span> {t('sunday_time', { defaultValue: '오전 11:00' })}</p>
-              <p className={`text-gray-300 ${fontClass}`}><span className="text-white font-medium">{t('wednesday', { defaultValue: '수요일' })}:</span> {t('wednesday_time', { defaultValue: '오후 7:30' })}</p>
+
+            {/* Service Times - 3 cols */}
+            <div className="md:col-span-3">
+              <h3
+                className={`text-xs font-medium tracking-[0.2em] uppercase mb-6 ${fontClass}`}
+                style={{ color: 'var(--church-accent)' }}
+              >
+                {t('service_times', { defaultValue: '예배 시간' })}
+              </h3>
+              <div className="space-y-3">
+                <p className={`text-sm ${fontClass}`} style={{ color: 'var(--church-secondary-300)' }}>
+                  <span style={{ color: 'var(--church-neutral-100)' }}>
+                    {t('sunday', { defaultValue: '주일' })}:
+                  </span>{' '}
+                  {t('sunday_time', { defaultValue: '오전 11:00' })}
+                </p>
+                <p className={`text-sm ${fontClass}`} style={{ color: 'var(--church-secondary-300)' }}>
+                  <span style={{ color: 'var(--church-neutral-100)' }}>
+                    {t('wednesday', { defaultValue: '수요일' })}:
+                  </span>{' '}
+                  {t('wednesday_time', { defaultValue: '오후 7:30' })}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className={`text-lg font-semibold mb-4 text-secondary ${fontClass}`}>{t('quick_links', { defaultValue: '바로가기' })}</h3>
-              <div className="flex flex-col space-y-2">
-                <Link href="/about/greeting" className={`text-gray-300 hover:text-white transition-colors ${fontClass}`}>{t('church_guide', { defaultValue: '교회안내' })}</Link>
-                <Link href="/sermons-live" className={`text-gray-300 hover:text-white transition-colors ${fontClass}`}>{t('sermons_praise', { defaultValue: '설교/찬양' })}</Link>
-                <Link href="/news/announcements" className={`text-gray-300 hover:text-white transition-colors ${fontClass}`}>{t('nav_links.announcements', { defaultValue: '공지사항' })}</Link>
-                <Link href="/giving" className={`text-gray-300 hover:text-white transition-colors ${fontClass}`}>{t('online_giving', { defaultValue: '온라인헌금' })}</Link>
+
+            {/* Quick Links - 4 cols */}
+            <div className="md:col-span-4">
+              <h3
+                className={`text-xs font-medium tracking-[0.2em] uppercase mb-6 ${fontClass}`}
+                style={{ color: 'var(--church-accent)' }}
+              >
+                {t('quick_links', { defaultValue: '바로가기' })}
+              </h3>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                <Link
+                  href="/about/greeting"
+                  className={`text-sm transition-colors duration-200 ${fontClass}`}
+                  style={{ color: 'var(--church-secondary-300)' }}
+                >
+                  {t('church_guide', { defaultValue: '교회안내' })}
+                </Link>
+                <Link
+                  href="/sermons-live"
+                  className={`text-sm transition-colors duration-200 ${fontClass}`}
+                  style={{ color: 'var(--church-secondary-300)' }}
+                >
+                  {t('sermons_praise', { defaultValue: '설교/찬양' })}
+                </Link>
+                <Link
+                  href="/news/announcements"
+                  className={`text-sm transition-colors duration-200 ${fontClass}`}
+                  style={{ color: 'var(--church-secondary-300)' }}
+                >
+                  {t('nav_links.announcements', { defaultValue: '공지사항' })}
+                </Link>
+                <Link
+                  href="/giving"
+                  className={`text-sm transition-colors duration-200 ${fontClass}`}
+                  style={{ color: 'var(--church-secondary-300)' }}
+                >
+                  {t('online_giving', { defaultValue: '온라인헌금' })}
+                </Link>
               </div>
             </div>
           </div>
-          <div className="mt-8 border-t border-gray-700/50 pt-8 text-center">
-            <p className={`text-gray-500 text-sm ${fontClass}`}>
+
+          {/* Bottom Bar */}
+          <div
+            className="mt-16 pt-8 flex flex-col md:flex-row md:items-center md:justify-between"
+            style={{ borderTop: '1px solid oklch(0.25 0.006 75 / 0.5)' }}
+          >
+            <p
+              className={`text-xs tracking-wide ${fontClass}`}
+              style={{ color: 'var(--church-secondary-600)' }}
+            >
               © {new Date().getFullYear()} {t('church_name')}. All rights reserved.
+            </p>
+            <p
+              className={`text-xs tracking-wide mt-2 md:mt-0 ${fontClass}`}
+              style={{ color: 'var(--church-secondary-700)' }}
+            >
+              Designed with faith & care
             </p>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { supabase } from '../../../lib/supabase'
 import Layout from '../../components/Layout'
+import type { AdminUser } from '../../../types/supabase'
 
 const AuthCallbackPage = () => {
   const router = useRouter()
@@ -63,14 +64,14 @@ const AuthCallbackPage = () => {
             .from('admin_users')
             .select('id, name, role')
             .eq('id', session.user.id)
-            .single<{ id: string; name: string | null; role: string }>()
+            .single<Pick<AdminUser, 'id' | 'name' | 'role'>>()
 
           console.log('[Callback] Admin check result:', {
             adminData,
             error: adminError?.message
           })
 
-          if (adminError || !adminData || adminData.role !== 'admin') {
+          if (adminError || !adminData || (adminData.role !== 'admin' && adminData.role !== 'super_admin')) {
             console.error('Admin check failed:', adminError)
             await supabase.auth.signOut()
             setStatus('error')

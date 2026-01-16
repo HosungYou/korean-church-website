@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import supabase from '../../lib/supabase'
+import type { AdminUser as AdminUserRow } from '../../types/supabase'
 
 export interface AdminUser {
   id: string
   email: string
   name: string
-  role?: string | null
+  role?: AdminUserRow['role'] | null
   avatarUrl?: string | null
 }
 
 interface AdminUserData {
   name: string | null
-  role: string | null
+  role: AdminUserRow['role'] | null
 }
 
 export function useAdminAuth() {
@@ -46,7 +47,7 @@ export function useAdminAuth() {
           .eq('id', session.user.id)
           .single<AdminUserData>()
 
-        if (adminError || !adminUserData || adminUserData.role !== 'admin') {
+        if (adminError || !adminUserData || (adminUserData.role !== 'admin' && adminUserData.role !== 'super_admin')) {
           await supabase.auth.signOut()
           if (isMounted) {
             setAdmin(null)

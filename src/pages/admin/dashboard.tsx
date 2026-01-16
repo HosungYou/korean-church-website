@@ -1,33 +1,31 @@
 import { useState, useEffect } from 'react'
-import Layout from '../../components/Layout'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import Link from 'next/link'
 import {
-  LayoutDashboard,
   FileText,
   Mail,
   Users,
   Settings,
   Plus,
-  TrendingUp,
-  Calendar,
-  MessageSquare,
-  LogOut,
-  BookOpen,
-  Megaphone,
   Video,
   Image,
   Newspaper,
-  UserPlus,
-  SlidersHorizontal,
-  Church
+  Megaphone,
+  TrendingUp,
+  ArrowRight,
 } from 'lucide-react'
-import Link from 'next/link'
+import AdminLayout from '@/components/AdminLayout'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { getSermonStats } from '../../utils/sermonService'
 import { getGalleryStats } from '../../utils/galleryService'
 import { getSubscriberStats } from '../../utils/subscriberService'
 import { getMemberStats } from '../../utils/memberService'
+
+// ===========================================
+// VS Design Diverge: Admin Dashboard
+// Editorial Cards + OKLCH Color System
+// ===========================================
 
 interface DashboardStats {
   sermons: number
@@ -39,14 +37,14 @@ interface DashboardStats {
 }
 
 const AdminDashboardPage = () => {
-  const { admin, loading, signOut } = useAdminAuth()
+  const { admin } = useAdminAuth()
   const [stats, setStats] = useState<DashboardStats>({
     sermons: 0,
     galleryAlbums: 0,
     galleryPhotos: 0,
     subscribers: 0,
     newFamilies: 0,
-    members: 0
+    members: 0,
   })
   const [statsLoading, setStatsLoading] = useState(true)
 
@@ -57,7 +55,7 @@ const AdminDashboardPage = () => {
           getSermonStats().catch(() => ({ total: 0 })),
           getGalleryStats().catch(() => ({ totalAlbums: 0, totalPhotos: 0 })),
           getSubscriberStats().catch(() => ({ active: 0 })),
-          getMemberStats().catch(() => ({ active: 0 }))
+          getMemberStats().catch(() => ({ active: 0 })),
         ])
 
         setStats({
@@ -65,8 +63,8 @@ const AdminDashboardPage = () => {
           galleryAlbums: galleryStats.totalAlbums || 0,
           galleryPhotos: galleryStats.totalPhotos || 0,
           subscribers: subscriberStats.active || 0,
-          newFamilies: 0, // 새가족 통계는 별도로 구현
-          members: memberStats.active || 0
+          newFamilies: 0,
+          members: memberStats.active || 0,
         })
       } catch (error) {
         console.error('Error loading stats:', error)
@@ -80,142 +78,32 @@ const AdminDashboardPage = () => {
     }
   }, [admin])
 
-  const handleLogout = async () => {
-    await signOut()
-  }
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-        </div>
-      </Layout>
-    )
-  }
-
-  if (!admin) {
-    return null
-  }
-
-  // 관리 메뉴 - 새로운 기능들 추가
-  const menuItems = [
-    {
-      name: '대시보드',
-      href: '/admin/dashboard',
-      icon: LayoutDashboard,
-      current: true,
-      description: '전체 현황'
-    },
-    {
-      name: '슬라이더/배너',
-      href: '/admin/slides',
-      icon: SlidersHorizontal,
-      current: false,
-      description: '홈페이지 메인 슬라이더'
-    },
-    {
-      name: '설교 관리',
-      href: '/admin/sermons',
-      icon: Video,
-      current: false,
-      description: '주일/수요 설교 영상'
-    },
-    {
-      name: '갤러리 관리',
-      href: '/admin/gallery',
-      icon: Image,
-      current: false,
-      description: '사진첩 관리'
-    },
-    {
-      name: '성경읽기표',
-      href: '/admin/bible-reading',
-      icon: BookOpen,
-      current: false,
-      description: '성경통독 계획'
-    },
-    {
-      name: '주보 관리',
-      href: '/admin/bulletins',
-      icon: Newspaper,
-      current: false,
-      description: '주보 PDF 업로드'
-    },
-    {
-      name: '게시글 관리',
-      href: '/admin/posts',
-      icon: FileText,
-      current: false,
-      description: '공지사항, 자료실'
-    },
-    {
-      name: '새가족 관리',
-      href: '/admin/new-families',
-      icon: UserPlus,
-      current: false,
-      description: '새가족 등록 현황'
-    },
-    {
-      name: '구독자 관리',
-      href: '/admin/subscribers',
-      icon: Mail,
-      current: false,
-      description: '이메일 구독자'
-    },
-    {
-      name: '교인 관리',
-      href: '/admin/members',
-      icon: Church,
-      current: false,
-      description: '교회 구성원'
-    },
-    {
-      name: '뉴스레터',
-      href: '/admin/newsletter',
-      icon: Mail,
-      current: false,
-      description: '뉴스레터 발송'
-    },
-    {
-      name: '설정',
-      href: '/admin/settings',
-      icon: Settings,
-      current: false,
-      description: '시스템 설정'
-    }
-  ]
-
   // 빠른 작업
   const quickActions = [
     {
       name: '설교 등록',
       href: '/admin/sermons/new',
       icon: Video,
-      color: 'bg-blue-600 hover:bg-blue-700',
-      description: '새 설교 영상 추가'
+      description: '새 설교 영상 추가',
     },
     {
       name: '갤러리 추가',
       href: '/admin/gallery/new',
       icon: Image,
-      color: 'bg-green-600 hover:bg-green-700',
-      description: '새 앨범 생성'
+      description: '새 앨범 생성',
     },
     {
       name: '공지사항 작성',
       href: '/admin/posts/new?type=announcement',
       icon: Megaphone,
-      color: 'bg-orange-600 hover:bg-orange-700',
-      description: '공지사항 등록'
+      description: '공지사항 등록',
     },
     {
       name: '주보 업로드',
-      href: '/admin/bulletins/new',
+      href: '/admin/bulletins',
       icon: Newspaper,
-      color: 'bg-purple-600 hover:bg-purple-700',
-      description: '이번 주 주보'
-    }
+      description: '이번 주 주보',
+    },
   ]
 
   // 통계 카드
@@ -224,254 +112,288 @@ const AdminDashboardPage = () => {
       name: '설교 영상',
       value: stats.sermons,
       icon: Video,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      href: '/admin/sermons',
     },
     {
       name: '갤러리 앨범',
       value: stats.galleryAlbums,
       icon: Image,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      subValue: `${stats.galleryPhotos}장`
+      subValue: `${stats.galleryPhotos}장`,
+      href: '/admin/gallery',
     },
     {
       name: '활성 구독자',
       value: stats.subscribers,
       icon: Mail,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
+      href: '/admin/subscribers',
     },
     {
       name: '활성 교인',
       value: stats.members,
       icon: Users,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50'
-    }
+      href: '/admin/members',
+    },
   ]
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-primary rounded-full mr-4"></div>
-                <h1 className="text-xl font-bold text-gray-900 font-korean">관리자 대시보드</h1>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700 font-korean">
-                  안녕하세요, {admin?.email || admin?.name}님
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+    <AdminLayout title="대시보드" subtitle="전체 현황을 확인하세요">
+      {/* 통계 카드 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        {statsCards.map((stat, index) => {
+          const Icon = stat.icon
+          return (
+            <Link
+              key={stat.name}
+              href={stat.href}
+              className={`group block stagger-${index + 1}`}
+            >
+              <div
+                className="p-6 rounded-sm transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  background: 'oklch(0.985 0.003 75)',
+                  border: '1px solid oklch(0.92 0.005 75)',
+                  boxShadow: '0 2px 8px oklch(0.45 0.12 265 / 0.05)',
+                }}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div
+                    className="w-12 h-12 rounded-sm flex items-center justify-center"
+                    style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}
+                  >
+                    <Icon className="w-6 h-6" style={{ color: 'oklch(0.45 0.12 265)' }} />
+                  </div>
+                  <ArrowRight
+                    className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1"
+                    style={{ color: 'oklch(0.72 0.10 75)' }}
+                  />
+                </div>
+                <p
+                  className="text-sm font-medium mb-1"
+                  style={{ color: 'oklch(0.55 0.01 75)' }}
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  <span className="font-korean">로그아웃</span>
-                </button>
+                  {stat.name}
+                </p>
+                <div className="flex items-baseline">
+                  <span
+                    className="font-headline font-bold text-3xl"
+                    style={{ color: 'oklch(0.22 0.07 265)' }}
+                  >
+                    {statsLoading ? '—' : stat.value}
+                  </span>
+                  {stat.subValue && (
+                    <span
+                      className="ml-2 text-sm"
+                      style={{ color: 'oklch(0.55 0.01 75)' }}
+                    >
+                      ({stat.subValue})
+                    </span>
+                  )}
+                </div>
               </div>
+            </Link>
+          )
+        })}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* 빠른 작업 */}
+        <div className="lg:col-span-1">
+          <div
+            className="p-6 rounded-sm"
+            style={{
+              background: 'oklch(0.985 0.003 75)',
+              border: '1px solid oklch(0.92 0.005 75)',
+            }}
+          >
+            {/* Section header */}
+            <div className="flex items-center mb-6">
+              <div
+                className="h-0.5 w-8 mr-4"
+                style={{
+                  background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))',
+                }}
+              />
+              <h3
+                className="font-headline font-bold text-lg"
+                style={{ color: 'oklch(0.22 0.07 265)' }}
+              >
+                빠른 작업
+              </h3>
+            </div>
+
+            <div className="space-y-3">
+              {quickActions.map((action, index) => {
+                const Icon = action.icon
+                return (
+                  <Link
+                    key={action.name}
+                    href={action.href}
+                    className={`group flex items-center p-4 rounded-sm transition-all duration-300 hover:-translate-y-0.5 stagger-${index + 1}`}
+                    style={{
+                      background: 'oklch(0.45 0.12 265)',
+                    }}
+                  >
+                    <div
+                      className="w-10 h-10 rounded-sm flex items-center justify-center mr-4 flex-shrink-0"
+                      style={{ background: 'oklch(0.35 0.10 265)' }}
+                    >
+                      <Icon className="w-5 h-5" style={{ color: 'oklch(0.72 0.10 75)' }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span
+                        className="block font-medium text-sm"
+                        style={{ color: 'oklch(0.98 0.003 75)' }}
+                      >
+                        {action.name}
+                      </span>
+                      <span
+                        className="block text-xs"
+                        style={{ color: 'oklch(0.80 0.01 75)' }}
+                      >
+                        {action.description}
+                      </span>
+                    </div>
+                    <Plus
+                      className="w-5 h-5 flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
+                      style={{ color: 'oklch(0.72 0.10 75)' }}
+                    />
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            {/* 통계 카드 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {statsCards.map((stat) => {
-                const Icon = stat.icon
+        {/* 최근 활동 & 시스템 상태 */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* 최근 활동 */}
+          <div
+            className="p-6 rounded-sm"
+            style={{
+              background: 'oklch(0.985 0.003 75)',
+              border: '1px solid oklch(0.92 0.005 75)',
+            }}
+          >
+            <div className="flex items-center mb-6">
+              <div
+                className="h-0.5 w-8 mr-4"
+                style={{
+                  background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))',
+                }}
+              />
+              <h3
+                className="font-headline font-bold text-lg"
+                style={{ color: 'oklch(0.22 0.07 265)' }}
+              >
+                최근 활동
+              </h3>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                {
+                  icon: TrendingUp,
+                  text: '시스템이 Supabase로 업그레이드되었습니다',
+                  time: '방금 전',
+                  color: 'oklch(0.55 0.15 145)',
+                },
+                {
+                  icon: Settings,
+                  text: '새로운 관리 기능이 추가되었습니다',
+                  time: '오늘',
+                  color: 'oklch(0.45 0.12 265)',
+                },
+              ].map((activity, index) => {
+                const Icon = activity.icon
                 return (
-                  <div key={stat.name} className="bg-white overflow-hidden shadow rounded-lg">
-                    <div className="p-5">
-                      <div className="flex items-center">
-                        <div className={`flex-shrink-0 p-3 rounded-lg ${stat.bgColor}`}>
-                          <Icon className={`h-6 w-6 ${stat.color}`} />
-                        </div>
-                        <div className="ml-5 w-0 flex-1">
-                          <dl>
-                            <dt className="text-sm font-medium text-gray-500 truncate font-korean">
-                              {stat.name}
-                            </dt>
-                            <dd className="flex items-baseline">
-                              <span className="text-2xl font-semibold text-gray-900">
-                                {statsLoading ? '-' : stat.value}
-                              </span>
-                              {stat.subValue && (
-                                <span className="ml-2 text-sm text-gray-500">
-                                  ({stat.subValue})
-                                </span>
-                              )}
-                            </dd>
-                          </dl>
-                        </div>
-                      </div>
+                  <div key={index} className="flex items-start">
+                    <div
+                      className="w-8 h-8 rounded-sm flex items-center justify-center mr-4 flex-shrink-0"
+                      style={{ background: activity.color }}
+                    >
+                      <Icon className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-sm"
+                        style={{ color: 'oklch(0.35 0.008 75)' }}
+                      >
+                        {activity.text}
+                      </p>
+                      <p
+                        className="text-xs mt-0.5"
+                        style={{ color: 'oklch(0.55 0.01 75)' }}
+                      >
+                        {activity.time}
+                      </p>
                     </div>
                   </div>
                 )
               })}
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* 빠른 작업 */}
-              <div className="lg:col-span-1">
-                <div className="bg-white shadow rounded-lg">
-                  <div className="px-4 py-5 sm:p-6">
-                    <div className="flex items-center mb-4">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                      <h3 className="text-lg leading-6 font-medium text-gray-900 font-korean">빠른 작업</h3>
-                    </div>
-                    <div className="space-y-3">
-                      {quickActions.map((action) => {
-                        const Icon = action.icon
-                        return (
-                          <Link
-                            key={action.name}
-                            href={action.href}
-                            className={`${action.color} text-white p-4 rounded-lg flex items-center transition-colors group`}
-                          >
-                            <Icon className="w-5 h-5 mr-3 flex-shrink-0" />
-                            <div>
-                              <span className="font-korean font-medium block">{action.name}</span>
-                              <span className="text-xs text-white/80">{action.description}</span>
-                            </div>
-                          </Link>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 메뉴 네비게이션 */}
-              <div className="lg:col-span-2">
-                <div className="bg-white shadow rounded-lg">
-                  <div className="px-4 py-5 sm:p-6">
-                    <div className="flex items-center mb-4">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                      <h3 className="text-lg leading-6 font-medium text-gray-900 font-korean">관리 메뉴</h3>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {menuItems.map((item) => {
-                        const Icon = item.icon
-                        return (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            className={`${
-                              item.current
-                                ? 'bg-primary/10 border-primary text-primary'
-                                : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
-                            } border rounded-lg p-3 transition-colors group`}
-                          >
-                            <div className="flex items-center mb-1">
-                              <Icon className={`h-5 w-5 mr-2 ${item.current ? 'text-primary' : 'text-gray-400 group-hover:text-gray-500'}`} />
-                              <span className="font-korean font-medium text-sm">{item.name}</span>
-                            </div>
-                            <p className="text-xs text-gray-500 font-korean">{item.description}</p>
-                          </Link>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {/* 시스템 상태 */}
+          <div
+            className="p-6 rounded-sm"
+            style={{
+              background: 'oklch(0.985 0.003 75)',
+              border: '1px solid oklch(0.92 0.005 75)',
+            }}
+          >
+            <div className="flex items-center mb-6">
+              <div
+                className="h-0.5 w-8 mr-4"
+                style={{
+                  background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))',
+                }}
+              />
+              <h3
+                className="font-headline font-bold text-lg"
+                style={{ color: 'oklch(0.22 0.07 265)' }}
+              >
+                시스템 상태
+              </h3>
             </div>
 
-            {/* 최근 활동 & 알림 */}
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* 최근 활동 */}
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 font-korean">최근 활동</h3>
-                  </div>
-                  <div className="flow-root">
-                    <ul className="-mb-8">
-                      <li>
-                        <div className="relative pb-8">
-                          <span className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
-                          <div className="relative flex space-x-3">
-                            <div>
-                              <span className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center ring-8 ring-white">
-                                <FileText className="w-4 h-4 text-white" />
-                              </span>
-                            </div>
-                            <div className="min-w-0 flex-1 pt-1.5">
-                              <p className="text-sm text-gray-500 font-korean">
-                                시스템이 Supabase로 업그레이드되었습니다
-                              </p>
-                              <p className="text-xs text-gray-400">방금 전</p>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                      <li>
-                        <div className="relative pb-8">
-                          <div className="relative flex space-x-3">
-                            <div>
-                              <span className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
-                                <Settings className="w-4 h-4 text-white" />
-                              </span>
-                            </div>
-                            <div className="min-w-0 flex-1 pt-1.5">
-                              <p className="text-sm text-gray-500 font-korean">
-                                새로운 관리 기능이 추가되었습니다
-                              </p>
-                              <p className="text-xs text-gray-400">오늘</p>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { name: '데이터베이스', status: '연결됨', ok: true },
+                { name: '파일 저장소', status: '정상', ok: true },
+                { name: '이메일 서비스', status: '설정 필요', ok: false },
+                { name: '백엔드', status: 'Supabase', ok: true },
+              ].map((item) => (
+                <div
+                  key={item.name}
+                  className="flex items-center justify-between p-3 rounded-sm"
+                  style={{ background: 'oklch(0.97 0.005 265)' }}
+                >
+                  <span
+                    className="text-sm"
+                    style={{ color: 'oklch(0.45 0.01 75)' }}
+                  >
+                    {item.name}
+                  </span>
+                  <span
+                    className="text-xs font-medium px-2 py-1 rounded-sm"
+                    style={{
+                      background: item.ok
+                        ? 'oklch(0.55 0.15 145 / 0.15)'
+                        : 'oklch(0.70 0.15 85 / 0.15)',
+                      color: item.ok
+                        ? 'oklch(0.45 0.15 145)'
+                        : 'oklch(0.55 0.15 85)',
+                    }}
+                  >
+                    {item.status}
+                  </span>
                 </div>
-              </div>
-
-              {/* 시스템 상태 */}
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 font-korean">시스템 상태</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 font-korean">데이터베이스</span>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        연결됨
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 font-korean">파일 저장소</span>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        정상
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 font-korean">이메일 서비스</span>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                        설정 필요
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 font-korean">백엔드</span>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Supabase
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </Layout>
+    </AdminLayout>
   )
 }
 

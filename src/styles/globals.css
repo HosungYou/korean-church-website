@@ -1,32 +1,357 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+/* ===========================================
+   VS Design Diverge: Editorial Minimalism
+   한복 청색 + Liturgical Gold + 한지 텍스처
+   =========================================== */
+
+/* ===========================================
+   Font Imports
+   - Pretendard Variable (한글 헤드라인)
+   - IBM Plex Sans (영문)
+   - Noto Sans KR (한글 본문)
+   - Noto Serif KR (성경 인용)
+   - Playfair Display (장식용)
+   =========================================== */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ===========================================
+   CSS Custom Properties
+   =========================================== */
+:root {
+  /* Primary - Deep Indigo (한복 청색) */
+  --church-primary: oklch(0.45 0.12 265);
+  --church-primary-50: oklch(0.97 0.01 265);
+  --church-primary-100: oklch(0.93 0.02 265);
+  --church-primary-200: oklch(0.85 0.04 265);
+  --church-primary-300: oklch(0.72 0.07 265);
+  --church-primary-400: oklch(0.58 0.10 265);
+  --church-primary-500: oklch(0.45 0.12 265);
+  --church-primary-600: oklch(0.38 0.11 265);
+  --church-primary-700: oklch(0.30 0.09 265);
+  --church-primary-800: oklch(0.22 0.07 265);
+  --church-primary-900: oklch(0.15 0.05 265);
+
+  /* Secondary - Warm Stone */
+  --church-secondary: oklch(0.65 0.03 75);
+  --church-secondary-400: oklch(0.65 0.03 75);
+  --church-secondary-600: oklch(0.45 0.03 75);
+
+  /* Accent - Liturgical Gold */
+  --church-accent: oklch(0.72 0.10 75);
+  --church-accent-light: oklch(0.82 0.08 75);
+  --church-accent-dark: oklch(0.58 0.11 75);
+
+  /* Neutral - Warm Grays */
+  --church-neutral-50: oklch(0.985 0.003 75);
+  --church-neutral-100: oklch(0.96 0.004 75);
+  --church-neutral-200: oklch(0.92 0.005 75);
+  --church-neutral-900: oklch(0.15 0.004 75);
+  --church-neutral-950: oklch(0.10 0.003 75);
+
+  /* Fallback hex colors */
+  --color-primary: #2d3a6b;
+  --color-secondary: #9d9486;
+  --color-accent: #b89968;
+  --color-background: #faf9f7;
+
+  /* Glass effect */
+  --glass-blur: 12px;
+  --glass-saturate: 180%;
+  --glass-bg: oklch(0.985 0.003 75 / 0.85);
+
+  /* Shadows */
+  --shadow-church: 0 2px 8px oklch(0.45 0.12 265 / 0.08), 0 1px 2px oklch(0.45 0.12 265 / 0.04);
+  --shadow-card: 0 2px 4px oklch(0.15 0.04 265 / 0.04), 0 8px 24px oklch(0.15 0.04 265 / 0.08);
+  --shadow-card-hover: 0 4px 8px oklch(0.15 0.04 265 / 0.06), 0 16px 40px oklch(0.15 0.04 265 / 0.12);
+
+  /* Animation durations */
+  --duration-fast: 200ms;
+  --duration-normal: 400ms;
+  --duration-slow: 600ms;
+  --duration-slower: 800ms;
+}
+
+/* ===========================================
+   Base Layer
+   =========================================== */
 @layer base {
   html {
     @apply scroll-smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-background text-primary antialiased;
+    font-family: 'Noto Sans KR', 'IBM Plex Sans', sans-serif;
+    background-color: var(--church-neutral-50);
+    color: var(--church-primary-800);
+    @apply antialiased;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-serif;
+  /* Typography hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Pretendard Variable', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    color: var(--church-primary-900);
+  }
+
+  h1 {
+    @apply text-hero tracking-tight;
+  }
+
+  h2 {
+    @apply text-4xl md:text-5xl tracking-tight;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl tracking-tight;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: var(--church-accent);
+    color: var(--church-neutral-50);
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    outline: 2px solid var(--church-accent);
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
+/* ===========================================
+   Component Layer
+   =========================================== */
+@layer components {
+  /* Glass Header */
+  .header-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-bottom: 1px solid oklch(0.92 0.005 75 / 0.5);
+  }
+
+  /* Card with paper texture */
+  .card-paper {
+    background-color: var(--church-neutral-50);
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow var(--duration-normal) ease, transform var(--duration-normal) ease;
+  }
+
+  .card-paper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  .card-paper:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+  }
+
+  /* Card with left accent line */
+  .card-accent {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .card-accent::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(
+      to bottom,
+      var(--church-primary-500),
+      var(--church-accent)
+    );
+    border-radius: 9999px;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    background-color: var(--church-primary-500);
+    color: var(--church-neutral-50);
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all var(--duration-normal) ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      transparent,
+      oklch(1 0 0 / 0.1),
+      transparent
+    );
+    transform: translateX(-100%);
+    transition: transform var(--duration-slow) ease;
+  }
+
+  .btn-primary:hover::before {
+    transform: translateX(100%);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--church-primary-600);
+    transform: translateY(-1px);
+  }
+
+  /* Nav link with animated underline */
+  .nav-link {
+    position: relative;
+    color: var(--church-primary-700);
+    font-weight: 500;
+    transition: color var(--duration-fast) ease;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      var(--church-primary-500),
+      var(--church-accent)
+    );
+    transition: width var(--duration-normal) cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nav-link:hover {
+    color: var(--church-primary-500);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  /* Section divider */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--church-secondary-400),
+      transparent
+    );
+  }
+
+  /* Scripture quote */
+  .scripture-quote {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-style: italic;
+    color: var(--church-primary-700);
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .scripture-quote::before {
+    content: '\201C';
+    position: absolute;
+    left: 0;
+    top: -0.5rem;
+    font-size: 3rem;
+    color: var(--church-accent);
+    opacity: 0.5;
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+/* ===========================================
+   Utility Layer
+   =========================================== */
 @layer utilities {
-  .bg-dotted-pattern {
-    background-color: #ffffff;
-    background-image: radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px);
-    background-size: 28px 28px;
+  /* Grain texture overlay */
+  .bg-grain {
+    position: relative;
+  }
+
+  .bg-grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Paper texture background */
+  .bg-paper {
+    background-color: var(--church-neutral-50);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3CfeDiffuseLighting in='noise' lighting-color='white' surfaceScale='2'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)'/%3E%3C/svg%3E");
+    background-blend-mode: multiply;
+  }
+
+  /* Hero gradient overlay */
+  .hero-overlay {
+    background: linear-gradient(
+      135deg,
+      oklch(0.15 0.05 265 / 0.85) 0%,
+      oklch(0.25 0.08 265 / 0.6) 50%,
+      oklch(0.35 0.06 265 / 0.3) 100%
+    );
+  }
+
+  /* Gold accent gradient */
+  .accent-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--church-accent-dark),
+      var(--church-accent),
+      var(--church-accent-light)
+    );
+  }
+
+  /* Text gradient */
+  .text-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--church-primary-500),
+      var(--church-accent)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Font utilities */
+  .font-headline {
+    font-family: 'Pretendard Variable', 'Pretendard', 'Noto Sans KR', sans-serif;
   }
 
   .font-korean {
@@ -34,22 +359,173 @@
   }
 
   .font-english {
-    font-family: 'Inter', sans-serif;
+    font-family: 'IBM Plex Sans', 'Inter', sans-serif;
   }
 
-  .animate-fade-in-up {
-    animation: fadeInUp 1s ease-out forwards;
+  .font-scripture {
+    font-family: 'Noto Serif KR', Georgia, serif;
   }
 
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
 
-    to {
-      opacity: 1;
-      transform: translateY(0);
+  /* Staggered animation delays */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-6 { animation-delay: 0.6s; }
+
+  /* Ken Burns container */
+  .ken-burns-container {
+    overflow: hidden;
+  }
+
+  .ken-burns-container img,
+  .ken-burns-container video {
+    animation: kenBurns 12s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  /* Glass morphism */
+  .glass {
+    background: oklch(0.985 0.003 75 / 0.8);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+  }
+
+  /* Smooth scroll snap */
+  .scroll-snap-x {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scroll-snap-center {
+    scroll-snap-align: center;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Aspect ratio containers */
+  .aspect-hero {
+    aspect-ratio: 16 / 9;
+  }
+
+  @media (max-width: 768px) {
+    .aspect-hero {
+      aspect-ratio: 4 / 3;
     }
+  }
+
+  /* Editorial left-aligned text */
+  .editorial-layout {
+    @apply text-left max-w-3xl;
+  }
+
+  /* Micro label style */
+  .micro-label {
+    @apply text-micro uppercase tracking-widest font-medium;
+    color: var(--church-secondary-600);
+  }
+
+  /* Corner accent decoration */
+  .corner-accent {
+    position: relative;
+  }
+
+  .corner-accent::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 40px 40px 0;
+    border-color: transparent var(--church-accent) transparent transparent;
+    opacity: 0;
+    transition: opacity var(--duration-normal) ease;
+  }
+
+  .corner-accent:hover::after {
+    opacity: 1;
+  }
+}
+
+/* ===========================================
+   Keyframe Animations
+   =========================================== */
+@keyframes kenBurns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.08) translate(-1%, -1%);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ===========================================
+   Print Styles
+   =========================================== */
+@media print {
+  .header-glass,
+  .bg-grain::after,
+  .card-paper::before {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
   }
 }

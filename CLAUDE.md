@@ -539,3 +539,211 @@ Tier 상승: 보안 관련 → Sonnet/Opus
 | `lib/supabaseAdmin.ts` | Supabase Admin 설정 |
 | `src/hooks/useAdminAuth.ts` | 인증 훅 |
 | `src/utils/postService.ts` | 게시글 서비스 |
+
+---
+
+## 12. VS Design Diverge 디자인 시스템
+
+### 12.1 디자인 철학
+
+**Editorial Minimalism + 한국적 미학**을 기반으로 한 디자인 시스템입니다.
+
+- **핵심 콘셉트**: Kinfolk 매거진 스타일의 절제된 Editorial 디자인
+- **컬러 아이덴티티**: 한복 청색(Deep Indigo) + Liturgical Gold(절제된 금색)
+- **텍스처**: 한지 느낌의 grain overlay로 촉각적 질감 표현
+- **타이포그래피**: 극단적 대비 (micro labels vs hero headlines)
+
+### 12.2 OKLCH 색상 시스템
+
+모든 색상은 **OKLCH 색공간**을 사용합니다 (더 풍부한 그라디언트 표현).
+
+```css
+/* Primary - Deep Indigo (한복 청색) */
+--church-primary-500: oklch(0.45 0.12 265);    /* 기본 */
+--church-primary-700: oklch(0.30 0.09 265);    /* 진한 */
+--church-primary-900: oklch(0.15 0.05 265);    /* 가장 진한 */
+
+/* Secondary - Warm Stone (한국 건축) */
+--church-secondary-400: oklch(0.65 0.03 75);
+--church-secondary-600: oklch(0.45 0.03 75);
+
+/* Accent - Liturgical Gold (절제된 금색) */
+--church-accent: oklch(0.72 0.10 75);          /* 기본 */
+--church-accent-light: oklch(0.82 0.08 75);    /* 밝은 */
+--church-accent-dark: oklch(0.58 0.11 75);     /* 어두운 */
+
+/* Neutral - Warm Grays (한지 느낌) */
+--church-neutral-50: oklch(0.985 0.003 75);    /* 배경 */
+--church-neutral-200: oklch(0.92 0.005 75);    /* 카드 배경 */
+--church-neutral-500: oklch(0.55 0.01 75);     /* 본문 텍스트 */
+--church-neutral-900: oklch(0.15 0.004 75);    /* 헤드라인 */
+```
+
+### 12.3 인라인 스타일 사용 패턴
+
+OKLCH 색상은 Tailwind 클래스와 `style` prop을 조합하여 사용:
+
+```tsx
+// ✅ 권장 패턴
+<div
+  className="p-8 rounded-sm transition-all duration-300"
+  style={{
+    background: 'oklch(0.985 0.003 75)',
+    color: 'oklch(0.30 0.09 265)',
+  }}
+>
+
+// ✅ 그라디언트 사용
+<div
+  style={{
+    background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))',
+  }}
+/>
+
+// ✅ 반투명 오버레이
+<div
+  style={{
+    background: 'oklch(0.45 0.12 265 / 0.5)',  // 50% 투명도
+  }}
+/>
+```
+
+### 12.4 컴포넌트 클래스 (globals.css 정의됨)
+
+```css
+/* 카드 스타일 */
+.card-paper     /* 한지 느낌 카드 - 내부 페이지용 */
+.card-accent    /* 골드 악센트 카드 - 강조용 */
+
+/* 버튼 스타일 */
+.btn-primary    /* 기본 버튼 (indigo) */
+.btn-secondary  /* 보조 버튼 (투명) */
+.btn-accent     /* 강조 버튼 (gold) */
+
+/* 텍스처 */
+.bg-grain       /* grain 노이즈 오버레이 */
+.bg-paper       /* 한지 텍스처 배경 */
+
+/* 애니메이션 */
+.stagger-1 ~ .stagger-6  /* 순차 애니메이션 딜레이 */
+```
+
+### 12.5 타이포그래피 규칙
+
+```tsx
+// 헤드라인 (극단적 크기)
+<h1
+  className="font-headline font-black"
+  style={{
+    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+    letterSpacing: '-0.03em',
+    color: 'oklch(0.22 0.07 265)',
+  }}
+>
+
+// 섹션 라벨 (작은 크기, 넓은 tracking)
+<span
+  className="text-xs font-medium tracking-[0.2em] uppercase"
+  style={{ color: 'oklch(0.72 0.10 75)' }}
+>
+
+// 본문 텍스트
+<p
+  className="leading-relaxed"
+  style={{ color: 'oklch(0.55 0.01 75)' }}
+>
+```
+
+### 12.6 섹션 헤더 패턴
+
+모든 섹션은 Editorial 스타일 헤더를 사용:
+
+```tsx
+{/* Editorial Section Header */}
+<div className="mb-16">
+  {/* Gold accent line */}
+  <div
+    className="h-0.5 w-12 mb-6"
+    style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+  />
+
+  {/* Micro label */}
+  <span
+    className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
+    style={{ color: 'oklch(0.72 0.10 75)' }}
+  >
+    Section Label
+  </span>
+
+  {/* Main heading */}
+  <h2
+    className="font-headline font-black"
+    style={{
+      fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+      letterSpacing: '-0.02em',
+      color: 'oklch(0.30 0.09 265)',
+    }}
+  >
+    섹션 제목
+  </h2>
+</div>
+```
+
+### 12.7 관리자 페이지 디자인 가이드
+
+관리자 페이지도 동일한 디자인 시스템을 따르되, 다음 특징을 가짐:
+
+```tsx
+// 관리자 배경색 (약간 더 차분한 톤)
+style={{ background: 'oklch(0.97 0.005 265)' }}
+
+// 관리자 사이드바
+style={{ background: 'oklch(0.15 0.05 265)' }}
+
+// 데이터 테이블
+<table className="w-full">
+  <thead style={{ background: 'oklch(0.93 0.02 265)' }}>
+  <tbody>
+    <tr className="hover:bg-[oklch(0.97_0.01_265)]">
+```
+
+### 12.8 금지 사항
+
+다음 패턴은 사용하지 않습니다:
+
+```tsx
+// ❌ 일반 hex/rgb 색상 사용 금지
+className="bg-blue-500"
+className="text-gray-600"
+style={{ color: '#2d3a6b' }}
+
+// ❌ 둥근 모서리 과다 사용 금지
+className="rounded-2xl"  // rounded-sm 또는 rounded-none 사용
+
+// ❌ 기본 그림자 사용 금지
+className="shadow-lg"  // shadow-church-* 사용
+
+// ❌ 대칭 레이아웃 지양
+className="text-center"  // 좌측 정렬 선호 (Editorial 스타일)
+```
+
+### 12.9 새 페이지 생성 시 체크리스트
+
+1. [ ] OKLCH 색상 시스템 사용
+2. [ ] Editorial 스타일 섹션 헤더 적용
+3. [ ] grain 텍스처 오버레이 추가 (필요 시)
+4. [ ] 좌측 정렬 레이아웃 (Editorial 스타일)
+5. [ ] stagger 애니메이션 적용
+6. [ ] font-headline 클래스 사용 (헤드라인)
+7. [ ] rounded-sm 사용 (sharp corners)
+8. [ ] shadow-church-* 사용
+
+### 12.10 반응형 디자인 기준
+
+```tsx
+// 모바일: 세로 스택
+// 태블릿(md): 2열 그리드
+// 데스크톱(lg): 3-4열 그리드
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+```

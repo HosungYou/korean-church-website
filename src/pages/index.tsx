@@ -139,23 +139,54 @@ const Home: NextPage<HomeProps> = ({ dbSlides }) => {
     <Layout>
       <HeroSlider slides={heroSlides} dbSlides={dbSlides} fontClass={fontClass} />
 
-      {/* Quick Access Icons */}
-      <section className="bg-white py-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-dotted-pattern opacity-30"></div>
+      {/* Quick Access Icons - Editorial Grid */}
+      <section className="bg-church-neutral-50 py-16 relative overflow-hidden">
+        {/* Subtle grain texture */}
+        <div className="absolute inset-0 bg-grain opacity-30"></div>
+
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-4 gap-6 md:grid-cols-8">
-            {quickAccessIcons.map((item) => {
+          {/* Section header with gold accent */}
+          <div className="flex items-center mb-10">
+            <div
+              className="h-px flex-1 max-w-[60px]"
+              style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), transparent)' }}
+            />
+            <span
+              className="px-4 text-xs font-medium tracking-[0.2em] uppercase"
+              style={{ color: 'oklch(0.55 0.01 75)' }}
+            >
+              Quick Access
+            </span>
+            <div
+              className="h-px flex-1"
+              style={{ background: 'linear-gradient(90deg, transparent, oklch(0.72 0.10 75) 20%, oklch(0.85 0.006 75))' }}
+            />
+          </div>
+
+          <div className="grid grid-cols-4 gap-4 md:grid-cols-8 md:gap-6">
+            {quickAccessIcons.map((item, index) => {
               const Icon = item.icon
               return (
                 <Link
                   key={item.titleKey}
                   href={item.href}
-                  className="group flex flex-col items-center p-4 rounded-xl hover:bg-gray-50/80 transition-all duration-300 hover:-translate-y-1"
+                  className={`group flex flex-col items-center p-4 rounded-sm transition-all duration-500 hover:-translate-y-2 stagger-${(index % 6) + 1}`}
+                  style={{
+                    animationDelay: `${index * 0.05}s`,
+                  }}
                 >
-                  <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mb-3 group-hover:bg-primary/90 group-hover:scale-110 transition-all duration-300 shadow-md group-hover:shadow-lg">
+                  <div
+                    className="w-14 h-14 rounded-sm flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110 shadow-church group-hover:shadow-church-lg"
+                    style={{
+                      background: 'oklch(0.45 0.12 265)',
+                    }}
+                  >
                     <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <span className={`text-sm text-primary font-medium text-center ${fontClass} group-hover:text-secondary transition-colors`}>
+                  <span
+                    className={`text-sm font-medium text-center transition-colors duration-300 ${fontClass}`}
+                    style={{ color: 'oklch(0.35 0.008 75)' }}
+                  >
                     {t(item.titleKey)}
                   </span>
                 </Link>
@@ -165,33 +196,79 @@ const Home: NextPage<HomeProps> = ({ dbSlides }) => {
         </div>
       </section>
 
-      {/* Worship/Sermon Section */}
-      <section className="bg-gray-50 py-20 relative">
-        {/* Decorative background element */}
-        <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
+      {/* Worship/Sermon Section - Editorial Cards */}
+      <section className="py-24 relative overflow-hidden" style={{ background: 'oklch(0.985 0.003 75)' }}>
+        {/* Decorative gradient blob */}
+        <div
+          className="absolute top-0 right-0 -mt-32 -mr-32 w-[500px] h-[500px] rounded-full blur-3xl opacity-40"
+          style={{ background: 'radial-gradient(circle, oklch(0.72 0.10 75 / 0.15), transparent 70%)' }}
+        />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="mb-12 text-center">
-            <h2 className={`text-4xl font-serif font-bold text-primary mb-3 ${fontClass}`}>
+          {/* Editorial Section Header - Left Aligned */}
+          <div className="mb-16">
+            <div
+              className="h-0.5 w-12 mb-6"
+              style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+            />
+            <h2
+              className={`font-headline font-black mb-4 ${fontClass}`}
+              style={{
+                fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                letterSpacing: '-0.03em',
+                color: 'oklch(0.22 0.07 265)',
+              }}
+            >
               {t('home:worship_section.title')}
             </h2>
-            <div className="h-1 w-20 bg-secondary mx-auto rounded-full"></div>
+            <p
+              className="text-lg max-w-xl"
+              style={{ color: 'oklch(0.55 0.01 75)' }}
+            >
+              매주 함께 모여 하나님을 경배합니다
+            </p>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {worshipCards.map((card) => (
+            {worshipCards.map((card, index) => (
               <Link href={card.href} key={card.href} className="group block h-full">
-                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 flex flex-col h-full relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center mr-4 group-hover:bg-primary/10 transition-colors">
-                      <div className="w-3 h-3 bg-primary rounded-full"></div>
-                    </div>
-                    <h3 className={`text-xl font-bold text-primary ${fontClass}`}>{card.title}</h3>
-                  </div>
-                  <p className={`text-gray-600 mb-6 flex-grow ${fontClass} leading-relaxed`}>{card.description}</p>
-                  <div className={`flex items-center text-secondary font-semibold text-sm ${fontClass} mt-auto`}>
+                <div
+                  className={`card-paper p-8 flex flex-col h-full relative overflow-hidden stagger-${index + 1}`}
+                >
+                  {/* Gold accent line on hover */}
+                  <div
+                    className="absolute top-0 left-0 w-full h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
+                    style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), transparent)' }}
+                  />
+
+                  {/* Card number */}
+                  <span
+                    className="text-xs font-medium tracking-[0.15em] uppercase mb-6"
+                    style={{ color: 'oklch(0.72 0.10 75)' }}
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+
+                  <h3
+                    className={`font-headline font-bold text-xl mb-4 ${fontClass}`}
+                    style={{ color: 'oklch(0.30 0.09 265)' }}
+                  >
+                    {card.title}
+                  </h3>
+
+                  <p
+                    className={`mb-8 flex-grow leading-relaxed ${fontClass}`}
+                    style={{ color: 'oklch(0.45 0.01 75)' }}
+                  >
+                    {card.description}
+                  </p>
+
+                  <div
+                    className={`flex items-center font-semibold text-sm ${fontClass} transition-colors duration-300`}
+                    style={{ color: 'oklch(0.45 0.12 265)' }}
+                  >
                     {card.cta}
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-2" />
                   </div>
                 </div>
               </Link>
@@ -200,78 +277,164 @@ const Home: NextPage<HomeProps> = ({ dbSlides }) => {
         </div>
       </section>
 
-      {/* First-Time Visitors Section */}
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12">
-            <h2 className={`text-3xl font-serif font-bold text-primary ${fontClass}`}>
-              {t('home:first_time_section.title')}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featureCards.map((card) => (
-              <Link href={card.href} key={card.title} className="group block">
-                <div className="bg-gray-50/50 rounded-xl p-6 hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-gray-100 hover:-translate-y-1">
-                  <div className="flex items-start mb-4">
-                    <div className="w-2 h-2 bg-secondary rounded-full mr-3 mt-2"></div>
-                    <div>
-                      <h3 className={`text-lg font-bold text-primary mb-2 ${fontClass}`}>
-                        {card.title}
-                      </h3>
-                      <p className={`text-gray-600 text-sm ${fontClass} leading-relaxed`}>
-                        {card.description}
-                      </p>
-                    </div>
-                  </div>
-                  <div className={`flex items-center text-primary/70 text-sm ${fontClass} group-hover:text-secondary transition-colors`}>
-                    {t('home:first_time_section.cta')}
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* First-Time Visitors Section - Accent Style */}
+      <section className="py-24 relative" style={{ background: 'oklch(0.97 0.01 265)' }}>
+        <div className="absolute inset-0 bg-grain opacity-20"></div>
 
-      {/* Email Subscription Section */}
-      <section className="bg-primary py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-dotted-pattern opacity-5 mix-blend-overlay"></div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-2xl border border-white/10">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="md:w-1/2">
-                <div className="flex items-center mb-4">
-                  <Mail className="w-8 h-8 text-secondary mr-4" />
-                  <h2 className={`text-2xl font-serif font-bold text-white ${fontClass}`}>
+          {/* Section Header with Accent Background */}
+          <div className="mb-16 flex items-end justify-between">
+            <div>
+              <span
+                className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
+                style={{ color: 'oklch(0.72 0.10 75)' }}
+              >
+                For Newcomers
+              </span>
+              <h2
+                className={`font-headline font-black ${fontClass}`}
+                style={{
+                  fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                  letterSpacing: '-0.02em',
+                  color: 'oklch(0.30 0.09 265)',
+                }}
+              >
+                {t('home:first_time_section.title')}
+              </h2>
+            </div>
+            <div
+              className="hidden md:block h-px flex-1 max-w-xs ml-8"
+              style={{ background: 'linear-gradient(90deg, oklch(0.45 0.12 265 / 0.3), transparent)' }}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featureCards.map((card, index) => (
+              <Link href={card.href} key={card.title} className="group block">
+                <div
+                  className={`card-accent p-6 h-full flex flex-col stagger-${index + 1}`}
+                >
+                  {/* Accent dot */}
+                  <div
+                    className="w-2 h-2 rounded-full mb-4"
+                    style={{ background: 'oklch(0.72 0.10 75)' }}
+                  />
+
+                  <h3
+                    className={`font-headline font-bold text-lg mb-3 ${fontClass}`}
+                    style={{ color: 'oklch(0.25 0.02 75)' }}
+                  >
+                    {card.title}
+                  </h3>
+
+                  <p
+                    className={`text-sm leading-relaxed mb-6 flex-grow ${fontClass}`}
+                    style={{ color: 'oklch(0.50 0.01 75)' }}
+                  >
+                    {card.description}
+                  </p>
+
+                  <div
+                    className={`flex items-center text-sm font-medium ${fontClass} transition-all duration-300 group-hover:translate-x-1`}
+                    style={{ color: 'oklch(0.45 0.12 265)' }}
+                  >
+                    {t('home:first_time_section.cta')}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Email Subscription Section - Deep Indigo with Gold Accent */}
+      <section
+        className="py-24 relative overflow-hidden"
+        style={{ background: 'oklch(0.22 0.07 265)' }}
+      >
+        {/* Grain overlay */}
+        <div className="absolute inset-0 bg-grain opacity-[0.03]"></div>
+
+        {/* Gold accent line at top */}
+        <div
+          className="absolute top-0 left-0 right-0 h-1"
+          style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265) 50%, transparent)' }}
+        />
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+          <div
+            className="p-10 md:p-16 rounded-sm relative overflow-hidden"
+            style={{
+              background: 'oklch(0.25 0.06 265 / 0.5)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid oklch(1 0 0 / 0.08)',
+            }}
+          >
+            {/* Subtle gradient accent */}
+            <div
+              className="absolute top-0 right-0 w-1/2 h-full opacity-30"
+              style={{
+                background: 'radial-gradient(ellipse at top right, oklch(0.72 0.10 75 / 0.2), transparent 60%)',
+              }}
+            />
+
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10 relative z-10">
+              <div className="lg:w-1/2">
+                <div className="flex items-center mb-6">
+                  <div
+                    className="w-12 h-12 rounded-sm flex items-center justify-center mr-4"
+                    style={{ background: 'oklch(0.72 0.10 75)' }}
+                  >
+                    <Mail className="w-6 h-6" style={{ color: 'oklch(0.15 0.05 265)' }} />
+                  </div>
+                  <h2
+                    className={`font-headline font-bold text-2xl md:text-3xl ${fontClass}`}
+                    style={{ color: 'oklch(0.98 0.003 75)' }}
+                  >
                     {t('home:subscribe_section.title')}
                   </h2>
                 </div>
-                <p className={`text-gray-300 text-lg ${fontClass}`}>
+                <p
+                  className={`text-lg leading-relaxed ${fontClass}`}
+                  style={{ color: 'oklch(0.80 0.01 75)' }}
+                >
                   {t('home:subscribe_section.description')}
                 </p>
               </div>
 
-              <div className="md:w-1/2 w-full">
-                <form onSubmit={handleSubscribe} className="flex gap-3">
+              <div className="lg:w-1/2 w-full">
+                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={t('home:subscribe_section.placeholder') as string}
-                    className={`flex-1 px-4 py-3 bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all ${fontClass}`}
+                    className={`flex-1 px-5 py-4 rounded-sm transition-all duration-300 ${fontClass}`}
+                    style={{
+                      background: 'oklch(0.18 0.05 265)',
+                      border: '1px solid oklch(1 0 0 / 0.15)',
+                      color: 'oklch(0.98 0.003 75)',
+                    }}
                     required
                   />
                   <button
                     type="submit"
-                    className={`px-6 py-3 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary/90 transition-all shadow-lg flex items-center whitespace-nowrap ${fontClass}`}
+                    className={`px-8 py-4 font-semibold rounded-sm transition-all duration-300 flex items-center justify-center whitespace-nowrap hover:scale-[1.02] ${fontClass}`}
+                    style={{
+                      background: 'oklch(0.72 0.10 75)',
+                      color: 'oklch(0.15 0.05 265)',
+                    }}
                   >
-                    <Bell className="w-4 h-4 mr-2" />
+                    <Bell className="w-5 h-5 mr-2" />
                     {t('home:subscribe_section.button')}
                   </button>
                 </form>
                 {isSubscribed && (
-                  <p className={`mt-4 text-green-400 font-medium ${fontClass}`}>
+                  <p
+                    className={`mt-4 font-medium ${fontClass}`}
+                    style={{ color: 'oklch(0.75 0.15 145)' }}
+                  >
                     {t('home:subscribe_section.success')}
                   </p>
                 )}

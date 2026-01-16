@@ -31,6 +31,29 @@ export default async function handler(
     return res.status(401).json({ error: 'Unauthorized' })
   }
 
+  // 실제 토큰 검증
+  const token = authHeader.substring(7)
+  try {
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
+    if (authError || !user) {
+      return res.status(401).json({ error: 'Invalid or expired token' })
+    }
+
+    // 관리자 권한 확인
+    const { data: adminData, error: adminError } = await supabaseAdmin
+      .from('admin_users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (adminError || !adminData || (adminData.role !== 'admin' && adminData.role !== 'super_admin')) {
+      return res.status(403).json({ error: 'Admin access required' })
+    }
+  } catch (error) {
+    console.error('Token verification error:', error)
+    return res.status(401).json({ error: 'Token verification failed' })
+  }
+
   try {
     const { newsletter } = req.body as RequestBody
 

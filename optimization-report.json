@@ -1,0 +1,65 @@
+{
+  "summary": {
+    "totalFiles": 52,
+    "processedFiles": 52,
+    "skippedFiles": 0,
+    "errorFiles": 0,
+    "originalSize": "118.8 MB",
+    "optimizedSize": "11.37 MB",
+    "totalSavings": "107.43 MB",
+    "savingsPercent": "90.4%"
+  },
+  "topSavings": [
+    {
+      "file": "community/community4.jpg",
+      "savings": "13.03 MB",
+      "percent": "98.2%"
+    },
+    {
+      "file": "community/community2.jpg",
+      "savings": "11.92 MB",
+      "percent": "97.6%"
+    },
+    {
+      "file": "community/community6.jpg",
+      "savings": "10.2 MB",
+      "percent": "94.1%"
+    },
+    {
+      "file": "community/community3.jpg",
+      "savings": "9.89 MB",
+      "percent": "94.6%"
+    },
+    {
+      "file": "community/community5.jpg",
+      "savings": "9.02 MB",
+      "percent": "96.7%"
+    },
+    {
+      "file": "community/community1.jpg",
+      "savings": "8.32 MB",
+      "percent": "96.4%"
+    },
+    {
+      "file": "history/2016년 8월 교회 야유회.JPG",
+      "savings": "6.37 MB",
+      "percent": "93.5%"
+    },
+    {
+      "file": "history/2012년 8월 단기선교-7.JPG",
+      "savings": "5.03 MB",
+      "percent": "93%"
+    },
+    {
+      "file": "history/2012년 8월 단기선교-1.JPG",
+      "savings": "4.69 MB",
+      "percent": "95.2%"
+    },
+    {
+      "file": "history/2012년 8월 단기선교-3.JPG",
+      "savings": "4.63 MB",
+      "percent": "95.1%"
+    }
+  ],
+  "timestamp": "2026-01-16T15:24:48.239Z"
+}
