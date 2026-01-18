@@ -24,19 +24,26 @@
 
 ### Fixed
 - **관리자 로그인 버그 수정**: 새로 추가된 관리자가 Google 로그인 시 접근 거부되는 문제 해결
-  - **원인**: `admin_users.id`가 `auth.users.id`와 불일치하여 인증 실패
+  - **원인 1**: `admin_users.id`가 `auth.users.id`와 불일치하여 인증 실패
+  - **원인 2**: 이메일 대소문자 불일치 (`KyuHongYeon@gmail.com` vs `kyuhongyeon@gmail.com`)
   - **해결**:
     - `callback.tsx`, `useAdminAuth.ts`에서 ID 기반 조회를 **이메일 기반 조회**로 변경
     - 첫 로그인 시 `admin_users.id`를 `auth.users.id`와 자동 동기화하는 로직 추가
-  - **영향받은 사용자**: `leesinhak@gmail.com` (DB 수동 수정 완료)
-  - **향후 예방**: 새 관리자 추가 후 첫 로그인 시 자동으로 ID 동기화됨
+    - **이메일 소문자 정규화**: 모든 이메일 비교/저장 시 소문자로 변환
+  - **영향받은 사용자**: `leesinhak@gmail.com`, `kyuhongyeon@gmail.com` (DB 수동 수정 완료)
+  - **향후 예방**:
+    - 새 관리자 추가 시 이메일이 자동으로 소문자로 저장됨
+    - 첫 로그인 시 ID가 자동 동기화됨
 
 ### Changed
-- `src/hooks/useAdminAuth.ts`: 이메일 기반 관리자 조회 + ID 자동 동기화
-- `src/pages/auth/callback.tsx`: 이메일 기반 관리자 조회 + ID 자동 동기화
+- `src/hooks/useAdminAuth.ts`: 이메일 소문자 변환 + 이메일 기반 관리자 조회 + ID 자동 동기화
+- `src/pages/auth/callback.tsx`: 이메일 소문자 변환 + 이메일 기반 관리자 조회 + ID 자동 동기화
+- `src/utils/adminService.ts`: 관리자 추가 시 이메일을 소문자로 정규화하여 저장
 
 ### Database
-- `admin_users` 테이블: `leesinhak@gmail.com`의 `id`를 `auth.users.id`와 일치하도록 업데이트
+- `admin_users` 테이블:
+  - `leesinhak@gmail.com`의 `id`를 `auth.users.id`와 일치하도록 업데이트
+  - `KyuHongYeon@gmail.com` → `kyuhongyeon@gmail.com`으로 변경 + ID 동기화
 
 ---
 
