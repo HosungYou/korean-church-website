@@ -99,6 +99,12 @@ const menuItems = [
     icon: Mail,
     description: '뉴스레터 발송',
   },
+  {
+    name: '관리자 관리',
+    href: '/admin/admins',
+    icon: Settings,
+    description: '관리자 권한 설정',
+  },
 ]
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, subtitle }) => {

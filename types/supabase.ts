@@ -41,28 +41,25 @@ export interface Database {
           id: string
           email: string
           name: string | null
-          role: 'super_admin' | 'admin' | 'editor' | 'user'
+          role: 'super_admin' | 'admin'
           last_login: string | null
-          created_at: string
-          updated_at: string
+          created_at: string | null
         }
         Insert: {
-          id: string
+          id?: string
           email: string
           name?: string | null
-          role?: 'super_admin' | 'admin' | 'editor' | 'user'
+          role?: 'super_admin' | 'admin'
           last_login?: string | null
           created_at?: string
-          updated_at?: string
         }
         Update: {
           id?: string
           email?: string
           name?: string | null
-          role?: 'super_admin' | 'admin' | 'editor' | 'user'
+          role?: 'super_admin' | 'admin'
           last_login?: string | null
           created_at?: string
-          updated_at?: string
         }
         Relationships: []
       }
@@ -811,6 +808,7 @@ export type NewsletterSent = Database['public']['Tables']['newsletter_sent']['Ro
 export type NewFamilyRegistration = Database['public']['Tables']['new_family_registrations']['Row']
 export type NewsletterLog = Database['public']['Tables']['newsletter_logs']['Row']
 export type AdminUser = Database['public']['Tables']['admin_users']['Row']
+export type AdminUserInsert = Database['public']['Tables']['admin_users']['Insert']
 
 // Insert 타입 별칭
 export type SermonInsert = Database['public']['Tables']['sermons']['Insert']
