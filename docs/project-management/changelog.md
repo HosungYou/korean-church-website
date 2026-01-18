@@ -20,6 +20,31 @@
 
 ---
 
+## [2.2.2] - 2026-01-18
+
+### Fixed
+- **갤러리 앨범 편집 권한 오류 수정**: 관리자가 갤러리 앨범 생성/수정 시 "저장 중 오류가 발생했습니다" 에러 해결
+  - **원인**: RLS 정책이 `profiles` 테이블을 확인했으나, 실제 관리자 정보는 `admin_users` 테이블에 저장됨
+  - **증상**: `gallery_albums`, `gallery_photos` 테이블에 INSERT/UPDATE 시 403 에러
+  - **해결**: RLS 정책을 `admin_users` 테이블 기반으로 변경 + `auth.jwt()->>'email'` 사용 + `LOWER()` 함수로 대소문자 무관 비교
+
+### Database
+- `gallery_albums` RLS 정책 재생성:
+  - `gallery_albums_select_public`: 모든 사용자 SELECT 허용
+  - `gallery_albums_insert_admin`: `admin_users` 테이블 기반 INSERT 권한
+  - `gallery_albums_update_admin`: `admin_users` 테이블 기반 UPDATE 권한
+  - `gallery_albums_delete_admin`: `admin_users` 테이블 기반 DELETE 권한
+- `gallery_photos` RLS 정책 재생성:
+  - `gallery_photos_select_public`: 모든 사용자 SELECT 허용
+  - `gallery_photos_insert_admin`: `admin_users` 테이블 기반 INSERT 권한
+  - `gallery_photos_update_admin`: `admin_users` 테이블 기반 UPDATE 권한
+  - `gallery_photos_delete_admin`: `admin_users` 테이블 기반 DELETE 권한
+
+### Migration
+- `supabase/migrations/20260118_fix_gallery_rls_policies.sql` 추가
+
+---
+
 ## [2.2.1] - 2026-01-18
 
 ### Fixed
