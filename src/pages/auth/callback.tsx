@@ -59,11 +59,20 @@ const AuthCallbackPage = () => {
 
         if (session?.user) {
           console.log('[Callback] Session found, checking admin role...')
+
+          const userEmail = session.user.email
+          if (!userEmail) {
+            setStatus('error')
+            setErrorMessage('이메일 정보를 찾을 수 없습니다.')
+            setTimeout(() => router.push('/admin/login'), 2000)
+            return
+          }
+
           // Check if user is admin from admin_users table (by email, not id)
           const { data: adminData, error: adminError } = await supabase
             .from('admin_users')
             .select('id, name, role, email')
-            .eq('email', session.user.email)
+            .eq('email', userEmail)
             .single<Pick<AdminUser, 'id' | 'name' | 'role' | 'email'>>()
 
           console.log('[Callback] Admin check result:', {
@@ -86,7 +95,7 @@ const AuthCallbackPage = () => {
             const { error: updateError } = await supabase
               .from('admin_users')
               .update({ id: session.user.id })
-              .eq('email', session.user.email)
+              .eq('email', userEmail)
 
             if (updateError) {
               console.error('Failed to sync admin ID:', updateError)
