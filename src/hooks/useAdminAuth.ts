@@ -42,10 +42,20 @@ export function useAdminAuth() {
         const session = sessionData.session
 
         // Query by email instead of id to handle first-time logins
+        const userEmail = session.user.email
+        if (!userEmail) {
+          if (isMounted) {
+            setAdmin(null)
+            setError('이메일 정보를 찾을 수 없습니다.')
+          }
+          router.replace('/admin/login')
+          return
+        }
+
         const { data: adminUserData, error: adminError } = await supabase
           .from('admin_users')
           .select('id, name, role')
-          .eq('email', session.user.email)
+          .eq('email', userEmail)
           .single<AdminUserData & { id: string }>()
 
         if (adminError || !adminUserData || (adminUserData.role !== 'admin' && adminUserData.role !== 'super_admin')) {
@@ -63,7 +73,7 @@ export function useAdminAuth() {
           await supabase
             .from('admin_users')
             .update({ id: session.user.id })
-            .eq('email', session.user.email)
+            .eq('email', userEmail)
         }
 
         const adminUser: AdminUser = {
