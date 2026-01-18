@@ -108,10 +108,6 @@ const navigationConfig: NavItem[] = [
     ],
   },
   {
-    labelKey: 'nav_groups.gallery',
-    href: '/news/gallery',
-  },
-  {
     labelKey: 'nav_groups.community',
     dropdown: [
       { labelKey: 'nav_links.announcements', href: '/announcements' },
@@ -128,6 +124,10 @@ const navigationConfig: NavItem[] = [
       { labelKey: 'nav_links.directions', href: '/about/directions' },
       { labelKey: 'nav_links.bulletin', href: '/news/bulletin' },
     ],
+  },
+  {
+    labelKey: 'nav_groups.gallery',
+    href: '/news/gallery',
   },
 ]
 
