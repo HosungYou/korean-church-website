@@ -59,12 +59,12 @@ const AuthCallbackPage = () => {
 
         if (session?.user) {
           console.log('[Callback] Session found, checking admin role...')
-          // Check if user is admin from admin_users table
+          // Check if user is admin from admin_users table (by email, not id)
           const { data: adminData, error: adminError } = await supabase
             .from('admin_users')
-            .select('id, name, role')
-            .eq('id', session.user.id)
-            .single<Pick<AdminUser, 'id' | 'name' | 'role'>>()
+            .select('id, name, role, email')
+            .eq('email', session.user.email)
+            .single<Pick<AdminUser, 'id' | 'name' | 'role' | 'email'>>()
 
           console.log('[Callback] Admin check result:', {
             adminData,
@@ -78,6 +78,21 @@ const AuthCallbackPage = () => {
             setErrorMessage('권한이 없는 계정입니다. 관리자에게 문의하세요.')
             setTimeout(() => router.push('/admin/login'), 2000)
             return
+          }
+
+          // Sync admin_users.id with auth.users.id if different (first login scenario)
+          if (adminData.id !== session.user.id) {
+            console.log('[Callback] Syncing admin_users.id with auth.users.id...')
+            const { error: updateError } = await supabase
+              .from('admin_users')
+              .update({ id: session.user.id })
+              .eq('email', session.user.email)
+
+            if (updateError) {
+              console.error('Failed to sync admin ID:', updateError)
+            } else {
+              console.log('[Callback] Admin ID synced successfully')
+            }
           }
 
           // Store admin info in localStorage

@@ -41,11 +41,12 @@ export function useAdminAuth() {
 
         const session = sessionData.session
 
+        // Query by email instead of id to handle first-time logins
         const { data: adminUserData, error: adminError } = await supabase
           .from('admin_users')
-          .select('name, role')
-          .eq('id', session.user.id)
-          .single<AdminUserData>()
+          .select('id, name, role')
+          .eq('email', session.user.email)
+          .single<AdminUserData & { id: string }>()
 
         if (adminError || !adminUserData || (adminUserData.role !== 'admin' && adminUserData.role !== 'super_admin')) {
           await supabase.auth.signOut()
@@ -55,6 +56,14 @@ export function useAdminAuth() {
           }
           router.replace('/admin/login?error=not_admin')
           return
+        }
+
+        // Sync admin_users.id with auth.users.id if different
+        if (adminUserData.id !== session.user.id) {
+          await supabase
+            .from('admin_users')
+            .update({ id: session.user.id })
+            .eq('email', session.user.email)
         }
 
         const adminUser: AdminUser = {
