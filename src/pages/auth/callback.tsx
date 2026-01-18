@@ -60,7 +60,7 @@ const AuthCallbackPage = () => {
         if (session?.user) {
           console.log('[Callback] Session found, checking admin role...')
 
-          const userEmail = session.user.email
+          const userEmail = session.user.email?.toLowerCase()
           if (!userEmail) {
             setStatus('error')
             setErrorMessage('이메일 정보를 찾을 수 없습니다.')

@@ -42,7 +42,7 @@ export function useAdminAuth() {
         const session = sessionData.session
 
         // Query by email instead of id to handle first-time logins
-        const userEmail = session.user.email
+        const userEmail = session.user.email?.toLowerCase()
         if (!userEmail) {
           if (isMounted) {
             setAdmin(null)

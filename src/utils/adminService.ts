@@ -63,8 +63,11 @@ export async function getAdminByEmail(email: string): Promise<AdminUserWithAuth 
 
 // 관리자 추가 (이메일로 검색하여 auth.users에서 id 가져오기)
 export async function addAdmin(email: string, name: string, role: AdminRole = 'admin'): Promise<AdminUserWithAuth> {
+  // 이메일을 소문자로 정규화 (Google OAuth는 소문자로 반환하므로 일관성 유지)
+  const normalizedEmail = email.toLowerCase()
+
   // 먼저 해당 이메일로 이미 관리자가 등록되어 있는지 확인
-  const existing = await getAdminByEmail(email)
+  const existing = await getAdminByEmail(normalizedEmail)
   if (existing) {
     throw new Error('이미 등록된 관리자입니다.')
   }
@@ -74,7 +77,7 @@ export async function addAdmin(email: string, name: string, role: AdminRole = 'a
   const { data, error } = await supabase
     .from('admin_users')
     .insert({
-      email,
+      email: normalizedEmail,
       name,
       role,
     })
