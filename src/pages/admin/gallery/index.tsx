@@ -13,11 +13,16 @@ import {
   EyeOff,
   FolderOpen,
   ArrowRight,
+  Users,
+  GraduationCap,
+  Heart,
+  Home,
+  Folder,
 } from 'lucide-react'
 import Link from 'next/link'
 import AdminLayout from '@/components/AdminLayout'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
-import { getAllAlbums, deleteAlbum } from '../../../utils/galleryService'
+import { getAllAlbums, deleteAlbum, DEPARTMENT_LABELS, DEPARTMENT_COLORS, type AlbumDepartment } from '../../../utils/galleryService'
 import type { GalleryAlbum } from '../../../../types/supabase'
 
 // ===========================================
@@ -39,6 +44,7 @@ const AdminGalleryPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterYear, setFilterYear] = useState<string>('all')
   const [filterVisibility, setFilterVisibility] = useState<'all' | 'visible' | 'hidden'>('all')
+  const [filterDepartment, setFilterDepartment] = useState<string>('all')
 
   useEffect(() => {
     if (!admin) return
@@ -90,9 +96,14 @@ const AdminGalleryPage = () => {
         (filterVisibility === 'visible' && album.is_visible) ||
         (filterVisibility === 'hidden' && !album.is_visible)
 
-      return matchesSearch && matchesYear && matchesVisibility
+      const matchesDepartment =
+        filterDepartment === 'all' ||
+        album.department === filterDepartment ||
+        (filterDepartment === 'general' && !album.department)
+
+      return matchesSearch && matchesYear && matchesVisibility && matchesDepartment
     })
-  }, [albums, searchTerm, filterYear, filterVisibility])
+  }, [albums, searchTerm, filterYear, filterVisibility, filterDepartment])
 
   const stats = useMemo(() => {
     const total = albums.length
@@ -203,7 +214,7 @@ const AdminGalleryPage = () => {
           border: '1px solid oklch(0.92 0.005 75)',
         }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {/* Search Input */}
           <div className="md:col-span-2">
             <div className="relative">
@@ -225,6 +236,25 @@ const AdminGalleryPage = () => {
               />
             </div>
           </div>
+
+          {/* Department Filter */}
+          <select
+            value={filterDepartment}
+            onChange={(e) => setFilterDepartment(e.target.value)}
+            className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none appearance-none cursor-pointer"
+            style={{
+              background: 'oklch(0.97 0.005 265)',
+              border: '1px solid oklch(0.90 0.01 265)',
+              color: 'oklch(0.35 0.02 75)',
+            }}
+          >
+            <option value="all">모든 부서</option>
+            <option value="children">유년부</option>
+            <option value="youth">중고등부</option>
+            <option value="young_adults">청년대학부</option>
+            <option value="district">구역</option>
+            <option value="general">일반</option>
+          </select>
 
           {/* Year Filter */}
           <select
@@ -330,6 +360,22 @@ const AdminGalleryPage = () => {
                       style={{ background: 'oklch(0.92 0.01 265)' }}
                     >
                       <Image className="w-12 h-12" style={{ color: 'oklch(0.70 0.01 75)' }} />
+                    </div>
+                  )}
+
+                  {/* Department Badge */}
+                  {album.department && album.department !== 'general' && (
+                    <div
+                      className="absolute top-3 left-3 px-2.5 py-1 rounded-sm text-xs font-medium"
+                      style={{
+                        background: DEPARTMENT_COLORS[album.department as AlbumDepartment],
+                        color: 'oklch(0.98 0.003 75)',
+                      }}
+                    >
+                      {DEPARTMENT_LABELS[album.department as AlbumDepartment]}
+                      {album.department === 'district' && album.district_number && (
+                        <span> {album.district_number}구역</span>
+                      )}
                     </div>
                   )}
 

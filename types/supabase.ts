@@ -362,6 +362,8 @@ export interface Database {
           year: number
           month: number
           category: 'sunday' | 'event' | 'education' | 'missions' | 'general'
+          department: 'children' | 'youth' | 'young_adults' | 'district' | 'general' | null
+          district_number: number | null
           is_visible: boolean
           sort_order: number
           photo_count: number
@@ -375,6 +377,8 @@ export interface Database {
           cover_image_url?: string | null
           album_date: string
           category?: 'sunday' | 'event' | 'education' | 'missions' | 'general'
+          department?: 'children' | 'youth' | 'young_adults' | 'district' | 'general' | null
+          district_number?: number | null
           is_visible?: boolean
           sort_order?: number
           photo_count?: number
@@ -388,6 +392,8 @@ export interface Database {
           cover_image_url?: string | null
           album_date?: string
           category?: 'sunday' | 'event' | 'education' | 'missions' | 'general'
+          department?: 'children' | 'youth' | 'young_adults' | 'district' | 'general' | null
+          district_number?: number | null
           is_visible?: boolean
           sort_order?: number
           photo_count?: number

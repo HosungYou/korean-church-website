@@ -108,11 +108,8 @@ const navigationConfig: NavItem[] = [
     ],
   },
   {
-    labelKey: 'nav_groups.media',
-    dropdown: [
-      { labelKey: 'nav_links.videos', href: '/sermons' },
-      { labelKey: 'nav_links.gallery', href: '/news/gallery' },
-    ],
+    labelKey: 'nav_groups.gallery',
+    href: '/news/gallery',
   },
   {
     labelKey: 'nav_groups.community',
@@ -257,7 +254,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'nav_groups.worship': '예배',
       'nav_groups.nurturing': '양육/훈련',
       'nav_groups.serving': '섬김',
-      'nav_groups.media': '미디어',
+      'nav_groups.gallery': '사진첩',
       'nav_groups.community': '소통',
       'nav_groups.about': '교회안내',
     }
