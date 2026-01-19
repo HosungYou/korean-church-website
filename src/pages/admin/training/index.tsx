@@ -34,6 +34,7 @@ import type { TrainingProgram } from '../../../../types/supabase'
 // ===========================================
 
 const CATEGORY_COLORS: Record<ProgramCategory, string> = {
+  new_family: 'oklch(0.55 0.15 340)',    // 새가족 양육 - 로즈핑크
   discipleship: 'oklch(0.45 0.12 265)',  // 제자훈련 - 진한 인디고
   bible_study: 'oklch(0.55 0.15 145)',   // 성경공부 - 녹색
   leadership: 'oklch(0.60 0.18 25)',     // 리더십 - 주황색
@@ -250,6 +251,7 @@ const AdminTrainingPage = () => {
             }}
           >
             <option value="all">모든 카테고리</option>
+            <option value="new_family">새가족 양육</option>
             <option value="discipleship">제자훈련</option>
             <option value="bible_study">성경공부</option>
             <option value="leadership">리더십훈련</option>

@@ -18,7 +18,7 @@ Korean Church Website 프로젝트를 위한 Claude Code 지침서입니다.
 korean-church-website/
 ├── lib/
 │   ├── supabase.ts          # Supabase 클라이언트 (Client-side)
-│   └── supabaseAdmin.ts     # Supabase Admin (Server-side, service_role)
+│   └── supabaseClient.ts    # Supabase Client
 ├── public/
 │   └── locales/
 │       ├── ko/              # 한국어 번역
@@ -33,13 +33,25 @@ korean-church-website/
 │   │   ├── education/       # 교육부서
 │   │   ├── missions/        # 선교
 │   │   ├── news/            # 소식
-│   │   └── sermons/         # 설교
+│   │   ├── sermons/         # 설교
+│   │   └── training/        # 훈련 프로그램
 │   └── utils/
 │       ├── postService.ts   # 게시글 서비스 (Supabase)
-│       ├── emailService.ts  # 이메일 서비스 (Supabase)
-│       └── newFamilyService.ts
+│       ├── trainingService.ts # 훈련 프로그램 서비스
+│       └── ...              # 기타 서비스 파일
+├── Architecture.md          # 전체 아키텍처 문서 (상세)
+├── CLAUDE.md               # Claude Code 지침서 (이 파일)
 └── DOCS/                    # 프로젝트 문서화
 ```
+
+### 아키텍처 문서 참조
+
+> **중요**: 프로젝트의 전체 아키텍처, 페이지 라우팅 구조, 데이터베이스 스키마, 컴포넌트 구조는 **`Architecture.md`** 파일을 참조하세요.
+>
+> **구조 변경 시 필수 사항**:
+> 1. `Architecture.md` 파일을 먼저 읽고 현재 구조를 파악
+> 2. 변경 후 `Architecture.md` 업데이트
+> 3. 변경 체크리스트 (Architecture.md 섹션 10) 확인
 
 ---
 

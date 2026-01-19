@@ -435,7 +435,7 @@ export interface Database {
           title: string
           description: string | null
           cover_image_url: string | null
-          category: 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
+          category: 'new_family' | 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
           total_weeks: number
           is_visible: boolean
           sort_order: number
@@ -448,7 +448,7 @@ export interface Database {
           title: string
           description?: string | null
           cover_image_url?: string | null
-          category?: 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
+          category?: 'new_family' | 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
           total_weeks?: number
           is_visible?: boolean
           sort_order?: number
@@ -461,7 +461,7 @@ export interface Database {
           title?: string
           description?: string | null
           cover_image_url?: string | null
-          category?: 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
+          category?: 'new_family' | 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
           total_weeks?: number
           is_visible?: boolean
           sort_order?: number

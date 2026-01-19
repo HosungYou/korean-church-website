@@ -14,6 +14,7 @@ import {
   Image as ImageIcon,
   Upload,
   X,
+  Heart,
   BookOpen,
   BookMarked,
   Users,
@@ -32,6 +33,7 @@ import {
 import type { TrainingProgramInsert } from '../../../../types/supabase'
 
 const CATEGORY_COLORS: Record<ProgramCategory, string> = {
+  new_family: 'oklch(0.55 0.15 340)',
   discipleship: 'oklch(0.45 0.12 265)',
   bible_study: 'oklch(0.55 0.15 145)',
   leadership: 'oklch(0.60 0.18 25)',
@@ -40,7 +42,8 @@ const CATEGORY_COLORS: Record<ProgramCategory, string> = {
 }
 
 const CATEGORIES: { id: ProgramCategory; label: string; icon: typeof BookOpen; description: string }[] = [
-  { id: 'discipleship', label: '제자훈련', icon: BookOpen, description: '새가족 및 제자 양육' },
+  { id: 'new_family', label: '새가족 양육', icon: Heart, description: '새가족 정착 및 양육 과정' },
+  { id: 'discipleship', label: '제자훈련', icon: BookOpen, description: '제자 양육 과정' },
   { id: 'bible_study', label: '성경공부', icon: BookMarked, description: '성경 연구 과정' },
   { id: 'leadership', label: '리더십훈련', icon: Users, description: '리더 양성 과정' },
   { id: 'baptism', label: '세례교육', icon: Droplets, description: '세례 준비 과정' },

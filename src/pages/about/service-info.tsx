@@ -243,8 +243,132 @@ const ServiceInfoPage = () => {
         </div>
       </section>
 
+      {/* Giving Section */}
+      <section id="giving" className="py-20" style={{ background: 'oklch(0.985 0.003 75)' }}>
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+          {/* Editorial Section Header */}
+          <div className="mb-12">
+            <div className="h-0.5 w-12 mb-6" style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }} />
+            <h2 className={`font-headline font-bold ${fontClass}`} style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em', color: 'oklch(0.25 0.05 265)' }}>
+              {i18n.language === 'ko' ? '헌금 안내' : 'Giving Information'}
+            </h2>
+            <p className={`mt-4 max-w-2xl ${fontClass}`} style={{ color: 'oklch(0.55 0.01 75)' }}>
+              {i18n.language === 'ko'
+                ? '성도들의 헌금은 교회의 사역과 선교, 지역사회 섬김에 사용됩니다.'
+                : 'Your offerings support church ministry, missions, and community service.'}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Offering Envelope */}
+            <div
+              className="rounded-sm p-6 transition-all duration-300 hover:translate-y-[-2px]"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+              }}
+            >
+              <div className="w-12 h-12 rounded-sm flex items-center justify-center mb-4" style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}>
+                <svg className="w-6 h-6" style={{ color: 'oklch(0.45 0.12 265)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h6m-6 4h6m-6 4h6"/>
+                </svg>
+              </div>
+              <h3 className={`font-bold mb-2 ${fontClass}`} style={{ color: 'oklch(0.25 0.05 265)' }}>
+                {i18n.language === 'ko' ? '헌금봉투' : 'Offering Envelope'}
+              </h3>
+              <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.55 0.01 75)' }}>
+                {i18n.language === 'ko'
+                  ? '예배 중 헌금봉투를 사용하여 헌금'
+                  : 'Use offering envelopes during service'}
+              </p>
+            </div>
+
+            {/* Mail */}
+            <div
+              className="rounded-sm p-6 transition-all duration-300 hover:translate-y-[-2px]"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+              }}
+            >
+              <div className="w-12 h-12 rounded-sm flex items-center justify-center mb-4" style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}>
+                <Mail className="w-6 h-6" style={{ color: 'oklch(0.45 0.12 265)' }} />
+              </div>
+              <h3 className={`font-bold mb-2 ${fontClass}`} style={{ color: 'oklch(0.25 0.05 265)' }}>
+                {i18n.language === 'ko' ? '우편 송금' : 'Mail'}
+              </h3>
+              <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.55 0.01 75)' }}>
+                123 Church Street<br />
+                State College, PA 16801
+              </p>
+            </div>
+
+            {/* PayPal */}
+            <div
+              className="rounded-sm p-6 transition-all duration-300 hover:translate-y-[-2px]"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+              }}
+            >
+              <div className="w-12 h-12 rounded-sm flex items-center justify-center mb-4" style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}>
+                <svg className="w-6 h-6" style={{ color: 'oklch(0.45 0.12 265)' }} viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z"/>
+                </svg>
+              </div>
+              <h3 className={`font-bold mb-2 ${fontClass}`} style={{ color: 'oklch(0.25 0.05 265)' }}>
+                PayPal
+              </h3>
+              <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.55 0.01 75)' }}>
+                giving@sckoreanchurch.org
+              </p>
+            </div>
+
+            {/* Venmo */}
+            <div
+              className="rounded-sm p-6 transition-all duration-300 hover:translate-y-[-2px]"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
+              }}
+            >
+              <div className="w-12 h-12 rounded-sm flex items-center justify-center mb-4" style={{ background: 'oklch(0.45 0.12 265 / 0.1)' }}>
+                <svg className="w-6 h-6" style={{ color: 'oklch(0.45 0.12 265)' }} viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.734 4.371c1.594 2.247 1.594 5.317.547 8.463L16.688 24h-5.469l-3.047-11.672c-.391-1.484-.313-2.578.234-3.203.547-.625 1.484-.859 2.578-.859h1.172l1.953 7.5L16.375 4.37h3.359z"/>
+                </svg>
+              </div>
+              <h3 className={`font-bold mb-2 ${fontClass}`} style={{ color: 'oklch(0.25 0.05 265)' }}>
+                Venmo
+              </h3>
+              <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.55 0.01 75)' }}>
+                @SCKoreanChurch
+              </p>
+            </div>
+          </div>
+
+          {/* Tax Info */}
+          <div
+            className="mt-8 rounded-sm p-6"
+            style={{
+              background: 'oklch(0.72 0.10 75 / 0.1)',
+              border: '1px solid oklch(0.72 0.10 75 / 0.2)',
+            }}
+          >
+            <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.45 0.05 265)' }}>
+              {i18n.language === 'ko'
+                ? '스테이트 칼리지 한인교회는 501(c)(3) 비영리 단체입니다. 모든 헌금은 세금 공제 대상이며, 연말에 헌금 영수증을 발급해 드립니다.'
+                : 'State College Korean Church is a 501(c)(3) non-profit organization. All donations are tax-deductible, and year-end giving statements are provided.'}
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
-      <section className="py-20" style={{ background: 'oklch(0.985 0.003 75)' }}>
+      <section className="py-20" style={{ background: 'oklch(0.97 0.005 75)' }}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
           {/* Editorial Section Header */}
           <div className="mb-12">

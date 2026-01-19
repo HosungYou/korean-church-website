@@ -7,9 +7,10 @@ import type {
 } from '../../types/supabase'
 
 export type MaterialType = 'pdf' | 'video' | 'audio'
-export type ProgramCategory = 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
+export type ProgramCategory = 'new_family' | 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
 
 export const CATEGORY_LABELS: Record<ProgramCategory, string> = {
+  new_family: '새가족 양육',
   discipleship: '제자훈련',
   bible_study: '성경공부',
   leadership: '리더십훈련',
@@ -506,6 +507,7 @@ export async function getProgramsByCategory() {
   }
 
   const stats: Record<ProgramCategory, number> = {
+    new_family: 0,
     discipleship: 0,
     bible_study: 0,
     leadership: 0,

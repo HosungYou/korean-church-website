@@ -48,6 +48,7 @@ import {
 import type { TrainingProgram, TrainingMaterial, TrainingMaterialInsert } from '../../../../types/supabase'
 
 const CATEGORY_COLORS: Record<ProgramCategory, string> = {
+  new_family: 'oklch(0.55 0.15 340)',   // 새가족 양육 - 로즈핑크
   discipleship: 'oklch(0.45 0.12 265)',
   bible_study: 'oklch(0.55 0.15 145)',
   leadership: 'oklch(0.60 0.18 25)',

@@ -18,6 +18,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  GraduationCap,
 } from 'lucide-react'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 
@@ -74,6 +75,12 @@ const menuItems = [
     href: '/admin/posts',
     icon: FileText,
     description: '공지사항, 자료실',
+  },
+  {
+    name: '훈련 관리',
+    href: '/admin/training',
+    icon: GraduationCap,
+    description: '새가족 양육, 제자훈련',
   },
   {
     name: '새가족 관리',

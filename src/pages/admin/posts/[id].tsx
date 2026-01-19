@@ -1,6 +1,10 @@
+// ===========================================
+// VS Design Diverge: Post Editor (Edit Mode)
+// Editorial Form + OKLCH Color System
+// ===========================================
+
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import Layout from '../../../components/Layout'
 import { GetServerSideProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import {
@@ -9,20 +13,38 @@ import {
   Calendar,
   ArrowLeft,
   Eye,
+  EyeOff,
   Upload,
-  Image as ImageIcon
+  Image as ImageIcon,
+  FileText,
+  Loader2,
+  Mail,
+  Clock,
+  Tag,
 } from 'lucide-react'
 import Link from 'next/link'
+import AdminLayout from '@/components/AdminLayout'
 import { sendNewsletterToSubscribers } from '../../../utils/emailService'
 import { getPostById, updatePost, PostRecord, PostCategory } from '../../../utils/postService'
 import { FileUpload } from '../../../components/FileUpload'
 import { UploadResult, deleteFile } from '../../../utils/fileUploadService'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 
+const CATEGORY_CONFIG = {
+  general: { label: '공지사항', color: 'oklch(0.45 0.12 265)' },
+  wednesday: { label: '수요예배 자료', color: 'oklch(0.55 0.15 145)' },
+  sunday: { label: '주일예배 자료', color: 'oklch(0.60 0.18 25)' },
+  bible: { label: '성경통독 자료', color: 'oklch(0.55 0.18 200)' },
+}
+
+const TYPE_CONFIG = {
+  announcement: { label: '공지사항', color: 'oklch(0.45 0.12 265)' },
+  event: { label: '행사', color: 'oklch(0.60 0.18 25)' },
+  general: { label: '일반', color: 'oklch(0.72 0.10 75)' },
+}
+
 const formatDateTimeInput = (value?: Date | null): string => {
-  if (!value) {
-    return ''
-  }
+  if (!value) return ''
   const iso = value.toISOString()
   return iso.slice(0, 16)
 }
@@ -77,9 +99,7 @@ const PostEditPage = () => {
   }
 
   useEffect(() => {
-    if (!admin || !id || typeof id !== 'string') {
-      return
-    }
+    if (!admin || !id || typeof id !== 'string') return
 
     const fetchPost = async () => {
       try {
@@ -110,11 +130,6 @@ const PostEditPage = () => {
 
     fetchPost()
   }, [admin, id, router])
-
-  const previewData = useMemo(() => ({
-    title: title || '제목 없음',
-    content: content || '내용이 없습니다.'
-  }), [title, content])
 
   const handleSave = async (nextStatus: 'draft' | 'published' | 'scheduled') => {
     if (!title || !content) {
@@ -174,270 +189,462 @@ const PostEditPage = () => {
 
   if (authLoading || loadingPost) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
+      <AdminLayout title="게시글 편집" subtitle="로딩 중...">
+        <div className="flex items-center justify-center py-20">
+          <div
+            className="w-12 h-12 rounded-sm animate-pulse"
+            style={{ background: 'oklch(0.45 0.12 265)' }}
+          />
         </div>
-      </Layout>
+      </AdminLayout>
     )
   }
 
-  if (!admin || !existingPost) {
-    return null
-  }
+  if (!admin || !existingPost) return null
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <Link href="/admin/posts" className="mr-4">
-                  <ArrowLeft className="w-5 h-5 text-gray-600 hover:text-black transition-colors" />
-                </Link>
-                <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-                <h1 className="text-xl font-bold text-gray-900 font-korean">게시글 편집</h1>
-              </div>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => setPreviewMode(!previewMode)}
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+    <AdminLayout title="게시글 편집" subtitle={existingPost.title}>
+      {/* Action Header */}
+      <div className="flex justify-between items-center mb-8">
+        <Link
+          href="/admin/posts"
+          className="inline-flex items-center text-sm font-medium transition-colors"
+          style={{ color: 'oklch(0.55 0.01 75)' }}
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          목록으로
+        </Link>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setPreviewMode(!previewMode)}
+            className="inline-flex items-center px-4 py-2 rounded-sm font-medium text-sm transition-all duration-200 hover:-translate-y-0.5"
+            style={{
+              background: previewMode ? 'oklch(0.55 0.15 145 / 0.1)' : 'oklch(0.45 0.12 265 / 0.1)',
+              color: previewMode ? 'oklch(0.40 0.15 145)' : 'oklch(0.45 0.12 265)',
+              border: `1px solid ${previewMode ? 'oklch(0.55 0.15 145 / 0.3)' : 'oklch(0.45 0.12 265 / 0.3)'}`,
+            }}
+          >
+            {previewMode ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+            {previewMode ? '편집 모드' : '미리보기'}
+          </button>
+          <button
+            onClick={() => handleSave('draft')}
+            disabled={isLoading}
+            className="inline-flex items-center px-4 py-2 rounded-sm font-medium text-sm transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50"
+            style={{
+              background: 'oklch(0.97 0.005 265)',
+              color: 'oklch(0.35 0.05 265)',
+              border: '1px solid oklch(0.90 0.01 265)',
+            }}
+          >
+            {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            임시저장
+          </button>
+          <button
+            onClick={() => status === 'scheduled' ? handleSave('scheduled') : handleSave('published')}
+            disabled={isLoading || (status === 'scheduled' && !scheduledDate)}
+            className="inline-flex items-center px-5 py-2.5 rounded-sm font-medium text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-50"
+            style={{
+              background: status === 'scheduled' ? 'oklch(0.55 0.18 200)' : 'oklch(0.45 0.12 265)',
+              color: 'oklch(0.98 0.003 75)',
+            }}
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : status === 'scheduled' ? (
+              <Calendar className="w-4 h-4 mr-2" />
+            ) : (
+              <Send className="w-4 h-4 mr-2" />
+            )}
+            {status === 'scheduled' ? '예약 게시' : '게시하기'}
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Main Editor - Left Column */}
+        <div className="lg:col-span-3 space-y-6">
+          {!previewMode ? (
+            <>
+              {/* Title */}
+              <div
+                className="p-6 rounded-sm"
+                style={{
+                  background: 'oklch(0.985 0.003 75)',
+                  border: '1px solid oklch(0.92 0.005 75)',
+                }}
+              >
+                <label
+                  className="block text-sm font-medium mb-3"
+                  style={{ color: 'oklch(0.35 0.05 265)' }}
                 >
-                  <Eye className="w-4 h-4 mr-2" />
-                  <span className="font-korean">{previewMode ? '편집' : '미리보기'}</span>
-                </button>
+                  <FileText className="w-4 h-4 inline mr-2" />
+                  제목
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="게시글 제목을 입력하세요"
+                  className="block w-full px-4 py-3 rounded-sm transition-all duration-200 focus:outline-none focus:ring-2 text-lg font-medium"
+                  style={{
+                    background: 'oklch(0.97 0.005 265)',
+                    border: '1px solid oklch(0.90 0.01 265)',
+                    color: 'oklch(0.22 0.07 265)',
+                  }}
+                />
+              </div>
+
+              {/* Cover Image */}
+              <div
+                className="p-6 rounded-sm"
+                style={{
+                  background: 'oklch(0.985 0.003 75)',
+                  border: '1px solid oklch(0.92 0.005 75)',
+                }}
+              >
+                <label
+                  className="block text-sm font-medium mb-3"
+                  style={{ color: 'oklch(0.35 0.05 265)' }}
+                >
+                  <ImageIcon className="w-4 h-4 inline mr-2" />
+                  대표 이미지
+                </label>
+                <FileUpload
+                  onUpload={handleCoverImageUpload}
+                  onRemove={handleCoverImageRemove}
+                  currentFile={coverImage}
+                  isImage={true}
+                  label=""
+                  accept="image/*"
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Attachment */}
+              <div
+                className="p-6 rounded-sm"
+                style={{
+                  background: 'oklch(0.985 0.003 75)',
+                  border: '1px solid oklch(0.92 0.005 75)',
+                }}
+              >
+                <label
+                  className="block text-sm font-medium mb-3"
+                  style={{ color: 'oklch(0.35 0.05 265)' }}
+                >
+                  <Upload className="w-4 h-4 inline mr-2" />
+                  첨부파일
+                </label>
+                <FileUpload
+                  onUpload={handleAttachmentUpload}
+                  onRemove={handleAttachmentRemove}
+                  currentFile={attachment}
+                  isImage={false}
+                  label=""
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Content */}
+              <div
+                className="p-6 rounded-sm"
+                style={{
+                  background: 'oklch(0.985 0.003 75)',
+                  border: '1px solid oklch(0.92 0.005 75)',
+                }}
+              >
+                <label
+                  className="block text-sm font-medium mb-3"
+                  style={{ color: 'oklch(0.35 0.05 265)' }}
+                >
+                  내용
+                </label>
+                <textarea
+                  rows={20}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="게시글 내용을 입력하세요"
+                  className="block w-full px-4 py-3 rounded-sm transition-all duration-200 focus:outline-none resize-none leading-relaxed"
+                  style={{
+                    background: 'oklch(0.97 0.005 265)',
+                    border: '1px solid oklch(0.90 0.01 265)',
+                    color: 'oklch(0.25 0.02 75)',
+                  }}
+                />
+              </div>
+            </>
+          ) : (
+            /* Preview Mode */
+            <div
+              className="p-8 rounded-sm"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                border: '1px solid oklch(0.92 0.005 75)',
+              }}
+            >
+              {/* Category Badge */}
+              <div className="mb-6">
+                <span
+                  className="inline-flex items-center px-3 py-1.5 rounded-sm text-xs font-bold tracking-wider uppercase"
+                  style={{
+                    background: CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG]?.color || CATEGORY_CONFIG.general.color,
+                    color: 'oklch(0.98 0.003 75)',
+                  }}
+                >
+                  {CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG]?.label || '공지사항'}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h1
+                className="font-headline font-black mb-6"
+                style={{
+                  fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                  letterSpacing: '-0.02em',
+                  color: 'oklch(0.22 0.07 265)',
+                }}
+              >
+                {title || '제목 없음'}
+              </h1>
+
+              {/* Cover Image Preview */}
+              {coverImage && (
+                <div className="aspect-video rounded-sm overflow-hidden mb-8">
+                  <img
+                    src={coverImage.url}
+                    alt="대표 이미지"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+
+              {/* Content */}
+              <div
+                className="prose max-w-none whitespace-pre-wrap leading-relaxed"
+                style={{ color: 'oklch(0.35 0.02 75)' }}
+              >
+                {content || '내용이 없습니다.'}
+              </div>
+
+              {/* Attachment Preview */}
+              {attachment && (
+                <div
+                  className="mt-8 p-4 rounded-sm flex items-center gap-3"
+                  style={{
+                    background: 'oklch(0.97 0.005 265)',
+                    border: '1px solid oklch(0.90 0.01 265)',
+                  }}
+                >
+                  <FileText className="w-5 h-5" style={{ color: 'oklch(0.45 0.12 265)' }} />
+                  <span style={{ color: 'oklch(0.35 0.05 265)' }}>{attachment.fileName}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar - Right Column */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Publish Settings */}
+          <div
+            className="p-6 rounded-sm"
+            style={{
+              background: 'oklch(0.985 0.003 75)',
+              border: '1px solid oklch(0.92 0.005 75)',
+            }}
+          >
+            <div className="flex items-center mb-5">
+              <div
+                className="h-0.5 w-8 mr-3"
+                style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+              />
+              <h3
+                className="font-headline font-bold text-lg"
+                style={{ color: 'oklch(0.22 0.07 265)' }}
+              >
+                게시 설정
+              </h3>
+            </div>
+
+            <div className="space-y-5">
+              {/* Category */}
+              <div>
+                <label
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: 'oklch(0.35 0.05 265)' }}
+                >
+                  <Tag className="w-3.5 h-3.5 inline mr-1.5" />
+                  카테고리
+                </label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as PostCategory)}
+                  className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none cursor-pointer"
+                  style={{
+                    background: 'oklch(0.97 0.005 265)',
+                    border: '1px solid oklch(0.90 0.01 265)',
+                    color: 'oklch(0.25 0.02 75)',
+                  }}
+                >
+                  {Object.entries(CATEGORY_CONFIG).map(([key, config]) => (
+                    <option key={key} value={key}>{config.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Type */}
+              <div>
+                <label
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: 'oklch(0.35 0.05 265)' }}
+                >
+                  게시글 유형
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {Object.entries(TYPE_CONFIG).map(([key, config]) => (
+                    <button
+                      key={key}
+                      onClick={() => setType(key as typeof type)}
+                      className="py-2 rounded-sm text-xs font-medium transition-all duration-200"
+                      style={{
+                        background: type === key ? config.color : 'oklch(0.97 0.005 265)',
+                        color: type === key ? 'oklch(0.98 0.003 75)' : 'oklch(0.45 0.05 265)',
+                        border: `1px solid ${type === key ? config.color : 'oklch(0.90 0.01 265)'}`,
+                      }}
+                    >
+                      {config.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label
+                  className="block text-sm font-medium mb-2"
+                  style={{ color: 'oklch(0.35 0.05 265)' }}
+                >
+                  <Clock className="w-3.5 h-3.5 inline mr-1.5" />
+                  게시 상태
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as typeof status)}
+                  className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none cursor-pointer"
+                  style={{
+                    background: 'oklch(0.97 0.005 265)',
+                    border: '1px solid oklch(0.90 0.01 265)',
+                    color: 'oklch(0.25 0.02 75)',
+                  }}
+                >
+                  <option value="draft">임시저장</option>
+                  <option value="published">게시됨</option>
+                  <option value="scheduled">예약 게시</option>
+                </select>
+              </div>
+
+              {/* Scheduled Date */}
+              {status === 'scheduled' && (
+                <div>
+                  <label
+                    className="block text-sm font-medium mb-2"
+                    style={{ color: 'oklch(0.35 0.05 265)' }}
+                  >
+                    <Calendar className="w-3.5 h-3.5 inline mr-1.5" />
+                    예약 날짜
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    className="block w-full px-3 py-2.5 rounded-sm transition-all duration-200 focus:outline-none"
+                    style={{
+                      background: 'oklch(0.97 0.005 265)',
+                      border: '1px solid oklch(0.90 0.01 265)',
+                      color: 'oklch(0.25 0.02 75)',
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Newsletter */}
+              <div
+                className="flex items-center p-3 rounded-sm"
+                style={{ background: 'oklch(0.97 0.005 265)' }}
+              >
+                <input
+                  id="newsletter"
+                  type="checkbox"
+                  checked={sendNewsletter}
+                  onChange={(e) => setSendNewsletter(e.target.checked)}
+                  className="h-4 w-4 rounded-sm cursor-pointer"
+                  style={{
+                    accentColor: 'oklch(0.45 0.12 265)',
+                  }}
+                />
+                <label
+                  htmlFor="newsletter"
+                  className="ml-3 flex items-center text-sm cursor-pointer"
+                  style={{ color: 'oklch(0.35 0.05 265)' }}
+                >
+                  <Mail className="w-3.5 h-3.5 mr-1.5" />
+                  뉴스레터 발송
+                </label>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              <div className="lg:col-span-3">
-                <div className="bg-white shadow rounded-lg">
-                  <div className="px-4 py-5 sm:p-6">
-                    {!previewMode ? (
-                      <div className="space-y-6">
-                        <div>
-                          <label htmlFor="title" className="block text-sm font-medium text-gray-700 font-korean mb-2">
-                            제목
-                          </label>
-                          <input
-                            type="text"
-                            id="title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            placeholder="게시글 제목을 입력하세요"
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-lg font-korean"
-                          />
-                        </div>
+          {/* Post Info */}
+          <div
+            className="p-5 rounded-sm"
+            style={{
+              background: 'oklch(0.97 0.005 265)',
+              border: '1px solid oklch(0.92 0.005 75)',
+            }}
+          >
+            <h4
+              className="text-sm font-bold mb-3"
+              style={{ color: 'oklch(0.35 0.05 265)' }}
+            >
+              게시글 정보
+            </h4>
+            <div className="space-y-2 text-xs" style={{ color: 'oklch(0.50 0.01 75)' }}>
+              <p><strong>작성자:</strong> {existingPost.authorName}</p>
+              <p><strong>생성일:</strong> {existingPost.createdAt ? new Date(existingPost.createdAt).toLocaleDateString('ko-KR') : '-'}</p>
+              {existingPost.publishedAt && (
+                <p><strong>게시일:</strong> {new Date(existingPost.publishedAt).toLocaleDateString('ko-KR')}</p>
+              )}
+            </div>
+          </div>
 
-                        <FileUpload
-                          onUpload={handleCoverImageUpload}
-                          onRemove={handleCoverImageRemove}
-                          currentFile={coverImage}
-                          isImage={true}
-                          label="대표 이미지"
-                          accept="image/*"
-                          disabled={isLoading}
-                        />
-
-                        <FileUpload
-                          onUpload={handleAttachmentUpload}
-                          onRemove={handleAttachmentRemove}
-                          currentFile={attachment}
-                          isImage={false}
-                          label="첨부파일"
-                          disabled={isLoading}
-                        />
-
-                        <div>
-                          <label htmlFor="content" className="block text-sm font-medium text-gray-700 font-korean mb-2">
-                            내용
-                          </label>
-                          <textarea
-                            id="content"
-                            rows={20}
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            placeholder="게시글 내용을 입력하세요"
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black font-korean"
-                          />
-                        </div>
-
-                        <div className="border-t pt-4">
-                          <div className="flex items-center space-x-4">
-                            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                              <ImageIcon className="w-4 h-4 mr-2" />
-                              <span className="font-korean">이미지 추가</span>
-                            </button>
-                            <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                              <Upload className="w-4 h-4 mr-2" />
-                              <span className="font-korean">파일 첨부</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="prose max-w-none">
-                        <div className="flex items-center mb-6">
-                          <div className="w-3 h-3 bg-black rounded-full mr-4"></div>
-                          <h1 className="text-2xl font-bold text-black font-korean m-0">{previewData.title}</h1>
-                        </div>
-                        <div className="whitespace-pre-wrap text-gray-700 font-korean">
-                          {previewData.content}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="lg:col-span-1">
-                <div className="space-y-6">
-                  <div className="bg-white shadow rounded-lg">
-                    <div className="px-4 py-5 sm:p-6">
-                      <div className="flex items-center mb-4">
-                        <div className="w-2 h-2 bg-black rounded-full mr-3"></div>
-                        <h3 className="text-lg leading-6 font-medium text-gray-900 font-korean">게시 설정</h3>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
-                            게시판 카테고리
-                          </label>
-                          <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value as PostCategory)}
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black font-korean"
-                          >
-                            <option value="general">일반</option>
-                            <option value="wednesday">수요성경공부</option>
-                            <option value="sunday">주일예배</option>
-                            <option value="bible">성경공부</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
-                            게시글 유형
-                          </label>
-                          <select
-                            value={type}
-                            onChange={(e) => setType(e.target.value as 'announcement' | 'event' | 'general')}
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black font-korean"
-                          >
-                            <option value="announcement">공지사항</option>
-                            <option value="event">행사</option>
-                            <option value="general">일반</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
-                            게시 상태
-                          </label>
-                          <select
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value as 'draft' | 'published' | 'scheduled')}
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black font-korean"
-                          >
-                            <option value="draft">임시저장</option>
-                            <option value="published">게시됨</option>
-                            <option value="scheduled">예약 게시</option>
-                          </select>
-                        </div>
-
-                        {status === 'scheduled' && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 font-korean mb-2">
-                              예약 날짜
-                            </label>
-                            <input
-                              type="datetime-local"
-                              value={scheduledDate}
-                              onChange={(e) => setScheduledDate(e.target.value)}
-                              className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
-                            />
-                          </div>
-                        )}
-
-                        <div className="flex items-center">
-                          <input
-                            id="newsletter"
-                            type="checkbox"
-                            checked={sendNewsletter}
-                            onChange={(e) => setSendNewsletter(e.target.checked)}
-                            className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
-                          />
-                          <label htmlFor="newsletter" className="ml-2 block text-sm text-gray-900 font-korean">
-                            뉴스레터 발송
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white shadow rounded-lg">
-                    <div className="px-4 py-5 sm:p-6">
-                      <div className="space-y-3">
-                        <button
-                          onClick={() => handleSave('draft')}
-                          disabled={isLoading}
-                          className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:bg-gray-100"
-                        >
-                          <Save className="w-4 h-4 mr-2" />
-                          <span className="font-korean">임시저장</span>
-                        </button>
-
-                        {status === 'scheduled' ? (
-                          <button
-                            onClick={() => handleSave('scheduled')}
-                            disabled={isLoading || !scheduledDate}
-                            className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
-                          >
-                            <Calendar className="w-4 h-4 mr-2" />
-                            <span className="font-korean">예약 게시</span>
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleSave('published')}
-                            disabled={isLoading}
-                            className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:bg-gray-400"
-                          >
-                            <Send className="w-4 h-4 mr-2" />
-                            <span className="font-korean">게시하기</span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full mr-3 mt-2"></div>
-                      <div>
-                        <h4 className="text-sm font-medium text-blue-900 font-korean">도움말</h4>
-                        <div className="mt-2 text-sm text-blue-700 font-korean space-y-1">
-                          <p>• 임시저장: 게시하지 않고 저장만 합니다.</p>
-                          <p>• 게시됨: 즉시 웹사이트에 반영됩니다.</p>
-                          <p>• 예약 게시: 지정한 시간에 자동 게시됩니다.</p>
-                          <p>• 뉴스레터 발송: 구독자에게 이메일을 보냅니다.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {/* Help */}
+          <div
+            className="p-5 rounded-sm"
+            style={{
+              background: 'oklch(0.45 0.12 265 / 0.05)',
+              border: '1px solid oklch(0.45 0.12 265 / 0.15)',
+            }}
+          >
+            <h4
+              className="text-sm font-bold mb-3"
+              style={{ color: 'oklch(0.35 0.10 265)' }}
+            >
+              도움말
+            </h4>
+            <div
+              className="space-y-2 text-xs leading-relaxed"
+              style={{ color: 'oklch(0.45 0.05 265)' }}
+            >
+              <p>• <strong>임시저장</strong>: 게시하지 않고 저장</p>
+              <p>• <strong>게시됨</strong>: 즉시 웹사이트에 반영</p>
+              <p>• <strong>예약 게시</strong>: 지정 시간에 자동 게시</p>
+              <p>• <strong>뉴스레터</strong>: 구독자에게 이메일 발송</p>
             </div>
           </div>
         </div>
       </div>
-    </Layout>
+    </AdminLayout>
   )
 }
 
