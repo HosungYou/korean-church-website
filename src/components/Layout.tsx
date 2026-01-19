@@ -54,6 +54,9 @@ const getBreadcrumbs = (pathname: string, translate: (key: string) => string): B
     'missions': 'missions',
     'domestic': 'domestic',
     'international': 'international',
+    'missionary-support': 'missionary_support',
+    'short-term': 'short_term_missions',
+    'relief': 'relief_missions',
     'new-family': 'new_family',
     'discipleship': 'discipleship',
     'training': 'training',
@@ -65,7 +68,9 @@ const getBreadcrumbs = (pathname: string, translate: (key: string) => string): B
     'gallery': 'gallery',
     'giving': 'giving',
     'korean-school': 'korean_school',
-    'worship': 'worship'
+    'worship': 'worship',
+    'community': 'community',
+    'settlement-info': 'settlement_info'
   }
 
   let currentPath = ''
@@ -95,34 +100,36 @@ const navigationConfig: NavItem[] = [
     labelKey: 'nav_groups.nurturing',
     dropdown: [
       { labelKey: 'nav_links.training', href: '/training' },
-      { labelKey: 'nav_links.korean_school', href: '/education/korean-school' },
       { labelKey: 'nav_links.new_family', href: '/missions/new-family' },
     ],
   },
   {
-    labelKey: 'nav_groups.serving',
+    labelKey: 'nav_groups.korean_school',
+    href: '/korean-school',
+  },
+  {
+    labelKey: 'nav_groups.missions',
     dropdown: [
-      { labelKey: 'nav_links.missions', href: '/missions/domestic' },
-      { labelKey: 'nav_links.volunteer_events', href: '/volunteer-events' },
-      { labelKey: 'nav_links.departments', href: '/church-departments' },
+      { labelKey: 'nav_links.missionary_support', href: '/missions/missionary-support' },
+      { labelKey: 'nav_links.short_term_missions', href: '/missions/short-term' },
+      { labelKey: 'nav_links.relief_missions', href: '/missions/relief' },
     ],
   },
   {
-    labelKey: 'nav_groups.community',
+    labelKey: 'nav_groups.announcements',
     dropdown: [
+      { labelKey: 'nav_links.bulletin', href: '/news/bulletin' },
+      { labelKey: 'nav_links.settlement_info', href: '/community/settlement-info' },
       { labelKey: 'nav_links.announcements', href: '/announcements' },
-      { labelKey: 'nav_links.resources', href: '/resources' },
     ],
   },
   {
     labelKey: 'nav_groups.about',
     dropdown: [
       { labelKey: 'nav_links.about', href: '/about' },
-      { labelKey: 'nav_links.new_family', href: '/new-family-guide' },
       { labelKey: 'nav_links.history', href: '/about/history' },
       { labelKey: 'nav_links.philosophy', href: '/about/philosophy' },
       { labelKey: 'nav_links.directions', href: '/about/directions' },
-      { labelKey: 'nav_links.bulletin', href: '/news/bulletin' },
     ],
   },
   {
@@ -253,9 +260,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const labelMap: Record<string, string> = {
       'nav_groups.worship': '예배',
       'nav_groups.nurturing': '양육/훈련',
-      'nav_groups.serving': '섬김',
+      'nav_groups.korean_school': '한국학교',
+      'nav_groups.missions': '선교',
+      'nav_groups.announcements': '알림 및 공지',
       'nav_groups.gallery': '사진첩',
-      'nav_groups.community': '소통',
       'nav_groups.about': '교회안내',
     }
     return labelMap[labelKey] || t(labelKey)

@@ -16,10 +16,11 @@
   },
   "nav_groups": {
     "worship": "Worship",
-    "growth": "Growth",
-    "serving": "Serving",
+    "nurturing": "Nurturing",
+    "korean_school": "Korean School",
+    "missions": "Missions",
+    "announcements": "Announcements",
     "gallery": "Gallery",
-    "community": "Community",
     "about": "About"
   },
   "nav_links": {
@@ -33,12 +34,16 @@
     "training": "Discipleship Training",
     "new_family": "New Family Registration",
     "missions": "Missions",
+    "missionary_support": "Missionary Support",
+    "short_term_missions": "Short-term Missions",
+    "relief_missions": "Relief Missions",
     "volunteer_events": "Volunteer & Events",
     "departments": "Church Departments",
     "videos": "Videos",
     "gallery": "Gallery",
     "upload": "Upload",
-    "announcements": "Announcements",
+    "announcements": "Ads & Announcements",
+    "settlement_info": "Settlement Info",
     "resources": "Resources",
     "about": "About SCKC",
     "history": "Church History",
@@ -101,6 +106,9 @@
     "missions": "Missions",
     "domestic": "Domestic Missions",
     "international": "International Missions",
+    "missionary_support": "Missionary Support",
+    "short_term_missions": "Short-term Missions",
+    "relief_missions": "Relief Missions",
     "new_family": "New Family",
     "discipleship": "Discipleship",
     "training": "Discipleship Training",
@@ -112,6 +120,8 @@
     "gallery": "Gallery",
     "giving": "Giving",
     "korean_school": "Korean School",
-    "worship": "Worship"
+    "worship": "Worship",
+    "community": "Community",
+    "settlement_info": "Settlement Info"
   }
 }
