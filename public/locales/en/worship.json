@@ -1,0 +1,61 @@
+{
+  "page_title": "Worship",
+  "subtitle": "Join us for worship at State College Korean Church.",
+  "services": {
+    "sunday": {
+      "title": "Sunday Worship",
+      "time": "11:00 AM",
+      "location": "In-Person (Sanctuary)",
+      "online": "YouTube Live",
+      "coming_soon": "Coming Soon"
+    },
+    "wednesday": {
+      "title": "Wednesday Service",
+      "time": "7:30 PM",
+      "location": "In-Person Only"
+    },
+    "dawn": {
+      "title": "Dawn Prayer Meeting",
+      "time": "6:30 AM",
+      "zoom_days": "Tue, Wed, Fri - Zoom",
+      "inperson_day": "Sat - In-Person"
+    }
+  },
+  "giving": {
+    "title": "Ways to Give",
+    "envelope": {
+      "title": "Offering Envelope",
+      "description": "Please use the offering envelopes available in the lobby and place them in the offering box before the service begins. (There is no separate offering time during the service)"
+    },
+    "mail": {
+      "title": "Mail",
+      "address": "758 Glenn Rd, State College, PA 16803"
+    },
+    "paypal": {
+      "title": "PayPal",
+      "account": "paypal.me/sckc9191"
+    },
+    "venmo": {
+      "title": "Venmo",
+      "account": "venmo.com/sckc9191"
+    }
+  },
+  "scripture": {
+    "text": "Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.",
+    "reference": "2 Corinthians 9:7"
+  },
+  "location": {
+    "title": "Visit Us",
+    "church_name": "State College Korean Church"
+  },
+  "actions": {
+    "join_zoom": "Join Zoom",
+    "copy_link": "Copy Link",
+    "copy_address": "Copy Address",
+    "copied": "Copied!",
+    "view_sermons": "View Sermons",
+    "get_directions": "Get Directions",
+    "give_via_paypal": "Give via PayPal",
+    "give_via_venmo": "Give via Venmo"
+  }
+}

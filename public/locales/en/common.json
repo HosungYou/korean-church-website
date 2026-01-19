@@ -25,9 +25,12 @@
   "nav_links": {
     "sermons_live": "Sermons Live",
     "sermons": "Sermons",
+    "worship_info": "Worship Info",
+    "sunday_sermon": "Sunday Sermons",
+    "wednesday_sermon": "Wednesday Sermons",
     "service_info": "Service Guide",
     "korean_school": "Korean School",
-    "training": "Training",
+    "training": "Discipleship Training",
     "new_family": "New Family Registration",
     "missions": "Missions",
     "volunteer_events": "Volunteer & Events",
@@ -100,7 +103,7 @@
     "international": "International Missions",
     "new_family": "New Family",
     "discipleship": "Discipleship",
-    "training": "Training",
+    "training": "Discipleship Training",
     "news": "News",
     "posts": "Posts",
     "announcements": "Announcements",
@@ -108,6 +111,7 @@
     "bulletin": "Bulletin",
     "gallery": "Gallery",
     "giving": "Giving",
-    "korean_school": "Korean School"
+    "korean_school": "Korean School",
+    "worship": "Worship"
   }
 }

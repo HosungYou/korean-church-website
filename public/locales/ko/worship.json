@@ -1,0 +1,61 @@
+{
+  "page_title": "예배 안내",
+  "subtitle": "스테이트 칼리지 한인교회의 모든 예배에 여러분을 초대합니다.",
+  "services": {
+    "sunday": {
+      "title": "주일 예배",
+      "time": "오전 11:00",
+      "location": "현장 예배 (본당)",
+      "online": "YouTube Live",
+      "coming_soon": "준비중"
+    },
+    "wednesday": {
+      "title": "수요 예배",
+      "time": "저녁 7:30",
+      "location": "현장 예배"
+    },
+    "dawn": {
+      "title": "새벽 기도회",
+      "time": "새벽 6:30",
+      "zoom_days": "화, 수, 금 - Zoom",
+      "inperson_day": "토 - 교회 본당"
+    }
+  },
+  "giving": {
+    "title": "헌금 안내",
+    "envelope": {
+      "title": "헌금 봉투",
+      "description": "교회에 오실 때 입구 로비에 비치된 헌금봉투를 사용해서 예배 전에 헌금함에 넣어 주시기 바랍니다. (예배 중에는 별도의 헌금 순서가 없습니다)"
+    },
+    "mail": {
+      "title": "우편",
+      "address": "758 Glenn Rd, State College, PA 16803"
+    },
+    "paypal": {
+      "title": "PayPal",
+      "account": "paypal.me/sckc9191"
+    },
+    "venmo": {
+      "title": "Venmo",
+      "account": "venmo.com/sckc9191"
+    }
+  },
+  "scripture": {
+    "text": "각각 그 마음에 정한 대로 할 것이요 인색함으로나 억지로 하지 말지니 하나님은 즐겨 내는 자를 사랑하시느니라",
+    "reference": "고린도후서 9:7"
+  },
+  "location": {
+    "title": "오시는 길",
+    "church_name": "스테이트 칼리지 한인교회"
+  },
+  "actions": {
+    "join_zoom": "Zoom 접속",
+    "copy_link": "링크 복사",
+    "copy_address": "주소 복사",
+    "copied": "복사됨!",
+    "view_sermons": "설교 보기",
+    "get_directions": "자세한 오시는 길",
+    "give_via_paypal": "PayPal로 헌금",
+    "give_via_venmo": "Venmo로 헌금"
+  }
+}

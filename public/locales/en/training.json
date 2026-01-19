@@ -1,0 +1,39 @@
+{
+  "hero": {
+    "label": "Nurturing · Training",
+    "title": "Discipleship Programs",
+    "subtitle": "A systematic training program to help you build a foundation in faith and grow as a disciple of Christ."
+  },
+  "stats": {
+    "programs": "Programs",
+    "materials": "Materials"
+  },
+  "programs": {
+    "label": "Training Courses",
+    "title": "Discipleship Training",
+    "empty": "No programs available at this time.",
+    "view": "View Details",
+    "weeks": "-week course",
+    "materials": " materials"
+  },
+  "filter": {
+    "all": "All"
+  },
+  "cta": {
+    "title": "New to our church?",
+    "description": "Register as a new family member and grow together as part of our church community.",
+    "button": "New Family Registration"
+  },
+  "detail": {
+    "backToList": "Back to list",
+    "weekCourse": "-week course",
+    "materials": " materials",
+    "curriculum": "Curriculum",
+    "weeklyMaterials": "Weekly Training Materials",
+    "week": "Week ",
+    "materialCount": " materials",
+    "minutes": " min",
+    "noMaterials": "No materials available.",
+    "notFound": "Program not found."
+  }
+}

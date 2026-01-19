@@ -429,6 +429,108 @@ export interface Database {
         }
         Relationships: []
       }
+      training_programs: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          cover_image_url: string | null
+          category: 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
+          total_weeks: number
+          is_visible: boolean
+          sort_order: number
+          material_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          cover_image_url?: string | null
+          category?: 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
+          total_weeks?: number
+          is_visible?: boolean
+          sort_order?: number
+          material_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          cover_image_url?: string | null
+          category?: 'discipleship' | 'bible_study' | 'leadership' | 'baptism' | 'general'
+          total_weeks?: number
+          is_visible?: boolean
+          sort_order?: number
+          material_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      training_materials: {
+        Row: {
+          id: string
+          program_id: string
+          title: string
+          description: string | null
+          week_number: number
+          material_type: 'pdf' | 'video' | 'audio'
+          file_url: string | null
+          file_name: string | null
+          file_size: number | null
+          video_url: string | null
+          duration_minutes: number | null
+          thumbnail_url: string | null
+          is_visible: boolean
+          sort_order: number
+          view_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          program_id: string
+          title: string
+          description?: string | null
+          week_number: number
+          material_type: 'pdf' | 'video' | 'audio'
+          file_url?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          video_url?: string | null
+          duration_minutes?: number | null
+          thumbnail_url?: string | null
+          is_visible?: boolean
+          sort_order?: number
+          view_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          program_id?: string
+          title?: string
+          description?: string | null
+          week_number?: number
+          material_type?: 'pdf' | 'video' | 'audio'
+          file_url?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          video_url?: string | null
+          duration_minutes?: number | null
+          thumbnail_url?: string | null
+          is_visible?: boolean
+          sort_order?: number
+          view_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bible_reading_plans: {
         Row: {
           id: string
@@ -822,3 +924,7 @@ export type ChurchMemberInsert = Database['public']['Tables']['church_members'][
 export type BulletinInsert = Database['public']['Tables']['bulletins']['Insert']
 export type NewFamilyRegistrationInsert = Database['public']['Tables']['new_family_registrations']['Insert']
 export type NewsletterLogInsert = Database['public']['Tables']['newsletter_logs']['Insert']
+export type TrainingProgram = Database['public']['Tables']['training_programs']['Row']
+export type TrainingProgramInsert = Database['public']['Tables']['training_programs']['Insert']
+export type TrainingMaterial = Database['public']['Tables']['training_materials']['Row']
+export type TrainingMaterialInsert = Database['public']['Tables']['training_materials']['Insert']

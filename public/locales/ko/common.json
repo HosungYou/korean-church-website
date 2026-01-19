@@ -24,11 +24,12 @@
   },
   "nav_links": {
     "sermons": "설교",
+    "worship_info": "예배안내",
     "sunday_sermon": "주일설교",
     "wednesday_sermon": "수요설교",
     "service_info": "예배안내",
     "korean_school": "한글학교",
-    "training": "교육/훈련",
+    "training": "제자훈련",
     "bible_reading": "성경읽기표",
     "new_family": "새가족 등록",
     "missions": "선교",
@@ -100,7 +101,7 @@
     "international": "해외선교",
     "new_family": "새가족양육",
     "discipleship": "제자훈련",
-    "training": "교육/훈련",
+    "training": "제자훈련",
     "bible_reading": "성경읽기표",
     "news": "교회소식",
     "posts": "게시글",
@@ -109,7 +110,8 @@
     "bulletin": "주보",
     "gallery": "갤러리",
     "giving": "온라인헌금",
-    "korean_school": "한글학교"
+    "korean_school": "한글학교",
+    "worship": "예배안내"
   },
   "bible_reading": {
     "title": "성경읽기표",

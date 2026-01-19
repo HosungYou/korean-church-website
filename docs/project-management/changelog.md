@@ -20,6 +20,94 @@
 
 ---
 
+## [2.4.0] - 2026-01-19
+
+### Added
+- **제자훈련 시스템 신규 생성** (`/training`)
+  - 훈련 프로그램 관리 (training_programs 테이블)
+  - 주차별 교육 자료 관리 (training_materials 테이블)
+  - PDF, 영상, 오디오 파일 지원
+  - 프로그램 카테고리: 제자훈련, 성경공부, 리더십훈련, 세례교육, 일반
+  - 주차별 커리큘럼 구조 (1-52주 지원)
+  - VS Design Diverge 디자인 시스템 적용 (Editorial Minimalism + 한국적 미학)
+  - OKLCH 색상 시스템 적용
+  - 조회수 추적 기능
+
+- **관리자 페이지** (`/admin/training`)
+  - 프로그램 목록 관리 (검색, 필터링, 통계)
+  - 프로그램 생성/수정/삭제
+  - 자료 추가/수정/삭제 (PDF, 영상, 오디오)
+  - 커버 이미지 업로드
+  - 공개/비공개 전환
+
+- **공개 페이지** (`/training`, `/training/[id]`)
+  - 프로그램 목록 페이지 (카테고리 필터, 통계)
+  - 프로그램 상세 페이지 (주차별 아코디언 UI)
+  - 자료 타입별 필터링
+  - 자료 다운로드/재생
+
+### Changed
+- **네비게이션 메뉴 업데이트**
+  - "양육/훈련" 메뉴 재구성
+  - `/education/training` → `/training` 경로 변경
+  - 메뉴 순서: 제자훈련 > 한글학교 > 새가족 등록
+
+### Database
+- `training_programs` 테이블 생성
+  - id, title, description, category, cover_image_url
+  - total_weeks, is_visible, sort_order
+  - created_at, updated_at
+
+- `training_materials` 테이블 생성
+  - id, program_id (FK), title, description
+  - week_number, material_type (pdf/video/audio)
+  - file_url, duration_minutes, view_count
+  - is_visible, sort_order
+  - created_at, updated_at
+
+- RLS 정책: admin_users 이메일 기반 권한 관리
+
+### Files
+- `src/utils/trainingService.ts` - 훈련 시스템 서비스 파일
+- `src/pages/training/index.tsx` - 공개 프로그램 목록 페이지
+- `src/pages/training/[id].tsx` - 공개 프로그램 상세 페이지
+- `src/pages/admin/training/index.tsx` - 관리자 프로그램 목록
+- `src/pages/admin/training/new.tsx` - 관리자 프로그램 생성
+- `src/pages/admin/training/[id].tsx` - 관리자 프로그램 편집
+- `public/locales/ko/training.json` - 한국어 번역
+- `public/locales/en/training.json` - 영어 번역
+- `types/supabase.ts` - TypeScript 타입 추가
+- `supabase/migrations/20260119_create_training_tables.sql` - DB 마이그레이션
+
+---
+
+## [2.3.0] - 2026-01-19
+
+### Added
+- **통합 예배 페이지 신규 생성** (`/worship`)
+  - 주일예배, 수요예배, 새벽기도 정보 통합
+  - 새벽기도 Zoom 링크 (https://tinyurl.com/sckc3)
+  - YouTube Live "준비중" 표시
+  - 헌금 안내 (헌금봉투, 우편, PayPal, Venmo)
+  - VS Design Diverge 디자인 시스템 적용 (Editorial Minimalism + 한국적 미학)
+  - OKLCH 색상 시스템 적용
+
+### Changed
+- **네비게이션 메뉴 단순화**
+  - 기존 "예배" 메뉴: 설교, 주일설교, 수요설교, 예배안내 (4개)
+  - 신규 "예배" 메뉴: 예배안내, 주일설교, 수요설교 (3개)
+  - `/about/service-info` 대신 `/worship` 페이지로 통합
+
+### Files
+- `src/pages/worship.tsx` - 통합 예배 페이지 신규 생성
+- `public/locales/ko/worship.json` - 한국어 번역 파일
+- `public/locales/en/worship.json` - 영어 번역 파일
+- `src/components/Layout.tsx` - 네비게이션 메뉴 업데이트
+- `public/locales/ko/common.json` - 네비게이션 키 추가
+- `public/locales/en/common.json` - 네비게이션 키 추가
+
+---
+
 ## [2.2.2] - 2026-01-18
 
 ### Fixed

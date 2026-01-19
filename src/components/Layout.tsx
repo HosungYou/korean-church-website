@@ -64,7 +64,8 @@ const getBreadcrumbs = (pathname: string, translate: (key: string) => string): B
     'bulletin': 'bulletin',
     'gallery': 'gallery',
     'giving': 'giving',
-    'korean-school': 'korean_school'
+    'korean-school': 'korean_school',
+    'worship': 'worship'
   }
 
   let currentPath = ''
@@ -85,18 +86,17 @@ const navigationConfig: NavItem[] = [
   {
     labelKey: 'nav_groups.worship',
     dropdown: [
-      { labelKey: 'nav_links.sermons', href: '/sermons' },
+      { labelKey: 'nav_links.worship_info', href: '/worship' },
       { labelKey: 'nav_links.sunday_sermon', href: '/sermons/sunday' },
       { labelKey: 'nav_links.wednesday_sermon', href: '/sermons/wednesday' },
-      { labelKey: 'nav_links.service_info', href: '/about/service-info' },
     ],
   },
   {
     labelKey: 'nav_groups.nurturing',
     dropdown: [
+      { labelKey: 'nav_links.training', href: '/training' },
       { labelKey: 'nav_links.korean_school', href: '/education/korean-school' },
-      { labelKey: 'nav_links.training', href: '/education/training' },
-      { labelKey: 'nav_links.bible_reading', href: '/bible-reading' },
+      { labelKey: 'nav_links.new_family', href: '/missions/new-family' },
     ],
   },
   {
