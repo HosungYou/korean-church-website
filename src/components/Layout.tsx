@@ -706,17 +706,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="space-y-3">
                 <p
                   className={`text-sm leading-relaxed ${fontClass}`}
-                  style={{ color: 'var(--church-secondary-300)' }}
+                  style={{ color: 'oklch(0.85 0.02 75)' }}
                 >
                   {t('full_address', { defaultValue: '758 Glenn Rd, State College, PA 16803' })}
                 </p>
-                <p className={`text-sm ${fontClass}`} style={{ color: 'var(--church-secondary-300)' }}>
+                <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.85 0.02 75)' }}>
                   <span style={{ color: 'var(--church-accent)' }}>
                     {t('phone', { defaultValue: '전화' })}:
                   </span>{' '}
                   {t('phone_number', { defaultValue: '814-380-9393' })}
                 </p>
-                <p className={`text-sm ${fontClass}`} style={{ color: 'var(--church-secondary-300)' }}>
+                <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.85 0.02 75)' }}>
                   <span style={{ color: 'var(--church-accent)' }}>
                     {t('email', { defaultValue: '이메일' })}:
                   </span>{' '}
@@ -734,14 +734,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {t('service_times', { defaultValue: '예배 시간' })}
               </h3>
               <div className="space-y-3">
-                <p className={`text-sm ${fontClass}`} style={{ color: 'var(--church-secondary-300)' }}>
-                  <span style={{ color: 'var(--church-neutral-100)' }}>
+                <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.85 0.02 75)' }}>
+                  <span style={{ color: 'var(--church-neutral-50)' }}>
                     {t('sunday', { defaultValue: '주일' })}:
                   </span>{' '}
                   {t('sunday_time', { defaultValue: '오전 11:00' })}
                 </p>
-                <p className={`text-sm ${fontClass}`} style={{ color: 'var(--church-secondary-300)' }}>
-                  <span style={{ color: 'var(--church-neutral-100)' }}>
+                <p className={`text-sm ${fontClass}`} style={{ color: 'oklch(0.85 0.02 75)' }}>
+                  <span style={{ color: 'var(--church-neutral-50)' }}>
                     {t('wednesday', { defaultValue: '수요일' })}:
                   </span>{' '}
                   {t('wednesday_time', { defaultValue: '오후 7:30' })}
@@ -760,29 +760,29 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="grid grid-cols-2 gap-x-6 gap-y-3">
                 <Link
                   href="/about/greeting"
-                  className={`text-sm transition-colors duration-200 ${fontClass}`}
-                  style={{ color: 'var(--church-secondary-300)' }}
+                  className={`text-sm transition-colors duration-200 hover:text-white ${fontClass}`}
+                  style={{ color: 'oklch(0.85 0.02 75)' }}
                 >
                   {t('church_guide', { defaultValue: '교회안내' })}
                 </Link>
                 <Link
                   href="/sermons-live"
-                  className={`text-sm transition-colors duration-200 ${fontClass}`}
-                  style={{ color: 'var(--church-secondary-300)' }}
+                  className={`text-sm transition-colors duration-200 hover:text-white ${fontClass}`}
+                  style={{ color: 'oklch(0.85 0.02 75)' }}
                 >
                   {t('sermons_praise', { defaultValue: '설교/찬양' })}
                 </Link>
                 <Link
                   href="/news/announcements"
-                  className={`text-sm transition-colors duration-200 ${fontClass}`}
-                  style={{ color: 'var(--church-secondary-300)' }}
+                  className={`text-sm transition-colors duration-200 hover:text-white ${fontClass}`}
+                  style={{ color: 'oklch(0.85 0.02 75)' }}
                 >
                   {t('nav_links.announcements', { defaultValue: '공지사항' })}
                 </Link>
                 <Link
                   href="/giving"
-                  className={`text-sm transition-colors duration-200 ${fontClass}`}
-                  style={{ color: 'var(--church-secondary-300)' }}
+                  className={`text-sm transition-colors duration-200 hover:text-white ${fontClass}`}
+                  style={{ color: 'oklch(0.85 0.02 75)' }}
                 >
                   {t('online_giving', { defaultValue: '온라인헌금' })}
                 </Link>
@@ -793,17 +793,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {/* Bottom Bar */}
           <div
             className="mt-16 pt-8 flex flex-col md:flex-row md:items-center md:justify-between"
-            style={{ borderTop: '1px solid oklch(0.25 0.006 75 / 0.5)' }}
+            style={{ borderTop: '1px solid oklch(0.35 0.006 75 / 0.5)' }}
           >
             <p
               className={`text-xs tracking-wide ${fontClass}`}
-              style={{ color: 'var(--church-secondary-600)' }}
+              style={{ color: 'oklch(0.70 0.02 75)' }}
             >
               © {new Date().getFullYear()} {t('church_name')}. All rights reserved.
             </p>
             <p
               className={`text-xs tracking-wide mt-2 md:mt-0 ${fontClass}`}
-              style={{ color: 'var(--church-secondary-700)' }}
+              style={{ color: 'oklch(0.65 0.02 75)' }}
             >
               Designed with faith & care
             </p>
