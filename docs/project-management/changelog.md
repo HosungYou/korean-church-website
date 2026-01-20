@@ -20,6 +20,60 @@
 
 ---
 
+## [2.7.0] - 2026-01-20
+
+### Added
+- **성경통독 자료 게시판 시스템** (`/bible-materials`)
+  - 구약성경/신약성경 카테고리 분류
+  - 자료 목록 페이지 (카테고리 필터링, 통계 표시)
+  - 자료 상세 페이지 (본문 내용, PDF 다운로드, 영상 링크)
+  - 조회수 추적 기능
+  - VS Design Diverge 디자인 시스템 적용 (Editorial Grid Layout + OKLCH Color)
+
+- **관리자 성경통독 자료 관리** (`/admin/bible-materials`)
+  - 자료 목록 관리 (검색, 카테고리 필터)
+  - 자료 생성/수정/삭제
+  - PDF 파일 업로드
+  - 영상 URL 등록
+  - 공개/비공개 전환
+  - 정렬 순서 설정
+
+- **새가족 등록 페이지** (`/about/new-family-registration`)
+  - 교회 안내 > SCKC 안내 메뉴로 이동
+  - 기존 new_families 테이블 활용
+  - 폼 유효성 검사 및 제출 기능
+
+### Changed
+- **네비게이션 메뉴 재구성**
+  - 양육/훈련 메뉴: QT (묵상), 성경통독 자료, 새가족 훈련
+  - 교회 안내 메뉴: 새가족 등록 추가
+  - 성경읽기표 → QT (묵상)으로 명칭 변경
+
+- **관리자 사이드바 업데이트**
+  - 성경읽기표 → QT (묵상) 명칭 변경
+  - 성경통독 자료 메뉴 추가
+
+### Database
+- `bible_materials` 테이블 생성
+  - id, title, description, category (old_testament/new_testament)
+  - book_name, chapter_range, content
+  - file_url, file_name, video_url
+  - author_name, is_visible, sort_order, view_count
+  - created_at, updated_at
+- RLS 정책: 공개 자료 조회 + 관리자 전체 접근
+
+### Files
+- `src/utils/bibleMaterialsService.ts` - 성경통독 자료 CRUD 서비스
+- `src/pages/bible-materials/index.tsx` - 공개 자료 목록 페이지
+- `src/pages/bible-materials/[id].tsx` - 공개 자료 상세 페이지
+- `src/pages/admin/bible-materials/index.tsx` - 관리자 자료 목록
+- `src/pages/admin/bible-materials/new.tsx` - 관리자 자료 생성
+- `src/pages/admin/bible-materials/[id].tsx` - 관리자 자료 편집
+- `src/pages/about/new-family-registration.tsx` - 새가족 등록 페이지
+- `types/supabase.ts` - bible_materials 테이블 타입 추가
+
+---
+
 ## [2.4.0] - 2026-01-19
 
 ### Added

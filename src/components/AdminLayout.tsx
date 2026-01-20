@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   BookOpen,
+  Book,
   Video,
   Image,
   Newspaper,
@@ -59,10 +60,16 @@ const menuItems = [
     description: '사진첩 관리',
   },
   {
-    name: '성경읽기표',
+    name: 'QT (묵상)',
     href: '/admin/bible-reading',
     icon: BookOpen,
-    description: '성경통독 계획',
+    description: 'QT 계획 및 자료',
+  },
+  {
+    name: '성경통독 자료',
+    href: '/admin/bible-materials',
+    icon: Book,
+    description: '구약/신약 자료 관리',
   },
   {
     name: '주보 관리',

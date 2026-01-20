@@ -32,7 +32,11 @@
     "service_info": "Service Guide",
     "korean_school": "Korean School",
     "training": "Discipleship Training",
-    "new_family": "New Family Registration",
+    "qt": "QT (Devotion)",
+    "bible_materials": "Bible Study Materials",
+    "new_family_training": "New Family Training",
+    "new_family": "New Family Ministry",
+    "new_family_registration": "New Family Registration",
     "missions": "Missions",
     "missionary_support": "Missionary Support",
     "short_term_missions": "Short-term Missions",
@@ -110,8 +114,11 @@
     "short_term_missions": "Short-term Missions",
     "relief_missions": "Relief Missions",
     "new_family": "New Family",
+    "new_family_registration": "New Family Registration",
     "discipleship": "Discipleship",
-    "training": "Discipleship Training",
+    "training": "Training Programs",
+    "qt": "QT (Devotion)",
+    "bible_materials": "Bible Study Materials",
     "news": "News",
     "posts": "Posts",
     "announcements": "Announcements",
@@ -123,5 +130,53 @@
     "worship": "Worship",
     "community": "Community",
     "settlement_info": "Settlement Info"
+  },
+  "bible_reading": {
+    "title": "QT (Devotion)",
+    "description": "Sharing the grace of God's Word through daily Bible reading.",
+    "today_reading": "Today's Reading",
+    "old_testament": "Old Testament",
+    "new_testament": "New Testament",
+    "psalms": "Psalms",
+    "proverbs": "Proverbs",
+    "no_reading": "No reading plan for today.",
+    "select_plan": "Select a reading plan"
+  },
+  "bible_materials": {
+    "title": "Bible Study Materials",
+    "description": "Resources and guides for reading through the Bible.",
+    "old_testament": "Old Testament",
+    "new_testament": "New Testament",
+    "all": "All",
+    "no_materials": "No materials available.",
+    "view_detail": "View Details",
+    "download": "Download",
+    "categories": {
+      "old_testament": "Old Testament",
+      "new_testament": "New Testament"
+    }
+  },
+  "new_family": {
+    "title": "New Family Registration",
+    "description": "Welcome to State College Korean Church!",
+    "form": {
+      "korean_name": "Korean Name",
+      "english_name": "English Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "birth_date": "Date of Birth",
+      "gender": "Gender",
+      "gender_male": "Male",
+      "gender_female": "Female",
+      "previous_church": "Previous Church",
+      "baptized": "Baptized",
+      "baptized_yes": "Yes",
+      "baptized_no": "No",
+      "notes": "Additional Notes",
+      "submit": "Submit",
+      "success": "Registration complete! We will contact you soon!",
+      "error": "An error occurred. Please try again."
+    }
   }
 }

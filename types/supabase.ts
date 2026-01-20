@@ -621,6 +621,63 @@ export interface Database {
         }
         Relationships: []
       }
+      bible_materials: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          category: 'old_testament' | 'new_testament'
+          book_name: string | null
+          chapter_range: string | null
+          content: string | null
+          file_url: string | null
+          file_name: string | null
+          video_url: string | null
+          author_name: string | null
+          is_visible: boolean
+          sort_order: number
+          view_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          category: 'old_testament' | 'new_testament'
+          book_name?: string | null
+          chapter_range?: string | null
+          content?: string | null
+          file_url?: string | null
+          file_name?: string | null
+          video_url?: string | null
+          author_name?: string | null
+          is_visible?: boolean
+          sort_order?: number
+          view_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          category?: 'old_testament' | 'new_testament'
+          book_name?: string | null
+          chapter_range?: string | null
+          content?: string | null
+          file_url?: string | null
+          file_name?: string | null
+          video_url?: string | null
+          author_name?: string | null
+          is_visible?: boolean
+          sort_order?: number
+          view_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hero_slides: {
         Row: {
           id: string

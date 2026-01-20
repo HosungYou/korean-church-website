@@ -31,8 +31,12 @@
     "service_info": "예배안내",
     "korean_school": "한국학교",
     "training": "제자훈련",
+    "qt": "QT (묵상)",
+    "bible_materials": "성경통독 자료",
+    "new_family_training": "새가족 훈련",
     "bible_reading": "성경읽기표",
-    "new_family": "새가족 등록",
+    "new_family": "새가족 양육",
+    "new_family_registration": "새가족 등록",
     "missions": "선교",
     "missionary_support": "선교사 지원",
     "short_term_missions": "단기선교",
@@ -108,9 +112,12 @@
     "short_term_missions": "단기선교",
     "relief_missions": "구제선교",
     "new_family": "새가족양육",
+    "new_family_registration": "새가족 등록",
     "discipleship": "제자훈련",
-    "training": "제자훈련",
+    "training": "훈련 프로그램",
+    "qt": "QT (묵상)",
     "bible_reading": "성경읽기표",
+    "bible_materials": "성경통독 자료",
     "news": "교회소식",
     "posts": "게시글",
     "announcements": "공지사항",
@@ -124,7 +131,7 @@
     "settlement_info": "정착 도움 정보"
   },
   "bible_reading": {
-    "title": "성경읽기표",
+    "title": "QT (묵상)",
     "description": "함께 성경을 읽으며 말씀의 은혜를 나눕니다.",
     "today_reading": "오늘의 말씀",
     "old_testament": "구약",
@@ -133,6 +140,20 @@
     "proverbs": "잠언",
     "no_reading": "오늘의 읽기 계획이 없습니다.",
     "select_plan": "읽기 계획을 선택하세요"
+  },
+  "bible_materials": {
+    "title": "성경통독 자료",
+    "description": "성경 통독을 위한 자료와 해설을 제공합니다.",
+    "old_testament": "구약성경",
+    "new_testament": "신약성경",
+    "all": "전체",
+    "no_materials": "등록된 자료가 없습니다.",
+    "view_detail": "자세히 보기",
+    "download": "다운로드",
+    "categories": {
+      "old_testament": "구약",
+      "new_testament": "신약"
+    }
   },
   "gallery": {
     "title": "갤러리",

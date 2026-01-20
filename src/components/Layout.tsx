@@ -58,8 +58,11 @@ const getBreadcrumbs = (pathname: string, translate: (key: string) => string): B
     'short-term': 'short_term_missions',
     'relief': 'relief_missions',
     'new-family': 'new_family',
+    'new-family-registration': 'new_family_registration',
     'discipleship': 'discipleship',
     'training': 'training',
+    'bible-reading': 'qt',
+    'bible-materials': 'bible_materials',
     'news': 'news',
     'posts': 'posts',
     'announcements': 'announcements',
@@ -99,8 +102,9 @@ const navigationConfig: NavItem[] = [
   {
     labelKey: 'nav_groups.nurturing',
     dropdown: [
-      { labelKey: 'nav_links.training', href: '/training' },
-      { labelKey: 'nav_links.new_family', href: '/missions/new-family' },
+      { labelKey: 'nav_links.qt', href: '/bible-reading' },
+      { labelKey: 'nav_links.bible_materials', href: '/bible-materials' },
+      { labelKey: 'nav_links.new_family_training', href: '/training' },
     ],
   },
   {
@@ -127,6 +131,7 @@ const navigationConfig: NavItem[] = [
     labelKey: 'nav_groups.about',
     dropdown: [
       { labelKey: 'nav_links.about', href: '/about' },
+      { labelKey: 'nav_links.new_family_registration', href: '/about/new-family-registration' },
       { labelKey: 'nav_links.history', href: '/about/history' },
       { labelKey: 'nav_links.philosophy', href: '/about/philosophy' },
       { labelKey: 'nav_links.directions', href: '/about/directions' },
