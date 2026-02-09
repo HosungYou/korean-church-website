@@ -49,7 +49,7 @@ const nextConfig = {
               "img-src 'self' data: blob: https:",
               "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",
               "connect-src 'self' https://*.supabase.co",
-              "frame-src 'self' https://www.youtube.com https://youtube.com",
+              "frame-src 'self' https://www.youtube.com https://youtube.com https://*.supabase.co",
             ].join('; '),
           },
           {

@@ -82,7 +82,7 @@ const Home: NextPage<HomeProps> = ({ dbSlides }) => {
   }
 
   const quickAccessIcons = [
-    { icon: Users, titleKey: 'home:quick_access.new_family', href: '/missions/new-family' },
+    { icon: Users, titleKey: 'home:quick_access.new_family', href: '/about/new-family-registration' },
     { icon: BookOpen, titleKey: 'home:quick_access.bulletin', href: '/news/bulletin' },
     { icon: Calendar, titleKey: 'home:quick_access.announcements', href: '/announcements' },
     { icon: Play, titleKey: 'home:quick_access.sermons', href: '/sermons/sunday' },

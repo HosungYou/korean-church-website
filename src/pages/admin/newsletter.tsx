@@ -9,14 +9,21 @@ import {
   FileText,
   Clock,
   ArrowRight,
+  Settings,
+  Save,
+  AlertCircle,
 } from 'lucide-react'
 import AdminLayout from '@/components/AdminLayout'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import {
   getActiveSubscribers,
-  sendNewsletterToSubscribers,
   EmailSubscriber,
 } from '../../utils/emailService'
+import {
+  getEmailSettings,
+  updateEmailSettings,
+  EmailSettings,
+} from '../../utils/siteSettingsService'
 
 // ===========================================
 // VS Design Diverge: Newsletter Management
@@ -31,10 +38,18 @@ const NewsletterAdminPage = () => {
   const [type, setType] = useState<'announcement' | 'event' | 'general'>('announcement')
   const [isLoading, setIsLoading] = useState(false)
   const [isSent, setIsSent] = useState(false)
+  const [emailSettings, setEmailSettings] = useState<EmailSettings>({
+    senderName: '',
+    senderAddress: '',
+    replyTo: '',
+  })
+  const [showSettings, setShowSettings] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     if (!admin) return
     loadSubscribers()
+    loadEmailSettings()
   }, [admin])
 
   const loadSubscribers = async () => {
@@ -43,6 +58,15 @@ const NewsletterAdminPage = () => {
       setSubscribers(activeSubscribers)
     } catch (error) {
       console.error('구독자 로딩 오류:', error)
+    }
+  }
+
+  const loadEmailSettings = async () => {
+    try {
+      const settings = await getEmailSettings()
+      setEmailSettings(settings)
+    } catch (error) {
+      console.error('이메일 설정 로딩 오류:', error)
     }
   }
 
@@ -55,12 +79,13 @@ const NewsletterAdminPage = () => {
 
     setIsLoading(true)
     try {
-      await sendNewsletterToSubscribers({
-        title,
-        content,
-        publishedAt: new Date(),
-        type,
+      const response = await fetch('/api/email/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newsletter: { title, content, type } }),
       })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error)
 
       setIsSent(true)
       setTitle('')
@@ -71,6 +96,19 @@ const NewsletterAdminPage = () => {
       alert('뉴스레터 발송 중 오류가 발생했습니다.')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleSaveSettings = async () => {
+    setIsSaving(true)
+    try {
+      await updateEmailSettings(emailSettings)
+      setShowSettings(false)
+    } catch (error) {
+      console.error('설정 저장 오류:', error)
+      alert('설정 저장에 실패했습니다.')
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -94,6 +132,18 @@ const NewsletterAdminPage = () => {
             뉴스레터 발송
           </span>
         </div>
+        <button
+          onClick={() => setShowSettings(!showSettings)}
+          className="inline-flex items-center px-4 py-2 rounded-sm text-sm font-medium transition-all duration-200"
+          style={{
+            background: showSettings ? 'oklch(0.45 0.12 265)' : 'oklch(0.97 0.005 265)',
+            color: showSettings ? 'oklch(0.98 0.003 75)' : 'oklch(0.35 0.02 75)',
+            border: '1px solid oklch(0.90 0.01 265)',
+          }}
+        >
+          <Settings className="w-4 h-4 mr-2" />
+          이메일 설정
+        </button>
       </div>
 
       {/* Statistics Cards */}
@@ -130,6 +180,91 @@ const NewsletterAdminPage = () => {
           )
         })}
       </div>
+
+      {/* Email Settings Panel */}
+      {showSettings && (
+        <div
+          className="mb-8 p-6 rounded-sm stagger-3"
+          style={{
+            background: 'oklch(0.985 0.003 75)',
+            border: '1px solid oklch(0.92 0.005 75)',
+          }}
+        >
+          <div className="flex items-center mb-6">
+            <div className="h-0.5 w-6 mr-3" style={{ background: 'oklch(0.72 0.10 75)' }} />
+            <h2 className="font-headline font-bold text-lg" style={{ color: 'oklch(0.22 0.07 265)' }}>
+              이메일 발송 설정
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'oklch(0.45 0.01 75)' }}>
+                발신자 이름
+              </label>
+              <input
+                type="text"
+                value={emailSettings.senderName}
+                onChange={(e) => setEmailSettings({ ...emailSettings, senderName: e.target.value })}
+                placeholder="스테이트 칼리지 한인교회"
+                className="block w-full px-4 py-2.5 rounded-sm focus:outline-none"
+                style={{
+                  background: 'oklch(0.97 0.005 265)',
+                  border: '1px solid oklch(0.90 0.01 265)',
+                  color: 'oklch(0.25 0.02 75)',
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'oklch(0.45 0.01 75)' }}>
+                발신 이메일
+              </label>
+              <input
+                type="email"
+                value={emailSettings.senderAddress}
+                onChange={(e) => setEmailSettings({ ...emailSettings, senderAddress: e.target.value })}
+                placeholder="newsletter@sckc.org"
+                className="block w-full px-4 py-2.5 rounded-sm focus:outline-none"
+                style={{
+                  background: 'oklch(0.97 0.005 265)',
+                  border: '1px solid oklch(0.90 0.01 265)',
+                  color: 'oklch(0.25 0.02 75)',
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'oklch(0.45 0.01 75)' }}>
+                답장 수신 이메일
+              </label>
+              <input
+                type="email"
+                value={emailSettings.replyTo}
+                onChange={(e) => setEmailSettings({ ...emailSettings, replyTo: e.target.value })}
+                placeholder="pastor@gmail.com"
+                className="block w-full px-4 py-2.5 rounded-sm focus:outline-none"
+                style={{
+                  background: 'oklch(0.97 0.005 265)',
+                  border: '1px solid oklch(0.90 0.01 265)',
+                  color: 'oklch(0.25 0.02 75)',
+                }}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={handleSaveSettings}
+              disabled={isSaving}
+              className="inline-flex items-center px-5 py-2 rounded-sm font-medium transition-all duration-200"
+              style={{
+                background: 'oklch(0.45 0.12 265)',
+                color: 'oklch(0.98 0.003 75)',
+              }}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {isSaving ? '저장 중...' : '설정 저장'}
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 구독자 현황 */}
@@ -293,7 +428,7 @@ const NewsletterAdminPage = () => {
               <button
                 type="submit"
                 disabled={isLoading || subscribers.length === 0}
-                className="inline-flex items-center px-6 py-2.5 rounded-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                className="inline-flex items-center px-6 py-2.5 rounded-sm font-medium transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 style={{
                   background: 'oklch(0.45 0.12 265)',
                   color: 'oklch(0.98 0.003 75)',

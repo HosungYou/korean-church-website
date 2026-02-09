@@ -7,6 +7,26 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+async function getEmailSettingsFromDB() {
+  const { data, error } = await supabaseAdmin
+    .from('site_settings')
+    .select('key, value')
+    .in('key', ['email_sender_name', 'email_sender_address', 'email_reply_to'])
+
+  const settings: Record<string, string> = {}
+  if (data) {
+    data.forEach((row: { key: string; value: string }) => {
+      settings[row.key] = row.value
+    })
+  }
+
+  return {
+    senderName: settings.email_sender_name || '스테이트 칼리지 한인교회',
+    senderAddress: settings.email_sender_address || 'newsletter@sckc.org',
+    replyTo: settings.email_reply_to || 'KyuHongYeon@gmail.com',
+  }
+}
+
 interface NewsletterData {
   title: string
   content: string
@@ -80,6 +100,7 @@ export default async function handler(
       })
     }
 
+    const emailSettings = await getEmailSettingsFromDB()
     const resendApiKey = process.env.RESEND_API_KEY
     const emailHtml = generateNewsletterTemplate(newsletter)
     let sentCount = 0
@@ -97,8 +118,9 @@ export default async function handler(
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              from: 'State College Korean Church <noreply@statecollegekoreanchurch.org>',
+              from: `${emailSettings.senderName} <${emailSettings.senderAddress}>`,
               to: subscriber.email,
+              reply_to: emailSettings.replyTo,
               subject: `[교회소식] ${newsletter.title}`,
               html: emailHtml,
             }),
