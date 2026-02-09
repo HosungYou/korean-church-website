@@ -84,11 +84,11 @@ const Home: NextPage<HomeProps> = ({ dbSlides }) => {
   const quickAccessIcons = [
     { icon: Users, titleKey: 'home:quick_access.new_family', href: '/missions/new-family' },
     { icon: BookOpen, titleKey: 'home:quick_access.bulletin', href: '/news/bulletin' },
-    { icon: Calendar, titleKey: 'home:quick_access.announcements', href: '/news/announcements' },
-    { icon: Play, titleKey: 'home:quick_access.sermons', href: '/sermons' },
+    { icon: Calendar, titleKey: 'home:quick_access.announcements', href: '/announcements' },
+    { icon: Play, titleKey: 'home:quick_access.sermons', href: '/sermons/sunday' },
     { icon: Globe, titleKey: 'home:quick_access.online_worship', href: '/sermons/sunday' },
     { icon: Heart, titleKey: 'home:quick_access.giving', href: '/giving' },
-    { icon: Phone, titleKey: 'home:quick_access.contact', href: '/about/service-info' },
+    { icon: Phone, titleKey: 'home:quick_access.contact', href: '/worship' },
     { icon: MapPin, titleKey: 'home:quick_access.directions', href: '/about/directions' }
   ]
 
@@ -122,7 +122,7 @@ const Home: NextPage<HomeProps> = ({ dbSlides }) => {
     {
       title: t('home:first_time_section.cards.korean_school.title'),
       description: t('home:first_time_section.cards.korean_school.description'),
-      href: '/education/korean-school'
+      href: '/korean-school'
     },
     {
       title: t('home:first_time_section.cards.directions.title'),

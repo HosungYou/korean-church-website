@@ -780,14 +780,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   {t('church_guide', { defaultValue: '교회안내' })}
                 </Link>
                 <Link
-                  href="/sermons-live"
+                  href="/sermons/sunday"
                   className={`text-sm transition-colors duration-200 hover:text-white ${fontClass}`}
                   style={{ color: 'oklch(0.85 0.02 75)' }}
                 >
                   {t('sermons_praise', { defaultValue: '설교/찬양' })}
                 </Link>
                 <Link
-                  href="/news/announcements"
+                  href="/announcements"
                   className={`text-sm transition-colors duration-200 hover:text-white ${fontClass}`}
                   style={{ color: 'oklch(0.85 0.02 75)' }}
                 >

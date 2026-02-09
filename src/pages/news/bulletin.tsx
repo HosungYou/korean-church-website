@@ -330,7 +330,7 @@ const BulletinPage = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { href: '/news/announcements', title: '공지사항', desc: '교회 소식과 공지' },
+              { href: '/announcements', title: '공지사항', desc: '교회 소식과 공지' },
               { href: '/news/gallery', title: '행사사진', desc: '교회 행사 사진 갤러리' },
               { href: '/sermons/sunday', title: '주일설교', desc: '주일예배 설교 영상' }
             ].map((link, index) => (
