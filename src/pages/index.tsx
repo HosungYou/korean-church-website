@@ -117,17 +117,12 @@ const Home: NextPage<HomeProps> = ({ dbSlides }) => {
     {
       title: t('home:first_time_section.cards.new_family.title'),
       description: t('home:first_time_section.cards.new_family.description'),
-      href: '/new-family-guide'
+      href: '/about/new-family-registration'
     },
     {
       title: t('home:first_time_section.cards.korean_school.title'),
       description: t('home:first_time_section.cards.korean_school.description'),
       href: '/education/korean-school'
-    },
-    {
-      title: t('home:first_time_section.cards.training.title'),
-      description: t('home:first_time_section.cards.training.description'),
-      href: '/education/training'
     },
     {
       title: t('home:first_time_section.cards.directions.title'),

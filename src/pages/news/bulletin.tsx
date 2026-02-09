@@ -8,7 +8,7 @@ import PageHeader from '@/components/PageHeader'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useState, useEffect, useMemo } from 'react'
-import { Download, FileText, Calendar, Filter, Loader2, ArrowRight } from 'lucide-react'
+import { Download, FileText, Calendar, Filter, Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { getBulletins, getBulletinsByYear } from '../../utils/bulletinService'
 import type { Bulletin } from '../../../types/supabase'
 import Link from 'next/link'
@@ -18,6 +18,7 @@ const BulletinPage = () => {
   const [yearCounts, setYearCounts] = useState<{ [year: number]: number }>({})
   const [loading, setLoading] = useState(true)
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
+  const [showPreview, setShowPreview] = useState(true)
 
   // 초기 데이터 로드
   useEffect(() => {
@@ -135,6 +136,84 @@ const BulletinPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Latest Bulletin Preview */}
+      {!loading && bulletins.length > 0 && bulletins[0].file_url && (
+        <section className="py-16" style={{ background: 'oklch(0.985 0.003 75)' }}>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-8">
+              <div
+                className="h-0.5 w-12 mb-6"
+                style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+              />
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <span
+                    className="text-xs font-medium tracking-[0.2em] uppercase mb-2 block"
+                    style={{ color: 'oklch(0.72 0.10 75)' }}
+                  >
+                    Latest Bulletin
+                  </span>
+                  <h2
+                    className="font-headline font-bold font-korean"
+                    style={{
+                      fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                      letterSpacing: '-0.02em',
+                      color: 'oklch(0.25 0.05 265)'
+                    }}
+                  >
+                    {bulletins[0].title || `${formatDate(bulletins[0].bulletin_date)} 주보`}
+                  </h2>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setShowPreview(!showPreview)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-korean transition-all duration-200"
+                    style={{
+                      background: 'oklch(0.97 0.005 75)',
+                      color: 'oklch(0.45 0.12 265)',
+                      border: '1px solid oklch(0.90 0.01 75)',
+                    }}
+                  >
+                    {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPreview ? '미리보기 닫기' : '미리보기 열기'}
+                  </button>
+                  <a
+                    href={bulletins[0].file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-korean transition-all duration-200"
+                    style={{
+                      background: 'oklch(0.45 0.12 265)',
+                      color: 'oklch(0.98 0.003 75)',
+                    }}
+                  >
+                    <Download className="w-4 h-4" />
+                    다운로드
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {showPreview && (
+              <div
+                className="rounded-sm overflow-hidden"
+                style={{
+                  border: '1px solid oklch(0.92 0.005 75)',
+                  boxShadow: '0 4px 16px oklch(0.30 0.09 265 / 0.10)',
+                }}
+              >
+                <iframe
+                  src={`${bulletins[0].file_url}#toolbar=0&navpanes=0`}
+                  className="w-full"
+                  style={{ height: '80vh', minHeight: '600px' }}
+                  title={bulletins[0].title || '최신 주보 미리보기'}
+                />
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Bulletin List */}
       <section className="py-16" style={{ background: 'oklch(0.97 0.005 75)' }}>

@@ -213,7 +213,7 @@ const ChurchDepartments: NextPage = () => {
             </p>
             <div className="flex justify-center space-x-4">
               <Link
-                href="/new-family-guide"
+                href="/about/new-family-registration"
                 className="inline-flex items-center px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-gray-100 transition-colors font-korean"
               >
                 새가족 등록
