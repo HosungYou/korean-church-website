@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import HeroSlider from '@/components/HeroSlider'
+import LatestSermonVideo from '@/components/LatestSermonVideo'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Play, Calendar, MapPin, Heart, Users, BookOpen, Phone, Globe, Mail, Bell } from 'lucide-react'
@@ -276,6 +277,8 @@ const Home: NextPage<HomeProps> = ({ dbSlides }) => {
           </div>
         </div>
       </section>
+
+      <LatestSermonVideo />
 
       {/* First-Time Visitors Section - Accent Style */}
       <section className="py-24 relative" style={{ background: 'oklch(0.97 0.01 265)' }}>

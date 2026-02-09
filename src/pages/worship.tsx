@@ -2,6 +2,7 @@ import type { GetStaticProps, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -39,90 +40,14 @@ const Worship: NextPage = () => {
 
   return (
     <Layout>
-      {/* Hero Section - Editorial Asymmetric Layout */}
-      <section
-        className="relative min-h-[70vh] flex items-end overflow-hidden bg-grain"
-        style={{
-          background: 'linear-gradient(135deg, oklch(0.15 0.05 265) 0%, oklch(0.25 0.08 265) 50%, oklch(0.20 0.06 265) 100%)',
-        }}
-      >
-        {/* Decorative Elements */}
-        <div
-          className="absolute top-0 right-0 w-1/3 h-full opacity-10"
-          style={{
-            background: 'linear-gradient(180deg, oklch(0.72 0.10 75) 0%, transparent 70%)',
-          }}
-        />
-        <div
-          className="absolute bottom-0 left-0 w-px h-1/2"
-          style={{ background: 'linear-gradient(to top, oklch(0.72 0.10 75), transparent)' }}
-        />
-
-        {/* Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 pb-20 pt-32 w-full">
-          {/* Micro Label */}
-          <span
-            className="text-xs font-medium tracking-[0.25em] uppercase mb-6 block"
-            style={{ color: 'oklch(0.72 0.10 75)' }}
-          >
-            WORSHIP SERVICE
-          </span>
-
-          {/* Main Heading - Editorial Style */}
-          <h1
-            className={`font-headline font-black leading-[0.95] mb-8 ${fontClass}`}
-            style={{
-              fontSize: 'clamp(3rem, 8vw, 6rem)',
-              letterSpacing: '-0.04em',
-              color: 'oklch(0.98 0.005 75)',
-            }}
-          >
-            {isKorean ? '예배 안내' : 'Worship'}
-          </h1>
-
-          {/* Subheading */}
-          <p
-            className={`text-lg md:text-xl max-w-xl leading-relaxed ${fontClass}`}
-            style={{ color: 'oklch(0.80 0.02 75)' }}
-          >
-            {isKorean
-              ? '스테이트 칼리지 한인교회의 모든 예배에 여러분을 초대합니다.'
-              : 'Join us for worship at State College Korean Church.'}
-          </p>
-
-          {/* Quick Info Pills */}
-          <div className="flex flex-wrap gap-3 mt-10">
-            <span
-              className="px-4 py-2 text-sm font-medium rounded-full"
-              style={{
-                background: 'oklch(0.72 0.10 75 / 0.15)',
-                color: 'oklch(0.82 0.08 75)',
-                border: '1px solid oklch(0.72 0.10 75 / 0.3)',
-              }}
-            >
-              {isKorean ? '주일예배 오전 11:00' : 'Sunday 11:00 AM'}
-            </span>
-            <span
-              className="px-4 py-2 text-sm font-medium rounded-full"
-              style={{
-                background: 'oklch(0.72 0.10 75 / 0.15)',
-                color: 'oklch(0.82 0.08 75)',
-                border: '1px solid oklch(0.72 0.10 75 / 0.3)',
-              }}
-            >
-              {isKorean ? '수요예배 저녁 7:30' : 'Wednesday 7:30 PM'}
-            </span>
-          </div>
-        </div>
-
-        {/* Bottom Gradient */}
-        <div
-          className="absolute bottom-0 left-0 right-0 h-32"
-          style={{
-            background: 'linear-gradient(to top, oklch(0.985 0.003 75), transparent)',
-          }}
-        />
-      </section>
+      {/* Page Header - Photo Composite Style */}
+      <PageHeader
+        label="WORSHIP SERVICE"
+        title={isKorean ? '예배 안내' : 'Worship'}
+        subtitle={isKorean
+          ? '스테이트 칼리지 한인교회의 모든 예배에 여러분을 초대합니다.'
+          : 'Join us for worship at State College Korean Church.'}
+      />
 
       {/* Main Service Times Section */}
       <section className="py-24 bg-grain" style={{ background: 'oklch(0.985 0.003 75)' }}>

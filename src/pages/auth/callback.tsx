@@ -123,7 +123,7 @@ const AuthCallbackPage = () => {
 
           setStatus('success')
           // Redirect to dashboard
-          router.push('/admin/dashboard')
+          router.replace('/admin/dashboard')
         } else {
           // No session found after code exchange attempt
           console.log('[Callback] No session found')

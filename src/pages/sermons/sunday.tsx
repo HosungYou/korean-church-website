@@ -12,6 +12,7 @@ import { Play, Calendar, User, BookOpen, ArrowRight, Filter, Search, Loader2 } f
 import { useState, useEffect, useMemo } from 'react'
 import { getSermons, getYouTubeThumbnailUrl, type SermonType } from '../../utils/sermonService'
 import type { Sermon } from '../../../types/supabase'
+import { parseLocalDate } from '../../utils/dateHelpers'
 
 const SundaySermonsPage = () => {
   const [sermons, setSermons] = useState<Sermon[]>([])
@@ -61,7 +62,7 @@ const SundaySermonsPage = () => {
   }, [sermons])
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = parseLocalDate(dateString)
     return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: 'long',

@@ -20,6 +20,69 @@
 
 ---
 
+## [2.8.0] - 2026-02-09
+
+### Fixed
+- **전체 RLS 정책 admin_users 기반 전환** (13개 테이블 + 7개 Storage 버킷)
+  - 주보 PDF 업로드 등 관리자 기능에서 RLS 에러 발생하던 문제 해결
+  - `profiles` 테이블 참조 → `admin_users` 테이블 기반으로 전면 교체
+- **QT/설교 날짜 하루 밀림 수정**
+  - `new Date("YYYY-MM-DD")`의 UTC 파싱으로 인한 시간대 오류 해결
+  - `dateHelpers.ts` 유틸리티 생성 (`parseLocalDate`, `toLocalDateString`)
+  - 수정 대상: bibleReadingService (9곳), sermonService, memberService, 설교 관련 페이지
+- **Google OAuth 이중 로그인 해결**
+  - `onAuthStateChange`에서 premature redirect 방지
+  - `prompt: 'consent'` → `prompt: 'select_account'`
+  - `router.push` → `router.replace`
+
+### Added
+- **설교 파일 첨부 기능**: PDF/PPT/DOCX 업로드 지원 (`sermons` 테이블 + Storage 버킷)
+- **교인 CSV Import**: 한국어 헤더 자동 매핑, 중복 검사, 미리보기, 결과 리포트
+- **성경통독 다중 책 지원**: 체크박스 다중 선택 UI + 콤마 구분 저장
+- **성경통독 PDF 덮어쓰기**: `upsert: true` 적용
+- **메인 페이지 유튜브 영상**: `LatestSermonVideo` 컴포넌트 (최신 주일설교 자동 표시)
+- **새가족 → 교인 자동 전환**: `convertToMember()` + 상태 변경 시 자동 트리거 + 수동 버튼
+
+### Changed
+- **PageHeader 컴포넌트 통합**: 9개 페이지의 중복 Hero 섹션을 PageHeader로 통합
+- `docs/.meta/context.json`: 버전 및 기술스택 업데이트
+
+### Database
+- `sermons` 테이블: `attachment_url TEXT`, `attachment_name TEXT` 컬럼 추가
+- `sermons` Storage 버킷 생성
+- 13개 테이블 RLS 정책 재생성 (admin_users 기반)
+- 7개 Storage 버킷 RLS 정책 재생성
+- 마이그레이션: `supabase/migrations/20260209_fix_all_rls_policies.sql`
+
+### Files
+- 신규: `src/utils/dateHelpers.ts`, `src/components/LatestSermonVideo.tsx`, `docs/examples/members_import_template.csv`
+- 수정: 29개 파일 (상세 목록은 `release-notes/v2.8.0.md` 참조)
+
+---
+
+## [2.7.1] - 2026-01-20
+
+### Changed
+- **성경통독 자료 페이지 배너 업데이트**
+  - 커스텀 헤더를 `PageHeader` 컴포넌트로 교체
+  - QT(묵상) 페이지와 동일한 이미지 배경 스타일 적용
+  - VS Design Diverge 디자인 시스템 준수 (OKLCH 색상, grain 오버레이)
+
+### Fixed
+- **카테고리 카운트 0 표시 문제 해결**
+  - 문제: 정적 빌드(SSG) 시점에 계산된 카운트가 0으로 표시됨
+  - 해결: `useEffect` 훅으로 클라이언트 측에서 실시간 카운트 로드
+
+### Added
+- 번역 키 추가: `bible_materials.label` (한국어: "성경통독", 영어: "Bible Study")
+
+### Files
+- `src/pages/bible-materials/index.tsx` - PageHeader 적용 + 동적 카운트 로드
+- `public/locales/ko/common.json` - label 키 추가
+- `public/locales/en/common.json` - label 키 추가
+
+---
+
 ## [2.7.0] - 2026-01-20
 
 ### Added

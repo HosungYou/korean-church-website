@@ -35,7 +35,9 @@ export function useAdminAuth() {
             setAdmin(null)
             setError(sessionError?.message || null)
           }
-          router.replace('/admin/login')
+          if (!router.asPath.startsWith('/auth/callback')) {
+            router.replace('/admin/login')
+          }
           return
         }
 
@@ -112,15 +114,17 @@ export function useAdminAuth() {
 
     checkSession()
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('adminLoggedIn')
           localStorage.removeItem('adminUser')
           window.dispatchEvent(new Event('admin-auth-changed'))
         }
         setAdmin(null)
-        router.replace('/admin/login')
+        if (!router.asPath.startsWith('/auth/callback')) {
+          router.replace('/admin/login')
+        }
       }
     })
 

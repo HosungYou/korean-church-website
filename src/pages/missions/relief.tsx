@@ -2,6 +2,7 @@ import { GetStaticProps, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import Link from 'next/link'
 
 const ReliefMissionsPage: NextPage = () => {
@@ -118,73 +119,15 @@ const ReliefMissionsPage: NextPage = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section
-        className="relative min-h-[60vh] flex items-center"
-        style={{
-          background: 'linear-gradient(135deg, oklch(0.50 0.12 25), oklch(0.22 0.07 265))',
-        }}
-      >
-        {/* Grain overlay */}
-        <div
-          className="absolute inset-0 opacity-30 pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-          {/* Breadcrumb */}
-          <div className="mb-8 stagger-1" style={{ animation: 'fadeIn 0.6s ease-out forwards' }}>
-            <Link
-              href="/missions/relief"
-              className="text-xs font-medium tracking-[0.2em] uppercase"
-              style={{ color: 'oklch(0.72 0.10 75)' }}
-            >
-              {isKorean ? '선교' : 'Missions'} — {isKorean ? '구제선교' : 'Relief'}
-            </Link>
-          </div>
-
-          {/* Hero content */}
-          <div className="max-w-3xl">
-            <h1
-              className="font-headline font-black mb-6 stagger-2"
-              style={{
-                fontSize: 'clamp(2.5rem, 6vw, 4rem)',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-                color: 'oklch(0.98 0.01 75)',
-                animation: 'fadeIn 0.6s ease-out 0.1s forwards',
-                opacity: 0,
-              }}
-            >
-              {isKorean ? '구제선교' : 'Relief Missions'}
-            </h1>
-
-            <p
-              className="text-lg md:text-xl leading-relaxed stagger-3"
-              style={{
-                color: 'oklch(0.85 0.02 75)',
-                maxWidth: '600px',
-                animation: 'fadeIn 0.6s ease-out 0.2s forwards',
-                opacity: 0,
-              }}
-            >
-              {isKorean
-                ? '굶주리고, 아프고, 어려움에 처한 이웃을 돌보는 것은 그리스도의 사랑을 실천하는 것입니다. 함께 나눔의 손길을 전합니다.'
-                : 'Caring for the hungry, sick, and those in need is living out Christ\'s love. Together, we extend helping hands.'}
-            </p>
-          </div>
-
-          {/* Heart decorative element */}
-          <div
-            className="absolute bottom-0 right-0 w-72 h-72 opacity-10"
-            style={{
-              background: 'radial-gradient(circle, oklch(0.72 0.10 75) 0%, transparent 70%)',
-            }}
-          />
-        </div>
-      </section>
+      {/* Page Header */}
+      <PageHeader
+        label={isKorean ? '선교' : 'Missions'}
+        title={isKorean ? '구제선교' : 'Relief Missions'}
+        subtitle={isKorean
+          ? '굶주리고, 아프고, 어려움에 처한 이웃을 돌보는 것은 그리스도의 사랑을 실천하는 것입니다. 함께 나눔의 손길을 전합니다.'
+          : "Caring for the hungry, sick, and those in need is living out Christ's love. Together, we extend helping hands."
+        }
+      />
 
       {/* Relief Areas Section */}
       <section

@@ -2,40 +2,51 @@
   "project": {
     "name": "korean-church-website",
     "type": "next.js-webapp",
-    "version": "1.0.0",
+    "version": "2.7.1",
     "description": "한영 이중언어 교회 웹사이트"
   },
   "tech_stack": {
     "frontend": ["next.js@14", "typescript", "tailwindcss"],
     "auth": ["supabase-auth", "google-oauth"],
-    "database": ["firebase-firestore"],
+    "database": ["supabase-postgresql"],
     "i18n": ["next-i18next"],
     "deployment": ["vercel"]
+  },
+  "design_system": {
+    "name": "VS Design Diverge",
+    "philosophy": "Editorial Minimalism + 한국적 미학",
+    "color_system": "OKLCH",
+    "components": ["PageHeader", "card-paper", "card-accent", "btn-primary", "btn-secondary", "btn-accent"]
   },
   "agents": {
     "available": [
       "F1-FrontendAgent",
       "F2-AuthAgent",
-      "F3-FirestoreAgent",
+      "F3-SupabaseAgent",
       "F4-i18nAgent",
       "F5-ContentAgent",
       "F6-AdminAgent",
       "F7-SEOAgent"
     ],
-    "last_used": []
+    "last_used": ["F1-FrontendAgent", "F4-i18nAgent"]
   },
   "session": {
-    "current_id": null,
-    "history": []
+    "current_id": "7b3a8c3d-add6-40a2-b103-c3c42d8a012c",
+    "history": [
+      "2026-01-16_data-fetch-csp-fixes",
+      "2026-01-16_i18n-admin-locale-sync",
+      "2026-01-16_i18n-localepath-client",
+      "2026-01-20_bible-materials-banner-update"
+    ]
   },
   "action_items": {
     "open_count": 0,
     "in_progress_count": 0,
-    "last_updated": null
+    "last_updated": "2026-01-20T00:00:00Z"
   },
   "metadata": {
     "created_at": "2025-01-16T00:00:00Z",
-    "last_updated": "2025-01-16T00:00:00Z",
-    "schema_version": "1.0"
+    "last_updated": "2026-01-20T00:00:00Z",
+    "schema_version": "1.1"
   }
 }

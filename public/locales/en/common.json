@@ -28,13 +28,14 @@
     "sermons": "Sermons",
     "worship_info": "Worship Info",
     "sunday_sermon": "Sunday Sermons",
-    "wednesday_sermon": "Wednesday Sermons",
+    "wednesday_sermon": "Wednesday Bible Study",
     "service_info": "Service Guide",
     "korean_school": "Korean School",
     "training": "Discipleship Training",
     "qt": "QT (Devotion)",
     "bible_materials": "Bible Study Materials",
     "new_family_training": "New Family Training",
+    "new_family_education": "New Family Education",
     "new_family": "New Family Ministry",
     "new_family_registration": "New Family Registration",
     "missions": "Missions",
@@ -115,6 +116,7 @@
     "relief_missions": "Relief Missions",
     "new_family": "New Family",
     "new_family_registration": "New Family Registration",
+    "new_family_education": "New Family Education",
     "discipleship": "Discipleship",
     "training": "Training Programs",
     "qt": "QT (Devotion)",
@@ -132,6 +134,7 @@
     "settlement_info": "Settlement Info"
   },
   "bible_reading": {
+    "label": "Bible",
     "title": "QT (Devotion)",
     "description": "Sharing the grace of God's Word through daily Bible reading.",
     "today_reading": "Today's Reading",
@@ -143,6 +146,7 @@
     "select_plan": "Select a reading plan"
   },
   "bible_materials": {
+    "label": "Bible Study",
     "title": "Bible Study Materials",
     "description": "Resources and guides for reading through the Bible.",
     "old_testament": "Old Testament",

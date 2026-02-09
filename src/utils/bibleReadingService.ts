@@ -5,6 +5,7 @@ import type {
   BibleReadingPlanInsert,
   BibleReadingEntryInsert
 } from '../../types/supabase'
+import { parseLocalDate, toLocalDateString } from './dateHelpers'
 
 // ========== 읽기 계획 관련 함수 ==========
 
@@ -140,8 +141,8 @@ export async function getEntriesByPlan(planId: string) {
 
 // 특정 월의 읽기 항목 조회
 export async function getEntriesByMonth(planId: string, year: number, month: number) {
-  const startDate = new Date(year, month - 1, 1).toISOString().split('T')[0]
-  const endDate = new Date(year, month, 0).toISOString().split('T')[0]
+  const startDate = toLocalDateString(new Date(year, month - 1, 1))
+  const endDate = toLocalDateString(new Date(year, month, 0))
 
   const { data, error } = await supabase
     .from('bible_reading_entries')
@@ -161,7 +162,7 @@ export async function getEntriesByMonth(planId: string, year: number, month: num
 
 // 오늘의 읽기 항목 조회
 export async function getTodayReading(planId: string) {
-  const today = new Date().toISOString().split('T')[0]
+  const today = toLocalDateString()
 
   const { data, error } = await supabase
     .from('bible_reading_entries')
@@ -298,7 +299,7 @@ export function generateCalendarData(
   const prevMonth = new Date(year, month - 1, 0)
   for (let i = startDayOfWeek - 1; i >= 0; i--) {
     const dayOfMonth = prevMonth.getDate() - i
-    const date = new Date(year, month - 2, dayOfMonth).toISOString().split('T')[0]
+    const date = toLocalDateString(new Date(year, month - 2, dayOfMonth))
     calendar.push({
       date,
       dayOfMonth,
@@ -308,7 +309,7 @@ export function generateCalendarData(
 
   // 현재 달 날짜 채우기
   for (let day = 1; day <= lastDay.getDate(); day++) {
-    const date = new Date(year, month - 1, day).toISOString().split('T')[0]
+    const date = toLocalDateString(new Date(year, month - 1, day))
     const reading = readings.find(r => r.reading_date === date)
     calendar.push({
       date,
@@ -321,7 +322,7 @@ export function generateCalendarData(
   // 다음 달 날짜 채우기 (6주를 채우기 위해)
   const remainingDays = 42 - calendar.length
   for (let day = 1; day <= remainingDays; day++) {
-    const date = new Date(year, month, day).toISOString().split('T')[0]
+    const date = toLocalDateString(new Date(year, month, day))
     calendar.push({
       date,
       dayOfMonth: day,
@@ -339,7 +340,7 @@ export async function getBibleReadingStats(planId: string) {
     .select('id', { count: 'exact', head: true })
     .eq('plan_id', planId)
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = toLocalDateString()
   const { count: completedDays } = await supabase
     .from('bible_reading_entries')
     .select('id', { count: 'exact', head: true })
@@ -358,12 +359,12 @@ export async function getBibleReadingStats(planId: string) {
 const DAY_NAMES_KO = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
 
 export function getDayOfWeekKorean(dateString: string): string {
-  const date = new Date(dateString)
+  const date = parseLocalDate(dateString)
   return DAY_NAMES_KO[date.getDay()]
 }
 
 export function formatDateWithDay(dateString: string): string {
-  const date = new Date(dateString)
+  const date = parseLocalDate(dateString)
   const year = date.getFullYear()
   const month = date.getMonth() + 1
   const day = date.getDate()
@@ -372,7 +373,7 @@ export function formatDateWithDay(dateString: string): string {
 }
 
 export function formatShortDate(dateString: string): string {
-  const date = new Date(dateString)
+  const date = parseLocalDate(dateString)
   const month = date.getMonth() + 1
   const day = date.getDate()
   const dayOfWeek = DAY_NAMES_KO[date.getDay()].slice(0, 1) // 첫 글자만

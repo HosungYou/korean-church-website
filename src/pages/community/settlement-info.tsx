@@ -2,6 +2,7 @@ import { GetStaticProps, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import Link from 'next/link'
 
 const SettlementInfoPage: NextPage = () => {
@@ -258,72 +259,14 @@ const SettlementInfoPage: NextPage = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section
-        className="relative min-h-[50vh] flex items-center"
-        style={{
-          background: 'linear-gradient(135deg, oklch(0.35 0.08 180), oklch(0.22 0.07 265))',
-        }}
-      >
-        {/* Grain overlay */}
-        <div
-          className="absolute inset-0 opacity-30 pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-          {/* Breadcrumb */}
-          <div className="mb-8" style={{ animation: 'fadeIn 0.6s ease-out forwards' }}>
-            <span
-              className="text-xs font-medium tracking-[0.2em] uppercase"
-              style={{ color: 'oklch(0.72 0.10 75)' }}
-            >
-              {isKorean ? '알림 및 공지' : 'Announcements'} — {isKorean ? '정착 도움 정보' : 'Settlement Info'}
-            </span>
-          </div>
-
-          {/* Hero content */}
-          <div className="max-w-3xl">
-            <h1
-              className="font-headline font-black mb-6"
-              style={{
-                fontSize: 'clamp(2.5rem, 6vw, 4rem)',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-                color: 'oklch(0.98 0.01 75)',
-                animation: 'fadeIn 0.6s ease-out 0.1s forwards',
-                opacity: 0,
-              }}
-            >
-              {isKorean ? 'State College 정착 도움 정보' : 'State College Settlement Guide'}
-            </h1>
-
-            <p
-              className="text-lg md:text-xl leading-relaxed"
-              style={{
-                color: 'oklch(0.85 0.02 75)',
-                maxWidth: '600px',
-                animation: 'fadeIn 0.6s ease-out 0.2s forwards',
-                opacity: 0,
-              }}
-            >
-              {isKorean
-                ? 'State College에 새로 오시는 분들을 위한 생활 정보 모음입니다. 주거, 학교, 의료, 쇼핑, 행정 절차 등 필요한 정보를 한곳에서 확인하세요.'
-                : 'A collection of helpful information for those new to State College. Find everything you need about housing, schools, medical, shopping, and administrative procedures.'}
-            </p>
-          </div>
-
-          {/* Decorative element */}
-          <div
-            className="absolute bottom-0 right-0 w-72 h-72 opacity-10"
-            style={{
-              background: 'radial-gradient(circle, oklch(0.72 0.10 75) 0%, transparent 70%)',
-            }}
-          />
-        </div>
-      </section>
+      {/* Page Header - Photo Composite Style */}
+      <PageHeader
+        label={isKorean ? '알림 및 공지' : 'Announcements'}
+        title={isKorean ? 'State College 정착 도움 정보' : 'State College Settlement Guide'}
+        subtitle={isKorean
+          ? 'State College에 새로 오시는 분들을 위한 생활 정보 모음입니다.'
+          : 'A collection of helpful information for those new to State College.'}
+      />
 
       {/* Quick Tips Section */}
       <section

@@ -307,6 +307,8 @@ export interface Database {
           thumbnail_url: string | null
           is_featured: boolean
           view_count: number
+          attachment_url: string | null
+          attachment_name: string | null
           status: 'draft' | 'published'
           created_at: string
           updated_at: string
@@ -325,6 +327,8 @@ export interface Database {
           thumbnail_url?: string | null
           is_featured?: boolean
           view_count?: number
+          attachment_url?: string | null
+          attachment_name?: string | null
           status?: 'draft' | 'published'
           created_at?: string
           updated_at?: string
@@ -343,6 +347,8 @@ export interface Database {
           thumbnail_url?: string | null
           is_featured?: boolean
           view_count?: number
+          attachment_url?: string | null
+          attachment_name?: string | null
           status?: 'draft' | 'published'
           created_at?: string
           updated_at?: string

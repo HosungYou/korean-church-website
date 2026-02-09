@@ -4,7 +4,8 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
-import { Book, FileText, Video, Download, Eye, ChevronRight } from 'lucide-react'
+import PageHeader from '@/components/PageHeader'
+import { Book, FileText, Video, Eye, ChevronRight } from 'lucide-react'
 import {
   getMaterials,
   getMaterialCountByCategory,
@@ -12,6 +13,8 @@ import {
   type BibleMaterialCategory,
   CATEGORY_LABELS,
   CATEGORY_COLORS,
+  OLD_TESTAMENT_BOOKS,
+  NEW_TESTAMENT_BOOKS,
 } from '@/utils/bibleMaterialsService'
 
 // ===========================================
@@ -26,29 +29,53 @@ interface BibleMaterialsPageProps {
 
 const BibleMaterialsPage: NextPage<BibleMaterialsPageProps> = ({
   initialMaterials,
-  categoryCounts,
+  categoryCounts: initialCategoryCounts,
 }) => {
   const { t } = useTranslation('common')
   const [materials, setMaterials] = useState<BibleMaterial[]>(initialMaterials)
+  const [categoryCounts, setCategoryCounts] = useState(initialCategoryCounts)
   const [selectedCategory, setSelectedCategory] = useState<BibleMaterialCategory | 'all'>('all')
+  const [selectedBook, setSelectedBook] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
-  // Filter materials by category
-  const filteredMaterials = useMemo(() => {
-    if (selectedCategory === 'all') {
-      return materials
+  // Load category counts on mount (클라이언트에서 동적으로 카운트 업데이트)
+  useEffect(() => {
+    async function loadCounts() {
+      try {
+        const counts = await getMaterialCountByCategory()
+        setCategoryCounts(counts)
+      } catch (error) {
+        console.error('Error loading category counts:', error)
+      }
     }
-    return materials.filter((m) => m.category === selectedCategory)
-  }, [materials, selectedCategory])
+    loadCounts()
+  }, [])
 
-  // Load materials when category changes (client-side)
+  // Filter materials by category and book
+  const filteredMaterials = useMemo(() => {
+    let result = materials
+    if (selectedCategory !== 'all') {
+      result = result.filter((m) => m.category === selectedCategory)
+    }
+    if (selectedBook) {
+      result = result.filter((m) => m.book_name === selectedBook)
+    }
+    return result
+  }, [materials, selectedCategory, selectedBook])
+
+  // Load materials when filter changes (client-side)
   useEffect(() => {
     async function loadMaterials() {
       setLoading(true)
       try {
-        const data = await getMaterials(
-          selectedCategory === 'all' ? {} : { category: selectedCategory }
-        )
+        const filters: { category?: BibleMaterialCategory; bookName?: string } = {}
+        if (selectedCategory !== 'all') {
+          filters.category = selectedCategory
+        }
+        if (selectedBook) {
+          filters.bookName = selectedBook
+        }
+        const data = await getMaterials(filters)
         setMaterials(data)
       } catch (error) {
         console.error('Error loading materials:', error)
@@ -58,15 +85,42 @@ const BibleMaterialsPage: NextPage<BibleMaterialsPageProps> = ({
     }
 
     // Only reload if we have initial data (meaning we're client-side navigating)
-    if (initialMaterials.length > 0 || selectedCategory !== 'all') {
+    if (initialMaterials.length > 0 || selectedCategory !== 'all' || selectedBook) {
       loadMaterials()
     }
-  }, [selectedCategory])
+  }, [selectedCategory, selectedBook])
+
+  // Reset book selection when category changes
+  const handleCategoryChange = (category: BibleMaterialCategory | 'all') => {
+    setSelectedCategory(category)
+    setSelectedBook('')
+  }
+
+  // Handle book selection from dropdown
+  const handleBookChange = (bookName: string) => {
+    setSelectedBook(bookName)
+    // Auto-detect category from book name
+    if (bookName) {
+      const oldBook = OLD_TESTAMENT_BOOKS.find(b => b.name === bookName)
+      if (oldBook) {
+        setSelectedCategory('old_testament')
+      } else {
+        setSelectedCategory('new_testament')
+      }
+    }
+  }
 
   const totalCount = categoryCounts.old_testament + categoryCounts.new_testament
 
   return (
     <Layout>
+      {/* Page Header - Editorial Style with Image Background */}
+      <PageHeader
+        label={t('bible_materials.label') || '성경통독'}
+        title={t('bible_materials.title') || '성경통독 자료'}
+        subtitle={t('bible_materials.description') || '성경 통독을 위한 자료와 해설을 제공합니다.'}
+      />
+
       <div
         className="min-h-screen relative"
         style={{ background: 'oklch(0.985 0.003 75)' }}
@@ -74,87 +128,113 @@ const BibleMaterialsPage: NextPage<BibleMaterialsPageProps> = ({
         {/* Grain overlay */}
         <div className="bg-grain absolute inset-0 pointer-events-none" />
 
-        {/* Header */}
-        <div
-          className="relative py-16"
-          style={{
-            background: 'linear-gradient(135deg, oklch(0.22 0.07 265) 0%, oklch(0.30 0.09 265) 100%)',
-          }}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div
-                className="w-12 h-12 rounded-sm flex items-center justify-center"
-                style={{ background: 'oklch(0.72 0.10 75 / 0.2)' }}
-              >
-                <Book className="w-6 h-6" style={{ color: 'oklch(0.85 0.08 75)' }} />
-              </div>
-              <div>
-                <h1
-                  className="font-headline font-black text-3xl md:text-4xl"
-                  style={{ color: 'oklch(0.98 0.003 75)', letterSpacing: '-0.02em' }}
-                >
-                  {t('bible_materials.title')}
-                </h1>
-                <p className="text-sm mt-1" style={{ color: 'oklch(0.85 0.02 75)' }}>
-                  {t('bible_materials.description')}
-                </p>
-              </div>
-            </div>
-
-            {/* Category Filter */}
-            <div className="mt-8 flex flex-wrap gap-3">
+        {/* Filter Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-4 relative">
+          {/* Category Filter */}
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <button
+              onClick={() => handleCategoryChange('all')}
+              className={`px-4 py-2.5 rounded-sm text-sm font-medium transition-all duration-200 ${
+                selectedCategory === 'all' && !selectedBook ? 'scale-[1.02]' : ''
+              }`}
+              style={{
+                background: selectedCategory === 'all' && !selectedBook
+                  ? 'oklch(0.45 0.12 265)'
+                  : 'oklch(0.97 0.005 75)',
+                color: selectedCategory === 'all' && !selectedBook
+                  ? 'oklch(0.98 0.003 75)'
+                  : 'oklch(0.35 0.02 265)',
+                border: `1px solid ${
+                  selectedCategory === 'all' && !selectedBook
+                    ? 'oklch(0.45 0.12 265)'
+                    : 'oklch(0.88 0.005 75)'
+                }`,
+              }}
+            >
+              {t('bible_materials.all')} ({totalCount})
+            </button>
+            {(['old_testament', 'new_testament'] as BibleMaterialCategory[]).map((cat) => (
               <button
-                onClick={() => setSelectedCategory('all')}
-                className={`px-4 py-2 rounded-sm text-sm font-medium transition-all duration-200 ${
-                  selectedCategory === 'all' ? 'scale-105' : ''
+                key={cat}
+                onClick={() => handleCategoryChange(cat)}
+                className={`px-4 py-2.5 rounded-sm text-sm font-medium transition-all duration-200 ${
+                  selectedCategory === cat && !selectedBook ? 'scale-[1.02]' : ''
                 }`}
                 style={{
-                  background: selectedCategory === 'all'
-                    ? 'oklch(0.72 0.10 75)'
-                    : 'oklch(0.98 0.003 75 / 0.15)',
-                  color: selectedCategory === 'all'
-                    ? 'oklch(0.15 0.05 75)'
-                    : 'oklch(0.98 0.003 75)',
+                  background: selectedCategory === cat && !selectedBook
+                    ? CATEGORY_COLORS[cat]
+                    : 'oklch(0.97 0.005 75)',
+                  color: selectedCategory === cat && !selectedBook
+                    ? 'oklch(0.98 0.003 75)'
+                    : 'oklch(0.35 0.02 265)',
                   border: `1px solid ${
-                    selectedCategory === 'all'
-                      ? 'oklch(0.72 0.10 75)'
-                      : 'oklch(0.98 0.003 75 / 0.3)'
+                    selectedCategory === cat && !selectedBook
+                      ? CATEGORY_COLORS[cat]
+                      : 'oklch(0.88 0.005 75)'
                   }`,
                 }}
               >
-                {t('bible_materials.all')} ({totalCount})
+                {CATEGORY_LABELS[cat]} ({categoryCounts[cat]})
               </button>
-              {(['old_testament', 'new_testament'] as BibleMaterialCategory[]).map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-sm text-sm font-medium transition-all duration-200 ${
-                    selectedCategory === cat ? 'scale-105' : ''
-                  }`}
-                  style={{
-                    background: selectedCategory === cat
-                      ? CATEGORY_COLORS[cat]
-                      : 'oklch(0.98 0.003 75 / 0.15)',
-                    color: selectedCategory === cat
-                      ? 'oklch(0.98 0.003 75)'
-                      : 'oklch(0.98 0.003 75)',
-                    border: `1px solid ${
-                      selectedCategory === cat
-                        ? CATEGORY_COLORS[cat]
-                        : 'oklch(0.98 0.003 75 / 0.3)'
-                    }`,
-                  }}
-                >
-                  {CATEGORY_LABELS[cat]} ({categoryCounts[cat]})
-                </button>
-              ))}
-            </div>
+            ))}
+          </div>
+
+          {/* Bible Book Dropdown */}
+          <div className="flex flex-wrap items-center gap-3">
+            <select
+              value={selectedBook}
+              onChange={(e) => handleBookChange(e.target.value)}
+              className="px-4 py-2.5 rounded-sm text-sm font-medium transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2"
+              style={{
+                background: selectedBook
+                  ? 'oklch(0.45 0.12 265)'
+                  : 'oklch(0.97 0.005 75)',
+                color: selectedBook
+                  ? 'oklch(0.98 0.003 75)'
+                  : 'oklch(0.35 0.02 265)',
+                border: `1px solid ${
+                  selectedBook
+                    ? 'oklch(0.45 0.12 265)'
+                    : 'oklch(0.88 0.005 75)'
+                }`,
+                minWidth: '200px',
+                outlineColor: 'oklch(0.45 0.12 265)',
+              }}
+            >
+              <option value="">성경책 선택 (66권)</option>
+              <optgroup label="━━ 구약 (39권) ━━">
+                {OLD_TESTAMENT_BOOKS.map((book) => (
+                  <option key={book.name} value={book.name}>
+                    {book.name} ({book.abbr})
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="━━ 신약 (27권) ━━">
+                {NEW_TESTAMENT_BOOKS.map((book) => (
+                  <option key={book.name} value={book.name}>
+                    {book.name} ({book.abbr})
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+            {selectedBook && (
+              <button
+                onClick={() => setSelectedBook('')}
+                className="px-3 py-2 rounded-sm text-xs font-medium transition-all duration-200 hover:scale-[1.02]"
+                style={{
+                  background: 'oklch(0.55 0.15 25 / 0.1)',
+                  color: 'oklch(0.55 0.15 25)',
+                  border: '1px solid oklch(0.55 0.15 25 / 0.3)',
+                }}
+              >
+                ✕ 초기화
+              </button>
+            )}
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
           {loading ? (
             <div className="flex justify-center py-20">
               <div
@@ -184,75 +264,96 @@ const BibleMaterialsPage: NextPage<BibleMaterialsPageProps> = ({
               </h3>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredMaterials.map((material, index) => (
                 <Link
                   key={material.id}
                   href={`/bible-materials/${material.id}`}
-                  className={`group block rounded-sm overflow-hidden transition-all duration-300 hover:translate-y-[-4px] stagger-${(index % 6) + 1}`}
+                  className={`group block rounded-sm overflow-hidden transition-all duration-500 hover:translate-y-[-6px] stagger-${(index % 6) + 1}`}
                   style={{
-                    background: 'oklch(0.985 0.003 75)',
-                    border: '1px solid oklch(0.92 0.005 75)',
-                    boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)',
+                    background: 'oklch(0.99 0.002 75)',
+                    border: '1px solid oklch(0.90 0.005 75)',
+                    boxShadow: '0 4px 20px oklch(0.30 0.09 265 / 0.06)',
                   }}
                 >
-                  {/* Category Badge */}
+                  {/* Category Gradient Bar */}
                   <div
-                    className="h-1.5"
-                    style={{ background: CATEGORY_COLORS[material.category] }}
+                    className="h-2"
+                    style={{
+                      background: `linear-gradient(90deg, ${CATEGORY_COLORS[material.category]}, oklch(0.72 0.10 75))`,
+                    }}
                   />
 
-                  <div className="p-6">
-                    {/* Category & Book */}
-                    <div className="flex items-center gap-2 mb-3">
+                  <div className="p-7">
+                    {/* Category & Book Badges */}
+                    <div className="flex flex-wrap items-center gap-2 mb-4">
                       <span
-                        className="text-xs font-medium px-2 py-0.5 rounded-sm"
+                        className="text-[10px] font-bold px-2.5 py-1 rounded-sm tracking-wide uppercase"
                         style={{
-                          background: `${CATEGORY_COLORS[material.category]}20`,
-                          color: CATEGORY_COLORS[material.category],
+                          background: CATEGORY_COLORS[material.category],
+                          color: 'oklch(0.98 0.003 75)',
                         }}
                       >
                         {CATEGORY_LABELS[material.category]}
                       </span>
                       {material.book_name && (
                         <span
-                          className="text-xs"
-                          style={{ color: 'oklch(0.55 0.01 75)' }}
+                          className="text-xs font-medium px-2.5 py-1 rounded-sm"
+                          style={{
+                            background: 'oklch(0.45 0.12 265 / 0.08)',
+                            color: 'oklch(0.40 0.08 265)',
+                          }}
                         >
-                          {material.book_name}
+                          {material.book_name.split(',').join(', ')}
                           {material.chapter_range && ` ${material.chapter_range}`}
                         </span>
                       )}
                     </div>
 
+                    {/* Gold Accent Line */}
+                    <div
+                      className="h-0.5 w-10 mb-4 transition-all duration-300 group-hover:w-16"
+                      style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }}
+                    />
+
                     {/* Title */}
                     <h2
-                      className="font-headline font-bold text-lg mb-2 line-clamp-2 group-hover:underline underline-offset-4"
-                      style={{ color: 'oklch(0.22 0.07 265)' }}
+                      className="font-headline font-black text-xl mb-3 line-clamp-2 transition-colors duration-300"
+                      style={{
+                        color: 'oklch(0.20 0.06 265)',
+                        letterSpacing: '-0.01em',
+                        lineHeight: 1.3,
+                      }}
                     >
-                      {material.title}
+                      <span className="group-hover:underline underline-offset-4 decoration-2" style={{ textDecorationColor: 'oklch(0.72 0.10 75)' }}>
+                        {material.title}
+                      </span>
                     </h2>
 
                     {/* Description */}
                     {material.description && (
                       <p
-                        className="text-sm line-clamp-2 mb-4"
-                        style={{ color: 'oklch(0.55 0.01 75)' }}
+                        className="text-sm line-clamp-2 mb-5 leading-relaxed"
+                        style={{ color: 'oklch(0.50 0.02 75)' }}
                       >
                         {material.description}
                       </p>
                     )}
 
-                    {/* Meta */}
+                    {/* Meta Footer */}
                     <div
-                      className="flex items-center justify-between pt-4"
+                      className="flex items-center justify-between pt-5"
                       style={{ borderTop: '1px solid oklch(0.92 0.005 75)' }}
                     >
+                      {/* Resource Badges */}
                       <div className="flex items-center gap-3">
                         {material.file_url && (
                           <span
-                            className="flex items-center gap-1 text-xs"
-                            style={{ color: 'oklch(0.55 0.01 75)' }}
+                            className="flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-sm"
+                            style={{
+                              background: 'oklch(0.55 0.18 25 / 0.08)',
+                              color: 'oklch(0.50 0.15 25)',
+                            }}
                           >
                             <FileText className="w-3.5 h-3.5" />
                             PDF
@@ -260,25 +361,37 @@ const BibleMaterialsPage: NextPage<BibleMaterialsPageProps> = ({
                         )}
                         {material.video_url && (
                           <span
-                            className="flex items-center gap-1 text-xs"
-                            style={{ color: 'oklch(0.55 0.01 75)' }}
+                            className="flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-sm"
+                            style={{
+                              background: 'oklch(0.55 0.15 25 / 0.08)',
+                              color: 'oklch(0.50 0.12 25)',
+                            }}
                           >
                             <Video className="w-3.5 h-3.5" />
                             영상
                           </span>
                         )}
                         <span
-                          className="flex items-center gap-1 text-xs"
+                          className="flex items-center gap-1.5 text-xs"
                           style={{ color: 'oklch(0.55 0.01 75)' }}
                         >
-                          <Eye className="w-3.5 h-3.5" />
+                          <Eye className="w-3.5 h-3.5" style={{ color: 'oklch(0.72 0.10 75)' }} />
                           {material.view_count}
                         </span>
                       </div>
-                      <ChevronRight
-                        className="w-4 h-4 transition-transform group-hover:translate-x-1"
-                        style={{ color: 'oklch(0.45 0.12 265)' }}
-                      />
+
+                      {/* Arrow */}
+                      <div
+                        className="w-8 h-8 rounded-sm flex items-center justify-center transition-all duration-300 group-hover:translate-x-1"
+                        style={{
+                          background: 'oklch(0.45 0.12 265 / 0.08)',
+                        }}
+                      >
+                        <ChevronRight
+                          className="w-4 h-4"
+                          style={{ color: 'oklch(0.45 0.12 265)' }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </Link>

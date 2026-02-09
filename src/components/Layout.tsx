@@ -57,7 +57,7 @@ const getBreadcrumbs = (pathname: string, translate: (key: string) => string): B
     'missionary-support': 'missionary_support',
     'short-term': 'short_term_missions',
     'relief': 'relief_missions',
-    'new-family': 'new_family',
+    'new-family': 'new_family_education',
     'new-family-registration': 'new_family_registration',
     'discipleship': 'discipleship',
     'training': 'training',
@@ -104,7 +104,8 @@ const navigationConfig: NavItem[] = [
     dropdown: [
       { labelKey: 'nav_links.qt', href: '/bible-reading' },
       { labelKey: 'nav_links.bible_materials', href: '/bible-materials' },
-      { labelKey: 'nav_links.new_family_training', href: '/training' },
+      { labelKey: 'nav_links.training', href: '/training' },
+      { labelKey: 'nav_links.new_family_education', href: '/training/new-family' },
     ],
   },
   {

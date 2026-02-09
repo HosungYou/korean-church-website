@@ -3,6 +3,7 @@ import { GetStaticProps, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import { UserPlus, Check, AlertCircle, Mail, Phone, MapPin, Calendar, Church } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 
@@ -109,42 +110,19 @@ const NewFamilyRegistrationPage: NextPage = () => {
 
   return (
     <Layout>
+      {/* Page Header */}
+      <PageHeader
+        label={(t('new_family.label') as string) || '새가족'}
+        title={t('new_family.title') as string}
+        subtitle={t('new_family.description') as string}
+      />
+
       <div
         className="min-h-screen relative"
         style={{ background: 'oklch(0.97 0.005 75)' }}
       >
         {/* Grain overlay */}
         <div className="bg-grain absolute inset-0 pointer-events-none" />
-
-        {/* Header */}
-        <div
-          className="relative py-16"
-          style={{
-            background: 'linear-gradient(135deg, oklch(0.22 0.07 265) 0%, oklch(0.30 0.09 265) 100%)',
-          }}
-        >
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div
-                className="w-12 h-12 rounded-sm flex items-center justify-center"
-                style={{ background: 'oklch(0.72 0.10 75 / 0.2)' }}
-              >
-                <UserPlus className="w-6 h-6" style={{ color: 'oklch(0.85 0.08 75)' }} />
-              </div>
-              <div>
-                <h1
-                  className="font-headline font-black text-3xl md:text-4xl"
-                  style={{ color: 'oklch(0.98 0.003 75)', letterSpacing: '-0.02em' }}
-                >
-                  {t('new_family.title')}
-                </h1>
-                <p className="text-sm mt-1" style={{ color: 'oklch(0.85 0.02 75)' }}>
-                  {t('new_family.description')}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Main Content */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative">

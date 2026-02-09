@@ -2,6 +2,7 @@ import { GetStaticProps, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import Link from 'next/link'
 
 const MissionarySupportPage: NextPage = () => {
@@ -70,73 +71,15 @@ const MissionarySupportPage: NextPage = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section
-        className="relative min-h-[60vh] flex items-center"
-        style={{
-          background: 'linear-gradient(135deg, oklch(0.22 0.07 265), oklch(0.15 0.05 265))',
-        }}
-      >
-        {/* Grain overlay */}
-        <div
-          className="absolute inset-0 opacity-30 pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-          {/* Breadcrumb */}
-          <div className="mb-8 stagger-1" style={{ animation: 'fadeIn 0.6s ease-out forwards' }}>
-            <Link
-              href="/missions/missionary-support"
-              className="text-xs font-medium tracking-[0.2em] uppercase"
-              style={{ color: 'oklch(0.72 0.10 75)' }}
-            >
-              {isKorean ? '선교' : 'Missions'} — {isKorean ? '선교사 지원' : 'Missionary Support'}
-            </Link>
-          </div>
-
-          {/* Hero content */}
-          <div className="max-w-3xl">
-            <h1
-              className="font-headline font-black mb-6 stagger-2"
-              style={{
-                fontSize: 'clamp(2.5rem, 6vw, 4rem)',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-                color: 'oklch(0.98 0.01 75)',
-                animation: 'fadeIn 0.6s ease-out 0.1s forwards',
-                opacity: 0,
-              }}
-            >
-              {isKorean ? '선교사 지원' : 'Missionary Support'}
-            </h1>
-
-            <p
-              className="text-lg md:text-xl leading-relaxed stagger-3"
-              style={{
-                color: 'oklch(0.85 0.02 75)',
-                maxWidth: '600px',
-                animation: 'fadeIn 0.6s ease-out 0.2s forwards',
-                opacity: 0,
-              }}
-            >
-              {isKorean
-                ? '전 세계에서 복음을 전하는 선교사님들을 기도와 물질로 후원합니다. 함께 선교의 사명을 감당합니다.'
-                : 'We support missionaries spreading the Gospel worldwide through prayer and financial support. Together, we fulfill the Great Commission.'}
-            </p>
-          </div>
-
-          {/* Decorative element */}
-          <div
-            className="absolute bottom-0 right-0 w-64 h-64 opacity-10"
-            style={{
-              background: 'radial-gradient(circle, oklch(0.72 0.10 75) 0%, transparent 70%)',
-            }}
-          />
-        </div>
-      </section>
+      {/* Page Header */}
+      <PageHeader
+        label={isKorean ? '선교' : 'Missions'}
+        title={isKorean ? '선교사 지원' : 'Missionary Support'}
+        subtitle={isKorean
+          ? '전 세계에서 복음을 전하는 선교사님들을 기도와 물질로 후원합니다. 함께 선교의 사명을 감당합니다.'
+          : 'We support missionaries spreading the Gospel worldwide through prayer and financial support. Together, we fulfill the Great Commission.'
+        }
+      />
 
       {/* Support Methods Section */}
       <section

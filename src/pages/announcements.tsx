@@ -2,6 +2,7 @@ import type { GetStaticProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -78,72 +79,15 @@ const Announcements = ({ posts: initialPosts }: AnnouncementsPageProps) => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section
-        className="relative min-h-[45vh] flex items-center"
-        style={{
-          background: 'linear-gradient(135deg, oklch(0.22 0.07 265), oklch(0.15 0.05 265))',
-        }}
-      >
-        {/* Grain overlay */}
-        <div
-          className="absolute inset-0 opacity-30 pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-          {/* Breadcrumb */}
-          <div className="mb-8" style={{ animation: 'fadeIn 0.6s ease-out forwards' }}>
-            <span
-              className="text-xs font-medium tracking-[0.2em] uppercase"
-              style={{ color: 'oklch(0.72 0.10 75)' }}
-            >
-              {isKorean ? '알림 및 공지' : 'Announcements'}
-            </span>
-          </div>
-
-          {/* Hero content */}
-          <div className="max-w-3xl">
-            <h1
-              className="font-headline font-black mb-6"
-              style={{
-                fontSize: 'clamp(2.5rem, 6vw, 4rem)',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-                color: 'oklch(0.98 0.01 75)',
-                animation: 'fadeIn 0.6s ease-out 0.1s forwards',
-                opacity: 0,
-              }}
-            >
-              {isKorean ? '공지사항' : 'Announcements'}
-            </h1>
-
-            <p
-              className="text-lg md:text-xl leading-relaxed"
-              style={{
-                color: 'oklch(0.85 0.02 75)',
-                maxWidth: '600px',
-                animation: 'fadeIn 0.6s ease-out 0.2s forwards',
-                opacity: 0,
-              }}
-            >
-              {isKorean
-                ? '스테이트 칼리지 한인교회의 소식과 공지사항을 확인하세요.'
-                : 'Stay updated with news and announcements from State College Korean Church.'}
-            </p>
-          </div>
-
-          {/* Decorative element */}
-          <div
-            className="absolute bottom-0 right-0 w-64 h-64 opacity-10"
-            style={{
-              background: 'radial-gradient(circle, oklch(0.72 0.10 75) 0%, transparent 70%)',
-            }}
-          />
-        </div>
-      </section>
+      {/* Page Header */}
+      <PageHeader
+        label={isKorean ? '알림 및 공지' : 'News & Updates'}
+        title={isKorean ? '공지사항' : 'Announcements'}
+        subtitle={isKorean
+          ? '스테이트 칼리지 한인교회의 소식과 공지사항을 확인하세요.'
+          : 'Stay updated with news and announcements from State College Korean Church.'
+        }
+      />
 
       {/* Main Content */}
       <section

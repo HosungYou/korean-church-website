@@ -16,6 +16,9 @@ import {
   createMaterial,
   type BibleMaterialCategory,
   CATEGORY_LABELS,
+  OLD_TESTAMENT_BOOKS,
+  NEW_TESTAMENT_BOOKS,
+  getCategoryByBookName,
 } from '@/utils/bibleMaterialsService'
 import { supabase } from '../../../../lib/supabase'
 
@@ -49,10 +52,22 @@ const AdminBibleMaterialNewPage: NextPage = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }))
+  }
+
+  const toggleBookSelection = (bookName: string) => {
+    const currentBooks = formData.book_name ? formData.book_name.split(',').filter(Boolean) : []
+    const index = currentBooks.indexOf(bookName)
+    if (index >= 0) {
+      currentBooks.splice(index, 1)
+    } else {
+      currentBooks.push(bookName)
+    }
+    setFormData({ ...formData, book_name: currentBooks.join(',') })
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,13 +80,13 @@ const AdminBibleMaterialNewPage: NextPage = () => {
       const fileName = `bible-materials/${Date.now()}.${fileExt}`
 
       const { error: uploadError } = await supabase.storage
-        .from('uploads')
+        .from('bible-materials')
         .upload(fileName, file)
 
       if (uploadError) throw uploadError
 
       const { data: { publicUrl } } = supabase.storage
-        .from('uploads')
+        .from('bible-materials')
         .getPublicUrl(fileName)
 
       setFormData((prev) => ({
@@ -211,7 +226,7 @@ const AdminBibleMaterialNewPage: NextPage = () => {
             </div>
 
             {/* Category & Book */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <label
                   className="block text-sm font-medium mb-2"
@@ -236,25 +251,28 @@ const AdminBibleMaterialNewPage: NextPage = () => {
               </div>
 
               <div>
-                <label
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: 'oklch(0.35 0.02 265)' }}
-                >
-                  성경 이름
+                <label className="block text-sm font-medium mb-1" style={{ color: 'oklch(0.35 0.02 265)' }}>
+                  성경책 (복수 선택 가능)
                 </label>
-                <input
-                  type="text"
-                  name="book_name"
-                  value={formData.book_name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2.5 rounded-sm text-sm focus:outline-none focus:ring-2"
-                  style={{
-                    background: 'oklch(0.97 0.005 75)',
-                    border: '1px solid oklch(0.88 0.005 75)',
-                    color: 'oklch(0.25 0.05 265)',
-                  }}
-                  placeholder="예: 창세기"
-                />
+                <div className="text-sm mb-2" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                  {formData.book_name || '선택되지 않음'}
+                </div>
+                <div className="max-h-48 overflow-y-auto p-3 rounded-sm" style={{ background: 'oklch(0.97 0.005 75)', border: '1px solid oklch(0.88 0.005 75)' }}>
+                  {(formData.category === 'old_testament' ? OLD_TESTAMENT_BOOKS : NEW_TESTAMENT_BOOKS).map((book) => {
+                    const isSelected = formData.book_name?.split(',').includes(book.name) || false
+                    return (
+                      <label key={book.name} className="flex items-center gap-2 py-1 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleBookSelection(book.name)}
+                          className="rounded"
+                        />
+                        <span style={{ color: 'oklch(0.25 0.05 265)' }}>{book.name}</span>
+                      </label>
+                    )
+                  })}
+                </div>
               </div>
 
               <div>

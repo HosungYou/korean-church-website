@@ -19,6 +19,9 @@ import {
   type BibleMaterial,
   type BibleMaterialCategory,
   CATEGORY_LABELS,
+  OLD_TESTAMENT_BOOKS,
+  NEW_TESTAMENT_BOOKS,
+  getCategoryByBookName,
 } from '@/utils/bibleMaterialsService'
 import { supabase } from '../../../../lib/supabase'
 
@@ -75,6 +78,18 @@ const AdminBibleMaterialEditPage: NextPage<EditPageProps> = ({ material }) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target
+
+    // 성경책 선택 시 자동으로 카테고리 설정
+    if (name === 'book_name' && value) {
+      const category = getCategoryByBookName(value)
+      setFormData((prev) => ({
+        ...prev,
+        book_name: value,
+        category: category || prev.category,
+      }))
+      return
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
@@ -91,13 +106,13 @@ const AdminBibleMaterialEditPage: NextPage<EditPageProps> = ({ material }) => {
       const fileName = `bible-materials/${Date.now()}.${fileExt}`
 
       const { error: uploadError } = await supabase.storage
-        .from('uploads')
+        .from('bible-materials')
         .upload(fileName, file)
 
       if (uploadError) throw uploadError
 
       const { data: { publicUrl } } = supabase.storage
-        .from('uploads')
+        .from('bible-materials')
         .getPublicUrl(fileName)
 
       setFormData((prev) => ({
@@ -307,8 +322,7 @@ const AdminBibleMaterialEditPage: NextPage<EditPageProps> = ({ material }) => {
                 >
                   성경 이름
                 </label>
-                <input
-                  type="text"
+                <select
                   name="book_name"
                   value={formData.book_name}
                   onChange={handleInputChange}
@@ -318,8 +332,23 @@ const AdminBibleMaterialEditPage: NextPage<EditPageProps> = ({ material }) => {
                     border: '1px solid oklch(0.88 0.005 75)',
                     color: 'oklch(0.25 0.05 265)',
                   }}
-                  placeholder="예: 창세기"
-                />
+                >
+                  <option value="">성경책 선택 (66권)</option>
+                  <optgroup label="━━ 구약 (39권) ━━">
+                    {OLD_TESTAMENT_BOOKS.map((book) => (
+                      <option key={book.name} value={book.name}>
+                        {book.name} ({book.abbr})
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="━━ 신약 (27권) ━━">
+                    {NEW_TESTAMENT_BOOKS.map((book) => (
+                      <option key={book.name} value={book.name}>
+                        {book.name} ({book.abbr})
+                      </option>
+                    ))}
+                  </optgroup>
+                </select>
               </div>
 
               <div>

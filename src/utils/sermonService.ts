@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import type { Sermon, SermonInsert } from '../../types/supabase'
+import { toLocalDateString } from './dateHelpers'
 
 export type SermonType = 'sunday' | 'wednesday' | 'friday' | 'special'
 
@@ -183,6 +184,48 @@ export async function deleteSermon(id: string) {
   return true
 }
 
+// 설교 첨부파일 업로드 (Supabase Storage)
+export async function uploadSermonAttachment(file: File, sermonDate: string) {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `sermon_${sermonDate.replace(/-/g, '')}_${Date.now()}.${fileExt}`
+
+  const { data, error } = await supabase.storage
+    .from('sermons')
+    .upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: true,
+    })
+
+  if (error) {
+    console.error('Error uploading sermon attachment:', error)
+    throw error
+  }
+
+  const { data: publicUrlData } = supabase.storage
+    .from('sermons')
+    .getPublicUrl(fileName)
+
+  return { url: publicUrlData.publicUrl, name: file.name }
+}
+
+// 설교 첨부파일 삭제
+export async function deleteSermonAttachment(fileUrl: string) {
+  const urlParts = fileUrl.split('/sermons/')
+  if (urlParts.length < 2) return false
+
+  const filePath = urlParts[1]
+  const { error } = await supabase.storage
+    .from('sermons')
+    .remove([filePath])
+
+  if (error) {
+    console.error('Error deleting sermon attachment:', error)
+    throw error
+  }
+
+  return true
+}
+
 // 조회수 증가
 export async function incrementViewCount(id: string) {
   const { error } = await supabase.rpc('increment_sermon_views', { sermon_id: id })
@@ -218,7 +261,7 @@ export async function getSermonStats() {
   const { count: thisMonth } = await supabase
     .from('sermons')
     .select('*', { count: 'exact', head: true })
-    .gte('sermon_date', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0])
+    .gte('sermon_date', toLocalDateString(new Date(new Date().getFullYear(), new Date().getMonth(), 1)))
 
   return {
     total: total ?? 0,

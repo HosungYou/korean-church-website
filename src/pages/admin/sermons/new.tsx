@@ -11,14 +11,17 @@ import {
   Calendar,
   User,
   Book,
-  FileText
+  FileText,
+  Paperclip
 } from 'lucide-react'
+import { toLocalDateString } from '../../../utils/dateHelpers'
 import Link from 'next/link'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import {
   createSermon,
   extractYouTubeVideoId,
   getYouTubeThumbnailUrl,
+  uploadSermonAttachment,
   type SermonType
 } from '../../../utils/sermonService'
 import type { SermonInsert } from '../../../../types/supabase'
@@ -28,12 +31,13 @@ const NewSermonPage = () => {
   const { admin, loading } = useAdminAuth()
   const [saving, setSaving] = useState(false)
   const [youtubePreview, setYoutubePreview] = useState<string | null>(null)
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null)
 
   const [formData, setFormData] = useState<Partial<SermonInsert>>({
     title: '',
     speaker: '',
     scripture: '',
-    sermon_date: new Date().toISOString().split('T')[0],
+    sermon_date: toLocalDateString(),
     sermon_type: 'sunday',
     youtube_url: '',
     description: '',
@@ -64,12 +68,22 @@ const NewSermonPage = () => {
 
     try {
       setSaving(true)
+
+      let attachmentUrl = ''
+      let attachmentName = ''
+      if (attachmentFile) {
+        const result = await uploadSermonAttachment(attachmentFile, formData.sermon_date!)
+        attachmentUrl = result.url
+        attachmentName = result.name
+      }
+
       await createSermon({
         ...formData,
         status,
         title: formData.title!.trim(),
         sermon_date: formData.sermon_date!,
-        sermon_type: formData.sermon_type as SermonType
+        sermon_type: formData.sermon_type as SermonType,
+        ...(attachmentUrl && { attachment_url: attachmentUrl, attachment_name: attachmentName }),
       } as SermonInsert)
 
       alert(status === 'published' ? '설교가 게시되었습니다.' : '설교가 저장되었습니다.')
@@ -271,6 +285,30 @@ const NewSermonPage = () => {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* 첨부파일 */}
+              <div>
+                <h2 className="text-lg font-medium text-gray-900 font-korean mb-4">
+                  <Paperclip className="w-5 h-5 inline mr-2" />
+                  첨부파일
+                </h2>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 font-korean mb-1">
+                    파일 첨부 (PDF, PPT, Word)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.ppt,.pptx,.doc,.docx"
+                    onChange={(e) => setAttachmentFile(e.target.files?.[0] || null)}
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 font-korean"
+                  />
+                  {attachmentFile && (
+                    <p className="mt-2 text-sm text-gray-600 font-korean">
+                      선택된 파일: {attachmentFile.name}
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* 설명 */}

@@ -11,6 +11,8 @@ interface PageHeaderProps {
   subtitle?: string
   height?: string
   label?: string // Micro label above title
+  images?: string[] // Custom images array for the page
+  image?: string // Single custom image
 }
 
 const communityImages = [
@@ -26,12 +28,16 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   subtitle,
   height = 'h-72 md:h-80',
-  label
+  label,
+  images,
+  image
 }) => {
-  // Select a random image on component mount
-  const randomImage = useMemo(() => {
-    return communityImages[Math.floor(Math.random() * communityImages.length)]
-  }, [])
+  // Select image: single image > custom images array > default community images
+  const selectedImage = useMemo(() => {
+    if (image) return image
+    const imagePool = images && images.length > 0 ? images : communityImages
+    return imagePool[Math.floor(Math.random() * imagePool.length)]
+  }, [image, images])
 
   return (
     <div
@@ -39,7 +45,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       style={{ background: 'oklch(0.15 0.05 265)' }}
     >
       <Image
-        src={randomImage}
+        src={selectedImage}
         alt="Church Community"
         fill
         className="object-cover"

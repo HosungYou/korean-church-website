@@ -7,6 +7,7 @@ import type { GetStaticProps, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
 import Layout from '@/components/Layout'
+import PageHeader from '@/components/PageHeader'
 import { Book, Users, Clock, Star, Heart, Globe, GraduationCap, Music, Palette } from 'lucide-react'
 
 const KoreanSchool: NextPage = () => {
@@ -146,61 +147,15 @@ const KoreanSchool: NextPage = () => {
 
   return (
     <Layout>
-      {/* Hero Section - Editorial Style */}
-      <section
-        className="relative py-24 overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, oklch(0.25 0.08 265), oklch(0.18 0.06 265))' }}
-      >
-        {/* Grain Overlay */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.04]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            {/* Label */}
-            <span
-              className="text-xs font-medium tracking-[0.25em] uppercase mb-6 block"
-              style={{ color: 'oklch(0.72 0.10 75)' }}
-            >
-              {isKorean ? '교육' : 'Education'}
-            </span>
-
-            {/* Title */}
-            <h1
-              className="font-headline font-black mb-6"
-              style={{
-                fontSize: 'clamp(2.5rem, 6vw, 4rem)',
-                letterSpacing: '-0.03em',
-                color: 'oklch(0.98 0.003 75)',
-                lineHeight: '1.1'
-              }}
-            >
-              {isKorean ? '한국학교' : 'Korean School'}
-            </h1>
-
-            {/* Subtitle */}
-            <p
-              className="text-lg leading-relaxed max-w-2xl"
-              style={{ color: 'oklch(0.85 0.02 75)' }}
-            >
-              {isKorean
-                ? '차세대가 한국어와 한국 문화를 배우며 정체성을 확립할 수 있도록 돕는 교육기관입니다'
-                : 'An educational institution helping the next generation learn Korean language and culture while establishing their identity'
-              }
-            </p>
-          </div>
-        </div>
-
-        {/* Decorative Element */}
-        <div
-          className="absolute bottom-0 left-0 right-0 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent, oklch(0.72 0.10 75), transparent)' }}
-        />
-      </section>
+      {/* Page Header */}
+      <PageHeader
+        label={isKorean ? '교육' : 'Education'}
+        title={isKorean ? '한국학교' : 'Korean School'}
+        subtitle={isKorean
+          ? '차세대가 한국어와 한국 문화를 배우며 정체성을 확립할 수 있도록 돕는 교육기관입니다'
+          : 'An educational institution helping the next generation learn Korean language and culture while establishing their identity'
+        }
+      />
 
       {/* Quick Stats */}
       <section style={{ background: 'oklch(0.985 0.003 75)', borderBottom: '1px solid oklch(0.92 0.005 75)' }}>

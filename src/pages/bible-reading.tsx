@@ -3,6 +3,7 @@ import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
 import { ChevronLeft, ChevronRight, Book, BookOpen, Heart, MessageCircle, Calendar } from 'lucide-react'
 import {
   getActivePlans,
@@ -113,6 +114,13 @@ export default function BibleReadingPage({ initialPlan, initialEntries }: BibleR
 
   return (
     <Layout>
+      {/* Page Header */}
+      <PageHeader
+        label={(t('bible_reading.label') as string) || '성경'}
+        title={t('bible_reading.title') as string}
+        subtitle={t('bible_reading.description') as string}
+      />
+
       <div
         className="min-h-screen relative"
         style={{ background: 'oklch(0.985 0.003 75)' }}
@@ -120,62 +128,31 @@ export default function BibleReadingPage({ initialPlan, initialEntries }: BibleR
         {/* Grain overlay */}
         <div className="bg-grain absolute inset-0 pointer-events-none" />
 
-        {/* Header */}
-        <div
-          className="relative py-16 mb-8"
-          style={{
-            background: 'linear-gradient(135deg, oklch(0.22 0.07 265) 0%, oklch(0.30 0.09 265) 100%)'
-          }}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div
-                className="w-12 h-12 rounded-sm flex items-center justify-center"
-                style={{ background: 'oklch(0.72 0.10 75 / 0.2)' }}
-              >
-                <Book className="w-6 h-6" style={{ color: 'oklch(0.85 0.08 75)' }} />
-              </div>
-              <div>
-                <h1
-                  className="font-headline font-black text-3xl md:text-4xl"
-                  style={{ color: 'oklch(0.98 0.003 75)', letterSpacing: '-0.02em' }}
-                >
-                  {t('bible_reading.title')}
-                </h1>
-                <p className="text-sm mt-1" style={{ color: 'oklch(0.85 0.02 75)' }}>
-                  {t('bible_reading.description')}
-                </p>
-              </div>
-            </div>
-
-            {/* Plan Selector */}
-            {plans.length > 1 && (
-              <div className="mt-6">
-                <select
-                  value={selectedPlan?.id || ''}
-                  onChange={(e) => {
-                    const plan = plans.find(p => p.id === e.target.value)
-                    setSelectedPlan(plan || null)
-                    setSelectedDay(null)
-                  }}
-                  className="px-4 py-2 rounded-sm text-sm font-medium focus:outline-none"
-                  style={{
-                    background: 'oklch(0.98 0.003 75 / 0.15)',
-                    backdropFilter: 'blur(8px)',
-                    border: '1px solid oklch(0.98 0.003 75 / 0.2)',
-                    color: 'oklch(0.98 0.003 75)',
-                  }}
-                >
-                  {plans.map(plan => (
-                    <option key={plan.id} value={plan.id} style={{ color: 'oklch(0.22 0.07 265)' }}>
-                      {plan.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+        {/* Plan Selector */}
+        {plans.length > 1 && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+            <select
+              value={selectedPlan?.id || ''}
+              onChange={(e) => {
+                const plan = plans.find(p => p.id === e.target.value)
+                setSelectedPlan(plan || null)
+                setSelectedDay(null)
+              }}
+              className="px-4 py-2 rounded-sm text-sm font-medium focus:outline-none"
+              style={{
+                background: 'oklch(0.92 0.005 75)',
+                border: '1px solid oklch(0.88 0.005 75)',
+                color: 'oklch(0.30 0.09 265)',
+              }}
+            >
+              {plans.map(plan => (
+                <option key={plan.id} value={plan.id}>
+                  {plan.title}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
+        )}
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 relative">

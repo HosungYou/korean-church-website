@@ -24,6 +24,12 @@
     "description": "Register as a new family member and grow together as part of our church community.",
     "button": "New Family Registration"
   },
+  "new_family": {
+    "label": "New Family · Education",
+    "title": "New Family Education",
+    "subtitle": "Systematic education and nurturing programs for new church family members.",
+    "empty": "No new family education programs available at this time."
+  },
   "detail": {
     "backToList": "Back to list",
     "weekCourse": "-week course",

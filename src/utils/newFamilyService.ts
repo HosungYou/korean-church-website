@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import type { NewFamilyRegistration, NewFamilyRegistrationInsert } from '../../types/supabase'
+import { createMember } from './memberService'
 
 export type NewFamilyStatus = 'pending' | 'contacted' | 'visiting' | 'registered' | 'inactive'
 
@@ -154,6 +155,33 @@ export async function deleteNewFamilyRegistration(id: string) {
     console.error('새가족 등록 삭제 오류:', error)
     throw error
   }
+
+  return true
+}
+
+// 새가족 → 교인 자동 전환
+export async function convertToMember(registrationId: string): Promise<boolean> {
+  const registration = await getNewFamilyRegistrationById(registrationId)
+  if (!registration) throw new Error('새가족 등록 정보를 찾을 수 없습니다.')
+
+  // 주소 합치기
+  const fullAddress = [registration.address1, registration.address2, registration.city, registration.state, registration.zip_code]
+    .filter(Boolean)
+    .join(', ')
+
+  await createMember({
+    korean_name: registration.korean_name,
+    english_name: registration.english_name || null,
+    email: registration.email || null,
+    phone: registration.phone,
+    address: fullAddress || null,
+    birth_date: registration.birth_date || null,
+    gender: registration.gender === 'male' || registration.gender === 'female' ? registration.gender : null,
+    member_type: 'member',
+    baptized: !!registration.baptism_date,
+    baptism_date: registration.baptism_date || null,
+    status: 'active',
+  })
 
   return true
 }

@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import type { ChurchMember, ChurchMemberInsert } from '../../types/supabase'
+import { toLocalDateString } from './dateHelpers'
 
 export type MemberType = 'member' | 'deacon' | 'elder' | 'pastor' | 'staff'
 export type MemberStatus = 'active' | 'inactive' | 'transferred' | 'deceased'
@@ -214,7 +215,7 @@ export async function getMemberStats() {
   const { count: newThisMonth } = await supabase
     .from('church_members')
     .select('*', { count: 'exact', head: true })
-    .gte('registered_date', thisMonth.toISOString().split('T')[0])
+    .gte('registered_date', toLocalDateString(thisMonth))
 
   return {
     total: total ?? 0,
@@ -302,4 +303,117 @@ export async function exportMembersToCSV(filters: MemberFilters = {}) {
 
   const csv = [headers, ...rows].map((row) => row.join(',')).join('\n')
   return csv
+}
+
+// CSV Import 관련 타입
+export interface CSVImportResult {
+  success: number
+  failed: number
+  duplicates: number
+  errors: string[]
+}
+
+export interface ParsedMemberRow {
+  korean_name: string
+  english_name?: string
+  email?: string
+  phone?: string
+  address?: string
+  birth_date?: string
+  gender?: 'male' | 'female' | 'other'
+  member_type?: MemberType
+  department?: string
+  baptized?: boolean
+  status?: MemberStatus
+}
+
+// CSV 헤더 매핑 (한국어 → 영문 필드)
+const CSV_HEADER_MAP: Record<string, keyof ParsedMemberRow> = {
+  '이름(한글)': 'korean_name',
+  '이름(영문)': 'english_name',
+  '이메일': 'email',
+  '전화': 'phone',
+  '주소': 'address',
+  '생년월일': 'birth_date',
+  '성별': 'gender',
+  '직분': 'member_type',
+  '부서': 'department',
+  '세례여부': 'baptized',
+  '상태': 'status',
+}
+
+const GENDER_MAP: Record<string, 'male' | 'female'> = { '남': 'male', '여': 'female' }
+const TYPE_MAP: Record<string, MemberType> = { '성도': 'member', '집사': 'deacon', '장로': 'elder', '목사': 'pastor', '교역자': 'staff' }
+const STATUS_MAP: Record<string, MemberStatus> = { '활동': 'active', '비활동': 'inactive', '이적': 'transferred', '사망': 'deceased' }
+
+// CSV 파싱
+export function parseCSV(csvText: string): ParsedMemberRow[] {
+  // BOM 제거
+  const text = csvText.replace(/^\uFEFF/, '')
+  const lines = text.split(/\r?\n/).filter(line => line.trim())
+  if (lines.length < 2) return []
+
+  const headers = lines[0].split(',').map(h => h.trim())
+  const fieldMap = headers.map(h => CSV_HEADER_MAP[h] || null)
+
+  const rows: ParsedMemberRow[] = []
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map(v => v.trim())
+    const row: any = {}
+    fieldMap.forEach((field, idx) => {
+      if (!field || !values[idx]) return
+      const val = values[idx]
+      if (field === 'gender') row[field] = GENDER_MAP[val] || null
+      else if (field === 'member_type') row[field] = TYPE_MAP[val] || 'member'
+      else if (field === 'status') row[field] = STATUS_MAP[val] || 'active'
+      else if (field === 'baptized') row[field] = val === '예'
+      else row[field] = val
+    })
+    if (row.korean_name) rows.push(row as ParsedMemberRow)
+  }
+  return rows
+}
+
+// 교인 CSV Import
+export async function importMembersFromCSV(rows: ParsedMemberRow[]): Promise<CSVImportResult> {
+  const result: CSVImportResult = { success: 0, failed: 0, duplicates: 0, errors: [] }
+
+  // 기존 교인 조회 (중복 체크용)
+  const existingMembers = await getAllMembers()
+  const existingSet = new Set(
+    existingMembers.map(m => `${m.korean_name}|${m.phone || ''}`)
+  )
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i]
+    const key = `${row.korean_name}|${row.phone || ''}`
+    if (existingSet.has(key)) {
+      result.duplicates++
+      result.errors.push(`행 ${i + 1}: "${row.korean_name}" 중복 (이름+전화번호)`)
+      continue
+    }
+
+    try {
+      await createMember({
+        korean_name: row.korean_name,
+        english_name: row.english_name || null,
+        email: row.email || null,
+        phone: row.phone || null,
+        address: row.address || null,
+        birth_date: row.birth_date || null,
+        gender: row.gender || null,
+        member_type: row.member_type || 'member',
+        department: row.department || null,
+        baptized: row.baptized || false,
+        status: row.status || 'active',
+      })
+      result.success++
+      existingSet.add(key)
+    } catch (err: any) {
+      result.failed++
+      result.errors.push(`행 ${i + 1}: "${row.korean_name}" 오류 - ${err.message}`)
+    }
+  }
+
+  return result
 }

@@ -19,6 +19,7 @@ import {
 import AdminLayout from '@/components/AdminLayout'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { newFamilyService, type NewFamily } from '../../../utils/newFamilyServiceSupabase'
+import { convertToMember, updateNewFamilyStatus } from '../../../utils/newFamilyService'
 
 // ===========================================
 // VS Design Diverge: New Family Management
@@ -82,9 +83,37 @@ const AdminNewFamiliesPage = () => {
       await newFamilyService.updateNewFamilyStatus(id, newStatus)
       setFamilies((prev) => prev.map((f) => (f.id === id ? { ...f, status: newStatus } : f)))
       await newFamilyService.getStatistics().then(setStats)
+
+      // 상태가 'registered'로 변경되면 자동으로 교인 등록
+      if (newStatus === 'registered') {
+        const family = families.find((f) => f.id === id)
+        if (family) {
+          try {
+            await convertToMember(id)
+            alert(`"${family.korean_name || family.english_name}"님이 교인으로 자동 등록되었습니다.`)
+          } catch (error: any) {
+            console.error('교인 전환 오류:', error)
+            alert(`교인 전환 중 오류: ${error.message}`)
+          }
+        }
+      }
     } catch (error) {
       console.error('상태 변경 오류:', error)
       alert('상태 변경 중 오류가 발생했습니다.')
+    }
+  }
+
+  const handleConvertToMember = async (id: string, name: string) => {
+    if (!confirm(`"${name}"님을 교인으로 등록하시겠습니까?`)) return
+    try {
+      await convertToMember(id)
+      await updateNewFamilyStatus(id, 'registered')
+      setFamilies((prev) => prev.map((f) => (f.id === id ? { ...f, status: 'registered' } : f)))
+      await newFamilyService.getStatistics().then(setStats)
+      alert(`"${name}"님이 교인으로 등록되었습니다.`)
+    } catch (error: any) {
+      console.error('교인 전환 오류:', error)
+      alert(`교인 전환 중 오류: ${error.message}`)
     }
   }
 
@@ -331,19 +360,37 @@ const AdminNewFamiliesPage = () => {
                       상세 정보
                     </h3>
                   </div>
-                  <button
-                    onClick={() =>
-                      handleDelete(
-                        selectedFamily.id,
-                        selectedFamily.korean_name || selectedFamily.english_name || ''
-                      )
-                    }
-                    className="p-2 rounded-sm transition-all duration-200 hover:-translate-y-0.5"
-                    style={{ background: 'oklch(0.55 0.18 25 / 0.1)', color: 'oklch(0.50 0.18 25)' }}
-                    title="삭제"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        handleConvertToMember(
+                          selectedFamily.id,
+                          selectedFamily.korean_name || selectedFamily.english_name || ''
+                        )
+                      }
+                      className="p-2 rounded-sm transition-all duration-200 hover:-translate-y-0.5"
+                      style={{
+                        background: 'oklch(0.55 0.15 145 / 0.1)',
+                        color: 'oklch(0.40 0.15 145)',
+                      }}
+                      title="교인 등록"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleDelete(
+                          selectedFamily.id,
+                          selectedFamily.korean_name || selectedFamily.english_name || ''
+                        )
+                      }
+                      className="p-2 rounded-sm transition-all duration-200 hover:-translate-y-0.5"
+                      style={{ background: 'oklch(0.55 0.18 25 / 0.1)', color: 'oklch(0.50 0.18 25)' }}
+                      title="삭제"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-4">

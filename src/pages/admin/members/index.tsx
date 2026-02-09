@@ -9,6 +9,7 @@ import {
   Users,
   Search,
   Download,
+  Upload,
   Phone,
   Mail,
   User,
@@ -25,8 +26,12 @@ import {
   deleteMember,
   getMemberStats,
   exportMembersToCSV,
+  parseCSV,
+  importMembersFromCSV,
   type MemberType,
   type MemberStatus,
+  type ParsedMemberRow,
+  type CSVImportResult,
 } from '../../../utils/memberService'
 import type { ChurchMember } from '../../../../types/supabase'
 
@@ -65,6 +70,10 @@ const AdminMembersPage = () => {
     newThisMonth: 0,
     byType: {} as Record<MemberType, number>,
   })
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [importPreview, setImportPreview] = useState<ParsedMemberRow[]>([])
+  const [importResult, setImportResult] = useState<CSVImportResult | null>(null)
+  const [importing, setImporting] = useState(false)
 
   useEffect(() => {
     if (!admin) return
@@ -113,6 +122,33 @@ const AdminMembersPage = () => {
     }
   }
 
+  const handleCSVFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const text = event.target?.result as string
+      const parsed = parseCSV(text)
+      setImportPreview(parsed)
+      setImportResult(null)
+    }
+    reader.readAsText(file, 'UTF-8')
+  }
+
+  const handleImport = async () => {
+    if (importPreview.length === 0) return
+    setImporting(true)
+    try {
+      const result = await importMembersFromCSV(importPreview)
+      setImportResult(result)
+      if (result.success > 0) fetchData()
+    } catch (error) {
+      console.error('Import error:', error)
+    } finally {
+      setImporting(false)
+    }
+  }
+
   const filteredMembers = useMemo(() => {
     return members.filter((member) => {
       const matchesSearch =
@@ -152,6 +188,18 @@ const AdminMembersPage = () => {
           </span>
         </div>
         <div className="flex gap-3">
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="inline-flex items-center px-5 py-2.5 rounded-sm font-medium transition-all duration-300 hover:-translate-y-0.5"
+            style={{
+              background: 'oklch(0.97 0.005 265)',
+              border: '1px solid oklch(0.90 0.01 265)',
+              color: 'oklch(0.35 0.02 75)',
+            }}
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            CSV 가져오기
+          </button>
           <button
             onClick={handleExport}
             className="inline-flex items-center px-5 py-2.5 rounded-sm font-medium transition-all duration-300 hover:-translate-y-0.5"
@@ -464,6 +512,63 @@ const AdminMembersPage = () => {
           </div>
         )}
       </div>
+
+      {/* CSV Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'oklch(0 0 0 / 0.5)' }}>
+          <div className="w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-sm p-6" style={{ background: 'oklch(0.985 0.003 75)' }}>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold" style={{ color: 'oklch(0.22 0.07 265)' }}>CSV 가져오기</h3>
+              <button onClick={() => { setShowImportModal(false); setImportPreview([]); setImportResult(null) }} className="text-2xl" style={{ color: 'oklch(0.55 0.01 75)' }}>&times;</button>
+            </div>
+            <input type="file" accept=".csv" onChange={handleCSVFile} className="mb-4 block w-full text-sm" />
+            {importPreview.length > 0 && !importResult && (
+              <div>
+                <p className="text-sm mb-2" style={{ color: 'oklch(0.45 0.01 75)' }}>{importPreview.length}명의 교인 데이터가 확인되었습니다.</p>
+                <div className="max-h-48 overflow-y-auto mb-4 rounded-sm" style={{ border: '1px solid oklch(0.92 0.005 75)' }}>
+                  <table className="w-full text-sm">
+                    <thead style={{ background: 'oklch(0.97 0.005 265)' }}>
+                      <tr>
+                        <th className="px-3 py-2 text-left">이름</th>
+                        <th className="px-3 py-2 text-left">전화</th>
+                        <th className="px-3 py-2 text-left">이메일</th>
+                        <th className="px-3 py-2 text-left">직분</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {importPreview.slice(0, 10).map((row, i) => (
+                        <tr key={i} style={{ borderTop: '1px solid oklch(0.92 0.005 75)' }}>
+                          <td className="px-3 py-2">{row.korean_name}</td>
+                          <td className="px-3 py-2">{row.phone || '-'}</td>
+                          <td className="px-3 py-2">{row.email || '-'}</td>
+                          <td className="px-3 py-2">{row.member_type || 'member'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {importPreview.length > 10 && <p className="p-2 text-xs text-center" style={{ color: 'oklch(0.55 0.01 75)' }}>... 외 {importPreview.length - 10}명</p>}
+                </div>
+                <button onClick={handleImport} disabled={importing} className="px-5 py-2.5 rounded-sm font-medium transition-all duration-300" style={{ background: 'oklch(0.45 0.12 265)', color: 'oklch(0.98 0.003 75)' }}>
+                  {importing ? '가져오는 중...' : `${importPreview.length}명 가져오기`}
+                </button>
+              </div>
+            )}
+            {importResult && (
+              <div className="mt-4 p-4 rounded-sm" style={{ background: 'oklch(0.97 0.005 75)', border: '1px solid oklch(0.92 0.005 75)' }}>
+                <p className="font-medium mb-2" style={{ color: 'oklch(0.22 0.07 265)' }}>가져오기 결과</p>
+                <p style={{ color: 'oklch(0.40 0.15 145)' }}>성공: {importResult.success}명</p>
+                {importResult.duplicates > 0 && <p style={{ color: 'oklch(0.50 0.12 85)' }}>중복: {importResult.duplicates}명</p>}
+                {importResult.failed > 0 && <p style={{ color: 'oklch(0.50 0.18 25)' }}>실패: {importResult.failed}명</p>}
+                {importResult.errors.length > 0 && (
+                  <div className="mt-2 max-h-32 overflow-y-auto text-xs" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                    {importResult.errors.map((err, i) => <p key={i}>{err}</p>)}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </AdminLayout>
   )
 }
