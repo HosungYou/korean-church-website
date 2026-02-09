@@ -71,19 +71,19 @@ const NewFamilyRegistrationPage: NextPage = () => {
         .from('new_family_registrations')
         .insert({
           korean_name: formData.korean_name,
-          english_name: formData.english_name || null,
-          email: formData.email || null,
+          english_name: formData.english_name || '',
+          email: formData.email || '',
           phone: formData.phone,
           address1: formData.address || 'N/A',
           city: 'State College',
           state: 'PA',
           zip_code: '16801',
-          birth_date: formData.birth_date || null,
-          gender: formData.gender || null,
-          previous_church: formData.previous_church || null,
-          baptism_date: formData.baptized ? new Date().toISOString().split('T')[0] : null,
-          introduction: formData.notes || null,
-          status: 'pending',
+          previous_church: formData.previous_church || '',
+          introduction: formData.notes || '',
+          status: 'pending' as const,
+          ...(formData.birth_date ? { birth_date: formData.birth_date } : {}),
+          ...(formData.gender ? { gender: formData.gender } : {}),
+          ...(formData.baptized ? { baptism_date: new Date().toISOString().split('T')[0] } : {}),
         })
 
       if (error) throw error
