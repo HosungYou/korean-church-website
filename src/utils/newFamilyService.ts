@@ -159,10 +159,23 @@ export async function deleteNewFamilyRegistration(id: string) {
   return true
 }
 
-// 새가족 → 교인 자동 전환
+// 새가족 → 교인 자동 전환 (중복 방지)
 export async function convertToMember(registrationId: string): Promise<boolean> {
   const registration = await getNewFamilyRegistrationById(registrationId)
   if (!registration) throw new Error('새가족 등록 정보를 찾을 수 없습니다.')
+
+  // 중복 체크: 이름+전화번호로 이미 교인 등록된 경우 건너뜀
+  const { data: existing } = await supabase
+    .from('church_members')
+    .select('id')
+    .eq('korean_name', registration.korean_name)
+    .eq('phone', registration.phone)
+    .maybeSingle()
+
+  if (existing) {
+    console.log(`"${registration.korean_name}"님은 이미 교인으로 등록되어 있습니다.`)
+    return true
+  }
 
   // 주소 합치기
   const fullAddress = [registration.address1, registration.address2, registration.city, registration.state, registration.zip_code]

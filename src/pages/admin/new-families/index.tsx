@@ -206,6 +206,20 @@ const AdminNewFamiliesPage = () => {
         })}
       </div>
 
+      {/* Auto-registration Info Banner */}
+      <div
+        className="p-4 rounded-sm mb-6 flex items-center gap-3"
+        style={{
+          background: 'oklch(0.55 0.15 145 / 0.08)',
+          border: '1px solid oklch(0.55 0.15 145 / 0.2)',
+        }}
+      >
+        <CheckCircle className="w-5 h-5 flex-shrink-0" style={{ color: 'oklch(0.40 0.15 145)' }} />
+        <p className="text-sm" style={{ color: 'oklch(0.35 0.10 145)' }}>
+          새가족 등록 시 교인 명부에 자동으로 등록됩니다. 관리자 페이지에서 직분, 부서 등 추가 정보를 편집하세요.
+        </p>
+      </div>
+
       {/* Search and Filters */}
       <div
         className="p-6 rounded-sm mb-6"
