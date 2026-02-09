@@ -7,21 +7,22 @@ import type { GetStaticProps, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import PageHeader from '@/components/PageHeader'
+import Image from 'next/image'
 
 const Philosophy: NextPage = () => {
   return (
     <Layout>
       <PageHeader
         title="목회 철학"
-        subtitle="하나님의 말씀을 기초로 예수 그리스도의 사랑을 실천하는 교회"
+        subtitle="골로새서 1:28을 기초로 예수 그리스도의 사역을 본받는 교회"
         label="Ministry Philosophy"
         height="h-72 md:h-80"
       />
 
-      {/* Vision Section */}
+      {/* ── Section 1: 예수님의 3중 사역 ── */}
       <section className="py-20" style={{ background: 'oklch(0.985 0.003 75)' }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             {/* Editorial Section Header */}
             <div className="mb-12">
               <div className="h-0.5 w-12 mb-6" style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }} />
@@ -29,342 +30,473 @@ const Philosophy: NextPage = () => {
                 className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
                 style={{ color: 'oklch(0.72 0.10 75)' }}
               >
-                Church Vision
+                Colossians 1:28
               </span>
               <h2
                 className="font-headline font-bold"
                 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em', color: 'oklch(0.25 0.05 265)' }}
               >
-                교회 비전
+                예수님의 3중 사역
               </h2>
             </div>
 
-            {/* Vision Statement Card */}
+            {/* Key Verse Card */}
             <div
-              className="rounded-sm p-8 md:p-10 mb-8"
+              className="rounded-sm p-8 md:p-10 mb-10"
               style={{
                 background: 'linear-gradient(135deg, oklch(0.30 0.09 265 / 0.05), oklch(0.72 0.10 75 / 0.08))',
                 border: '1px solid oklch(0.72 0.10 75 / 0.3)',
               }}
             >
               <p
-                className="text-xl md:text-2xl font-semibold leading-relaxed font-korean"
+                className="text-lg md:text-xl font-semibold leading-relaxed font-korean"
                 style={{ color: 'oklch(0.30 0.09 265)' }}
               >
-                &ldquo;복음의 생명으로 세상을 아름답게 하는 성령의 교회&rdquo;
+                &ldquo;우리가 그를 전파하여 각 사람을 권하고 모든 지혜로 각 사람을 가르침은
+                각 사람을 그리스도 안에서 완전한 자로 세우려 함이니&rdquo;
               </p>
               <p
-                className="text-base md:text-lg mt-4 font-korean"
+                className="text-base mt-3 font-korean"
                 style={{ color: 'oklch(0.55 0.01 75)' }}
               >
-                A Spirit-filled church that beautifies the world with the life of the Gospel
+                &mdash; 골로새서 1:28
               </p>
             </div>
 
-            <p className="leading-relaxed font-korean" style={{ color: 'oklch(0.45 0.03 75)' }}>
-              스테이트 칼리지 한인교회는 펜실베이니아 주립대학과 지역 사회에서
-              하나님의 사랑을 전하고 실천하는 공동체입니다. 우리는 예배와 말씀,
-              기도와 교제를 통해 그리스도인으로 성장하며, 다음 세대와 지역 사회를
-              섬기는 사명을 감당합니다.
+            <p className="leading-relaxed font-korean mb-8" style={{ color: 'oklch(0.45 0.03 75)' }}>
+              골로새서 1:28절이 우리 교회의 사역이며 성도들이 행해야 하고,
+              특별히 교회의 제직들이 가져야 하는 사역의 모습과 목적입니다.
             </p>
-          </div>
-        </div>
-      </section>
 
-      {/* Mission Section */}
-      <section className="py-20" style={{ background: 'oklch(0.97 0.005 75)' }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Editorial Section Header */}
-          <div className="mb-12">
-            <div className="h-0.5 w-12 mb-6" style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }} />
-            <span
-              className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
-              style={{ color: 'oklch(0.72 0.10 75)' }}
-            >
-              Church Mission
-            </span>
-            <h2
-              className="font-headline font-bold"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em', color: 'oklch(0.25 0.05 265)' }}
-            >
-              교회 사명
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl">
-            {/* Mission Card 1 */}
-            <div
-              className="rounded-sm p-8 transition-all duration-300 hover:translate-y-[-2px]"
-              style={{
-                background: 'oklch(0.985 0.003 75)',
-                border: '1px solid oklch(0.92 0.005 75)',
-                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
-              }}
-            >
-              <div
-                className="w-14 h-14 rounded-sm flex items-center justify-center mb-6"
-                style={{ background: 'oklch(0.30 0.09 265 / 0.08)' }}
-              >
-                <svg className="w-7 h-7" style={{ color: 'oklch(0.45 0.12 265)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold mb-3 font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
-                하나님 나라의 문화 창출
-              </h3>
-              <p className="text-sm font-korean leading-relaxed" style={{ color: 'oklch(0.55 0.01 75)' }}>
-                말씀과 성령의 능력으로 하나님 나라의 가치관을 실현하는 교회
-              </p>
+            {/* Threefold Ministry Image */}
+            <div className="rounded-sm overflow-hidden mb-10" style={{ boxShadow: '0 4px 16px oklch(0.30 0.09 265 / 0.10)' }}>
+              <Image
+                src="/images/philosophy/threefold-ministry.jpeg"
+                alt="예수님의 3중 사역 - 전파, 가르침, 세움"
+                width={1200}
+                height={500}
+                className="w-full h-auto"
+              />
             </div>
 
-            {/* Mission Card 2 */}
-            <div
-              className="rounded-sm p-8 transition-all duration-300 hover:translate-y-[-2px]"
-              style={{
-                background: 'oklch(0.985 0.003 75)',
-                border: '1px solid oklch(0.92 0.005 75)',
-                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
-              }}
-            >
-              <div
-                className="w-14 h-14 rounded-sm flex items-center justify-center mb-6"
-                style={{ background: 'oklch(0.30 0.09 265 / 0.08)' }}
-              >
-                <svg className="w-7 h-7" style={{ color: 'oklch(0.45 0.12 265)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold mb-3 font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
-                그리스도의 성품을 닮아가는 성도
-              </h3>
-              <p className="text-sm font-korean leading-relaxed" style={{ color: 'oklch(0.55 0.01 75)' }}>
-                예수님의 사랑과 섬김을 본받아 성숙한 그리스도인으로 성장
-              </p>
-            </div>
-
-            {/* Mission Card 3 */}
-            <div
-              className="rounded-sm p-8 transition-all duration-300 hover:translate-y-[-2px]"
-              style={{
-                background: 'oklch(0.985 0.003 75)',
-                border: '1px solid oklch(0.92 0.005 75)',
-                boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)'
-              }}
-            >
-              <div
-                className="w-14 h-14 rounded-sm flex items-center justify-center mb-6"
-                style={{ background: 'oklch(0.30 0.09 265 / 0.08)' }}
-              >
-                <svg className="w-7 h-7" style={{ color: 'oklch(0.45 0.12 265)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold mb-3 font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
-                세상을 섬기는 교회
-              </h3>
-              <p className="text-sm font-korean leading-relaxed" style={{ color: 'oklch(0.55 0.01 75)' }}>
-                지역 사회와 열방을 향한 선교와 봉사로 하나님의 사랑을 실천
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Core Values Section */}
-      <section className="py-20" style={{ background: 'oklch(0.985 0.003 75)' }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Editorial Section Header */}
-          <div className="mb-12">
-            <div className="h-0.5 w-12 mb-6" style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }} />
-            <span
-              className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
-              style={{ color: 'oklch(0.72 0.10 75)' }}
-            >
-              Core Values
-            </span>
-            <h2
-              className="font-headline font-bold"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em', color: 'oklch(0.25 0.05 265)' }}
-            >
-              핵심 가치
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl">
-            {[
-              { num: '1', title: '경건한 예배', desc: '하나님께 드리는 예배를 최우선으로 하며, 성령 충만한 예배를 드립니다' },
-              { num: '2', title: '말씀 중심', desc: '하나님의 말씀을 삶의 기준으로 삼고 말씀대로 살아갑니다' },
-              { num: '3', title: '기도의 일상화', desc: '새벽기도와 개인 기도를 통해 하나님과 깊은 교제를 나눕니다' },
-              { num: '4', title: '가정의 교회화', desc: '각 가정이 작은 교회가 되어 신앙을 전수하고 실천합니다' },
-              { num: '5', title: '사랑의 교제', desc: '그리스도의 사랑으로 서로를 돌보고 섬기는 공동체를 이룹니다' },
-              { num: '6', title: '섬김과 나눔', desc: '이웃의 아픔에 동참하고 섬기는 것이 교회의 본질적 사명입니다' },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="rounded-sm p-6 md:p-8"
-                style={{
-                  background: 'oklch(0.97 0.005 75)',
-                  border: '1px solid oklch(0.92 0.005 75)',
-                }}
-              >
-                <div className="flex items-start gap-4">
-                  <div
-                    className="flex-shrink-0 w-10 h-10 rounded-sm flex items-center justify-center font-bold text-sm"
-                    style={{
-                      background: 'oklch(0.45 0.12 265)',
-                      color: 'oklch(0.98 0.003 75)',
-                    }}
-                  >
-                    {item.num}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold mb-2 font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
-                      {item.title}
-                    </h3>
-                    <p className="text-sm font-korean leading-relaxed" style={{ color: 'oklch(0.55 0.01 75)' }}>
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Ministry Philosophy Details */}
-      <section className="py-20" style={{ background: 'oklch(0.97 0.005 75)' }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Editorial Section Header */}
-          <div className="mb-12">
-            <div className="h-0.5 w-12 mb-6" style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }} />
-            <span
-              className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
-              style={{ color: 'oklch(0.72 0.10 75)' }}
-            >
-              Ministry Direction
-            </span>
-            <h2
-              className="font-headline font-bold"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em', color: 'oklch(0.25 0.05 265)' }}
-            >
-              목회 방향
-            </h2>
-          </div>
-
-          <div className="max-w-4xl space-y-6">
-            {[
-              {
-                title: '예배와 영성',
-                content: '스테이트 칼리지 한인교회는 경건하고 절제된 예배를 드립니다. 형식적인 예배가 아닌, 성령님의 임재 가운데 드리는 살아있는 예배를 추구합니다. 매주일 예배와 수요예배, 그리고 새벽기도를 통해 하나님과의 친밀한 관계를 유지합니다.'
-              },
-              {
-                title: '교육과 양육',
-                content: '성경적 가치관을 바탕으로 한 체계적인 신앙교육을 실시합니다. 유아부터 청년에 이르기까지 각 연령대에 맞는 교육 프로그램을 운영하며, 특별히 다음 세대의 신앙 계승을 위해 힘쓰고 있습니다.'
-              },
-              {
-                title: '선교와 봉사',
-                content: '지역 사회와 캠퍼스 선교에 힘쓰며, 유학생과 새로운 이민자들을 돕는 사역을 감당합니다. 또한 국내외 선교사들을 후원하고 단기선교를 통해 복음 전파에 동참합니다.'
-              },
-              {
-                title: '공동체와 교제',
-                content: '소그룹 모임과 각 부서별 활동을 통해 깊은 교제를 나눕니다. 서로의 짐을 나누어 지고, 기쁨과 슬픔을 함께하는 진정한 공동체를 이루어 갑니다.'
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="rounded-sm p-8"
-                style={{
-                  background: 'oklch(0.985 0.003 75)',
-                  border: '1px solid oklch(0.92 0.005 75)',
-                  boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.04)'
-                }}
-              >
-                <h3
-                  className="text-xl font-bold mb-4 font-korean"
-                  style={{ color: 'oklch(0.30 0.09 265)' }}
-                >
-                  {item.title}
-                </h3>
-                <p className="leading-relaxed font-korean" style={{ color: 'oklch(0.45 0.03 75)' }}>
-                  {item.content}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pastor's Message Section */}
-      <section className="py-20" style={{ background: 'oklch(0.985 0.003 75)' }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Editorial Section Header */}
-          <div className="mb-12">
-            <div className="h-0.5 w-12 mb-6" style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }} />
-            <span
-              className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
-              style={{ color: 'oklch(0.72 0.10 75)' }}
-            >
-              Pastor&apos;s Message
-            </span>
-            <h2
-              className="font-headline font-bold"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em', color: 'oklch(0.25 0.05 265)' }}
-            >
-              담임목사 인사말
-            </h2>
-          </div>
-
-          <div className="max-w-6xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-              <div className="order-2 lg:order-1">
-                {/* Photo Placeholder */}
+            {/* Three Ministry Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+              {[
+                {
+                  title: '전파 (Proclaiming)',
+                  subtitle: '우리가 그를 전파하여',
+                  desc: '예수님이 그리스도 되심과 그의 십자가의 복음 전파가 교회의 존재 목적입니다.',
+                  color: 'oklch(0.45 0.12 265)',
+                },
+                {
+                  title: '가르침 (Teaching)',
+                  subtitle: '모든 지혜로 각 사람을 가르침은',
+                  desc: '모든 지혜로 각 사람을 가르침은 교회가 행해야 하는 복음 사역이며 진리를 이 땅에 전하는 하나님의 명령입니다.',
+                  color: 'oklch(0.55 0.08 265)',
+                },
+                {
+                  title: '세움 (Equipping)',
+                  subtitle: '각 사람을 완전한 자로 세우려 함이니',
+                  desc: '각 사람을 권면하고 그들의 삶의 어려움에서 건져 내는 것이 교회가 지닌 사명입니다.',
+                  color: 'oklch(0.65 0.06 265)',
+                },
+              ].map((item, index) => (
                 <div
-                  className="rounded-sm h-96 flex items-center justify-center"
+                  key={index}
+                  className="rounded-sm p-6 transition-all duration-300 hover:translate-y-[-2px]"
                   style={{
-                    background: 'oklch(0.92 0.005 75)',
-                    border: '1px solid oklch(0.88 0.005 75)',
+                    background: 'oklch(0.97 0.005 75)',
+                    border: '1px solid oklch(0.92 0.005 75)',
+                    boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)',
+                    borderTop: `3px solid ${item.color}`,
                   }}
                 >
-                  <p className="font-korean" style={{ color: 'oklch(0.55 0.01 75)' }}>담임목사 사진 위치</p>
+                  <h3 className="text-lg font-bold mb-2 font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
+                    {item.title}
+                  </h3>
+                  <p className="text-sm font-medium mb-3 font-korean" style={{ color: item.color }}>
+                    {item.subtitle}
+                  </p>
+                  <p className="text-sm font-korean leading-relaxed" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                    {item.desc}
+                  </p>
                 </div>
-              </div>
-              <div className="order-1 lg:order-2">
-                <div className="space-y-5">
-                  <p className="leading-relaxed font-korean" style={{ color: 'oklch(0.45 0.03 75)' }}>
-                    주님의 이름으로 문안드립니다.
-                  </p>
-                  <p className="leading-relaxed font-korean" style={{ color: 'oklch(0.45 0.03 75)' }}>
-                    스테이트 칼리지 한인교회는 펜실베이니아 중부 지역에서
-                    하나님의 사랑을 전하고 실천하는 믿음의 공동체입니다.
-                  </p>
-                  <p className="leading-relaxed font-korean" style={{ color: 'oklch(0.45 0.03 75)' }}>
-                    우리 교회는 예수 그리스도의 복음을 통해 영혼을 구원하고,
-                    하나님의 말씀으로 양육하며, 성령의 능력으로 세상을 변화시키는
-                    사명을 감당하고자 합니다.
-                  </p>
-                  <p className="leading-relaxed font-korean" style={{ color: 'oklch(0.45 0.03 75)' }}>
-                    특별히 Penn State 대학의 유학생들과 이 지역에 거주하시는
-                    한인 가정들이 신앙 안에서 하나 되어, 서로 사랑하고
-                    섬기는 아름다운 교회를 만들어가기를 소망합니다.
-                  </p>
-                  <p className="leading-relaxed font-korean" style={{ color: 'oklch(0.45 0.03 75)' }}>
-                    여러분을 주님의 사랑으로 환영하며, 함께 하나님 나라를
-                    세워가는 동역자가 되기를 기도합니다.
-                  </p>
-                  <div className="pt-6">
-                    <p className="font-bold font-korean" style={{ color: 'oklch(0.30 0.09 265)' }}>
-                      스테이트 칼리지 한인교회 담임목사
-                    </p>
-                    <p
-                      className="text-2xl font-bold mt-2 font-korean"
-                      style={{ color: 'oklch(0.45 0.12 265)' }}
+              ))}
+            </div>
+
+            {/* Supporting Scripture */}
+            <div
+              className="rounded-sm p-6"
+              style={{
+                background: 'oklch(0.97 0.005 75)',
+                borderLeft: '4px solid oklch(0.72 0.10 75)',
+              }}
+            >
+              <p className="text-sm font-korean leading-relaxed" style={{ color: 'oklch(0.45 0.03 75)' }}>
+                &ldquo;...회당에서 가르치시며, 천국 복음을 전파하시며, 백성 중의 모든 병과 모든 약한 것을 고치시니&rdquo;
+              </p>
+              <p className="text-xs mt-2 font-korean" style={{ color: 'oklch(0.72 0.10 75)' }}>
+                &mdash; 마태복음 4:23
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 2: 구체적인 목회 형태 ── */}
+      <section className="py-20" style={{ background: 'oklch(0.97 0.005 75)' }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="mb-12">
+              <div className="h-0.5 w-12 mb-6" style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }} />
+              <span
+                className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
+                style={{ color: 'oklch(0.72 0.10 75)' }}
+              >
+                Specific Ministry Form
+              </span>
+              <h2
+                className="font-headline font-bold"
+                style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em', color: 'oklch(0.25 0.05 265)' }}
+              >
+                구체적인 목회 형태
+              </h2>
+            </div>
+
+            <p className="leading-relaxed font-korean mb-8" style={{ color: 'oklch(0.45 0.03 75)' }}>
+              저의 목회 형태는 사도행전의 원시 기독교 공동체의 삶 형태 속에 있었던 예배, 교제, 교육, 복음 선포, 섬김을
+              적용하는 것입니다 (사도행전 2:42-47). 이것은 사역의 기능이 아니라 원래부터 있었던 하나님을 섬기는
+              사람들의 존재 양식이요 하나님을 아버지로 모시고 모였던 백성들의 신앙 경험의 표현양식이었습니다.
+            </p>
+
+            {/* Ministry Form Image */}
+            <div
+              className="rounded-sm overflow-hidden mb-10 flex justify-center"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                boxShadow: '0 4px 16px oklch(0.30 0.09 265 / 0.10)',
+              }}
+            >
+              <Image
+                src="/images/philosophy/ministry-form.png"
+                alt="구체적인 목회 형태 - 사도행전 2:42-47을 모델로 하는 교회"
+                width={700}
+                height={700}
+                className="w-full max-w-[600px] h-auto p-4"
+              />
+            </div>
+
+            {/* Five Confessions */}
+            <div className="mb-8">
+              <h3 className="text-lg font-bold mb-6 font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
+                고백적 선언과 실천항목
+              </h3>
+              <div className="space-y-4">
+                {[
+                  {
+                    confession: '우리가 하나님을 예배한다 (Leiturgia)',
+                    practice: '예배와 예전 그리고 기도',
+                    verse: '롬 12:1-2',
+                  },
+                  {
+                    confession: '우리는 성령 안에서 더불어 살아간다 (Koinonia)',
+                    practice: '친교와 교제',
+                    verse: '엡 4:13-16',
+                  },
+                  {
+                    confession: '우리는 하나님의 백성으로 성숙한다 (Didache)',
+                    practice: '가르침과 훈련',
+                    verse: '골 3:16-17',
+                  },
+                  {
+                    confession: '우리는 하나님나라를 선포한다 (Kerygma)',
+                    practice: '말씀의 선포와 전도',
+                    verse: '사 60:22',
+                  },
+                  {
+                    confession: '우리는 예수님의 섬김으로 이웃을 사랑한다 (Diakonia)',
+                    practice: '봉사와 섬김',
+                    verse: '약 1:26-27',
+                  },
+                ].map((item, index) => (
+                  <div
+                    key={index}
+                    className="rounded-sm p-5 flex flex-col md:flex-row md:items-center gap-3"
+                    style={{
+                      background: 'oklch(0.985 0.003 75)',
+                      border: '1px solid oklch(0.92 0.005 75)',
+                    }}
+                  >
+                    <div
+                      className="flex-shrink-0 w-8 h-8 rounded-sm flex items-center justify-center font-bold text-sm"
+                      style={{
+                        background: 'oklch(0.45 0.12 265)',
+                        color: 'oklch(0.98 0.003 75)',
+                      }}
                     >
-                      연규홍 목사
-                    </p>
+                      {index + 1}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
+                        {item.confession}
+                      </p>
+                      <p className="text-sm font-korean" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                        {item.practice}
+                      </p>
+                    </div>
+                    <span
+                      className="text-xs font-medium px-3 py-1 rounded-sm flex-shrink-0"
+                      style={{ background: 'oklch(0.72 0.10 75 / 0.15)', color: 'oklch(0.55 0.08 75)' }}
+                    >
+                      {item.verse}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 3: Church Ministry Map ── */}
+      <section className="py-20" style={{ background: 'oklch(0.985 0.003 75)' }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="mb-12">
+              <div className="h-0.5 w-12 mb-6" style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }} />
+              <span
+                className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
+                style={{ color: 'oklch(0.72 0.10 75)' }}
+              >
+                Church Ministry Map
+              </span>
+              <h2
+                className="font-headline font-bold"
+                style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em', color: 'oklch(0.25 0.05 265)' }}
+              >
+                교회 미니스트리 맵
+              </h2>
+            </div>
+
+            <p className="leading-relaxed font-korean mb-8" style={{ color: 'oklch(0.45 0.03 75)' }}>
+              하나님의 말씀에 기반하여 성령님의 도우심과 성도들과 협력하여 교회를 목회적으로
+              운영할 때 제가 그리고 있는 실제적인 교회 미니스트리 맵은 아래와 같습니다.
+            </p>
+
+            {/* Ministry Map Image */}
+            <div
+              className="rounded-sm overflow-hidden mb-10 flex justify-center"
+              style={{
+                background: 'oklch(0.985 0.003 75)',
+                boxShadow: '0 4px 16px oklch(0.30 0.09 265 / 0.10)',
+              }}
+            >
+              <Image
+                src="/images/philosophy/ministry-map.png"
+                alt="Church Ministry Map - 양육, 훈련, 사역의 체계"
+                width={700}
+                height={800}
+                className="w-full max-w-[600px] h-auto p-4"
+              />
+            </div>
+
+            {/* Three Levels */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  level: 'Individual',
+                  title: '양육 (개인)',
+                  items: ['경건의 시간 (QT)', '개인 기도', '새가족반', '평신도 사역자로서의 의식'],
+                  desc: '개인의 신앙 기초를 세우는 단계입니다. 경건의 시간과 기도를 통해 하나님과의 관계를 형성합니다.',
+                },
+                {
+                  level: 'Relationship',
+                  title: '훈련 (관계)',
+                  items: ['예배/설교', '사랑방', '중보기도모임', '초급반 · 제자훈련 · 사역훈련 · 리더훈련'],
+                  desc: '공동체 안에서 관계를 통해 성장하는 단계입니다. 예배와 소그룹을 통해 그리스도인으로 훈련됩니다.',
+                },
+                {
+                  level: 'Activity',
+                  title: '사역 (활동)',
+                  items: ['각종 은사별 사역팀', '교회내 사역 · 대외 사역', '전도/선교', '하나님 나라'],
+                  desc: '훈련받은 성도가 은사에 따라 섬기는 단계입니다. 교회 내외의 사역을 통해 하나님 나라를 확장합니다.',
+                },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="rounded-sm p-6"
+                  style={{
+                    background: 'oklch(0.97 0.005 75)',
+                    border: '1px solid oklch(0.92 0.005 75)',
+                    boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.06)',
+                  }}
+                >
+                  <span
+                    className="text-xs font-medium tracking-[0.15em] uppercase mb-2 block"
+                    style={{ color: 'oklch(0.72 0.10 75)' }}
+                  >
+                    {item.level}
+                  </span>
+                  <h3 className="text-lg font-bold mb-3 font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
+                    {item.title}
+                  </h3>
+                  <p className="text-sm font-korean leading-relaxed mb-4" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                    {item.desc}
+                  </p>
+                  <ul className="space-y-1.5">
+                    {item.items.map((li, i) => (
+                      <li key={i} className="flex items-start text-sm">
+                        <div className="w-1.5 h-1.5 rounded-full mt-1.5 mr-2 flex-shrink-0" style={{ background: 'oklch(0.72 0.10 75)' }} />
+                        <span className="font-korean" style={{ color: 'oklch(0.45 0.03 265)' }}>{li}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 4: 교회의 존재 이유와 우리의 사역 ── */}
+      <section className="py-20" style={{ background: 'oklch(0.97 0.005 75)' }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="mb-12">
+              <div className="h-0.5 w-12 mb-6" style={{ background: 'linear-gradient(90deg, oklch(0.72 0.10 75), oklch(0.45 0.12 265))' }} />
+              <span
+                className="text-xs font-medium tracking-[0.2em] uppercase mb-4 block"
+                style={{ color: 'oklch(0.72 0.10 75)' }}
+              >
+                Our Calling
+              </span>
+              <h2
+                className="font-headline font-bold"
+                style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.02em', color: 'oklch(0.25 0.05 265)' }}
+              >
+                교회의 존재 이유와 우리의 사역
+              </h2>
+            </div>
+
+            <p className="leading-relaxed font-korean mb-6" style={{ color: 'oklch(0.45 0.03 75)' }}>
+              모든 성숙한 성도는 두 가지 의미의 사역자가 되어야 합니다.
+              첫째, 복음의 일꾼이 되어야 합니다 (골 1:23). 복음의 확신이 필요하며, 하나님의 사역에 대하여 분명히 알고
+              증거할 수 있어야 합니다.
+              둘째, 교회의 일꾼이 되어야 합니다 (골 1:25). 지역 교회가 왜 존재해야 하는지에 대한 확실한 근거가 중요합니다.
+            </p>
+
+            {/* Key Question Card */}
+            <div
+              className="rounded-sm p-8 md:p-10 mb-10"
+              style={{
+                background: 'oklch(0.25 0.08 265)',
+                boxShadow: '0 4px 16px oklch(0.30 0.09 265 / 0.15)',
+              }}
+            >
+              <p
+                className="text-xs font-medium tracking-[0.15em] uppercase mb-4"
+                style={{ color: 'oklch(0.72 0.10 75)' }}
+              >
+                마태복음 28:19-20
+              </p>
+              <p
+                className="text-lg md:text-xl font-bold leading-relaxed font-korean"
+                style={{ color: 'oklch(0.98 0.003 75)' }}
+              >
+                그렇다면 우리 교회의 존재 이유와<br />
+                우리 (제직, 성도로서의 직분자들)의 사역은 어떠해야 하는가?
+              </p>
+            </div>
+
+            {/* Five Discipleship Principles */}
+            <div className="space-y-5">
+              {[
+                {
+                  num: '1',
+                  title: '제자론의 기본은 하나님 앞에서 인간의 존재론을 정립하는 것이다',
+                  desc: '하나님이 누구신가에 대한 바른 신관의 정립과 함께 자신의 정체성을 정립하는 것에서 시작됩니다.',
+                },
+                {
+                  num: '2',
+                  title: '존재론을 정립한 사람은 개인의 성품을 변화시켜 나간다',
+                  desc: '하나님과의 관계 속에서 그리스도의 성품을 닮아가며 날로 변화되는 삶을 살아갑니다.',
+                },
+                {
+                  num: '3',
+                  title: '참된 인격을 만들어가는 자들은 공동체를 위해 참된 해석자가 되어간다',
+                  desc: '성숙한 그리스도인은 공동체 안에서 하나님의 말씀을 올바르게 해석하고 적용하는 역할을 감당합니다.',
+                },
+                {
+                  num: '4',
+                  title: '해석하는 공동체인 교회는 예언적 공동체며 은혜의 공동체다',
+                  desc: '교회는 세상 속에서 하나님의 뜻을 선포하고 은혜를 나누는 예언적 역할을 수행합니다.',
+                },
+                {
+                  num: '5',
+                  title: '기독교 공동체는 완성된 종말을 이곳에서 살아가는 시간론에 기초한다',
+                  desc: '이미 이루어진 하나님 나라의 완성을 믿으며, 지금 이곳에서 그 나라의 가치를 실현해 갑니다.',
+                },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="rounded-sm p-6 md:p-8"
+                  style={{
+                    background: 'oklch(0.985 0.003 75)',
+                    border: '1px solid oklch(0.92 0.005 75)',
+                    boxShadow: '0 2px 8px oklch(0.30 0.09 265 / 0.04)',
+                  }}
+                >
+                  <div className="flex items-start gap-4">
+                    <div
+                      className="flex-shrink-0 w-10 h-10 rounded-sm flex items-center justify-center font-bold text-sm"
+                      style={{
+                        background: 'oklch(0.45 0.12 265)',
+                        color: 'oklch(0.98 0.003 75)',
+                      }}
+                    >
+                      {item.num}
+                    </div>
+                    <div>
+                      <h3 className="text-base md:text-lg font-bold mb-2 font-korean" style={{ color: 'oklch(0.25 0.05 265)' }}>
+                        {item.title}
+                      </h3>
+                      <p className="text-sm font-korean leading-relaxed" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                        {item.desc}
+                      </p>
+                    </div>
                   </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Closing Philosophy */}
+            <div
+              className="rounded-sm p-8 md:p-10 mt-10"
+              style={{
+                background: 'linear-gradient(135deg, oklch(0.30 0.09 265 / 0.05), oklch(0.72 0.10 75 / 0.08))',
+                border: '1px solid oklch(0.72 0.10 75 / 0.3)',
+              }}
+            >
+              <h3 className="text-lg font-bold mb-4 font-korean" style={{ color: 'oklch(0.30 0.09 265)' }}>
+                목회 철학
+              </h3>
+              <p className="leading-relaxed font-korean mb-3" style={{ color: 'oklch(0.45 0.03 75)' }}>
+                &ldquo;복음의 진리 가운데 모든 이들이 하나님의 생명 가운데 자유함을 누리게 하는 것이다.&rdquo;
+              </p>
+              <div className="space-y-2 mt-4">
+                {[
+                  '우리는 세상의 진리가 아닌 하나님의 진리를 선포하는 것이다',
+                  '우리는 이 땅의 생명으로 하나님의 영원한 생명을 경험하는 것이다',
+                  '우리는 하나님의 생명 가운데 참 자유함을 누리는 것이다',
+                ].map((text, i) => (
+                  <p key={i} className="text-sm font-korean leading-relaxed" style={{ color: 'oklch(0.45 0.12 265)' }}>
+                    {text}
+                  </p>
+                ))}
               </div>
+              <p className="text-xs mt-4 font-korean" style={{ color: 'oklch(0.55 0.01 75)' }}>
+                (요한복음 8장과 10장 &ldquo;진리가 너희를 자유케 하리라&rdquo;, &ldquo;풍성함을 누리는 삶&rdquo;)
+              </p>
             </div>
           </div>
         </div>
