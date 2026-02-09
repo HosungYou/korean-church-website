@@ -1,6 +1,16 @@
 {
   "page_title": "About Us",
   "subtitle": "A community growing in God's love",
+  "hero": {
+    "label": "About Us",
+    "title": "A Church of the Holy Spirit Making the World Beautiful with the Life of the Gospel",
+    "subtitle": "State College Korean Church is a living organism led by the Holy Spirit, saving lives through the proclamation of the Gospel and love of neighbors, growing to resemble the Father's church that makes the world beautiful."
+  },
+  "sections": {
+    "vision": "Our Vision",
+    "activities": "Our Activities",
+    "ministry": "Our Ministry"
+  },
   "vision": {
     "title": "Vision",
     "content": "A church that makes disciples of all nations with the love of Jesus Christ, expanding God's kingdom",

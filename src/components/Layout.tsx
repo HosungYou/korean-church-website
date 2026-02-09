@@ -263,16 +263,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   // Nav label translations
   const getNavLabel = (labelKey: string): string => {
-    const labelMap: Record<string, string> = {
-      'nav_groups.worship': '예배',
-      'nav_groups.nurturing': '양육/훈련',
-      'nav_groups.korean_school': '한국학교',
-      'nav_groups.missions': '선교',
-      'nav_groups.announcements': '알림 및 공지',
-      'nav_groups.gallery': '사진첩',
-      'nav_groups.about': '교회안내',
-    }
-    return labelMap[labelKey] || t(labelKey)
+    return t(labelKey)
   }
 
   return (

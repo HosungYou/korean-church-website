@@ -4,6 +4,7 @@
 // ===========================================
 
 import type { GetStaticProps, NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Layout from '@/components/Layout'
 import PageHeader from '@/components/PageHeader'
@@ -11,6 +12,7 @@ import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const AboutMain: NextPage = () => {
+  const { t } = useTranslation('about')
   const [currentSlide, setCurrentSlide] = useState(0)
 
   const slides = [
@@ -102,9 +104,9 @@ const AboutMain: NextPage = () => {
     <Layout>
       {/* Hero Section with PageHeader */}
       <PageHeader
-        title="복음의 생명으로 세상을 아름답게 하는 성령의 교회"
-        subtitle="스테이트 칼리지 한인교회는 복음전파와 이웃 사랑으로 죽어가는 생명을 살리고 세상을 아름답게 만드시는 아버지 교회를 닮아가는 생명의 유기체로 만드는 바로 성령이십니다."
-        label="교회 소개"
+        title={t('hero.title') as string}
+        subtitle={t('hero.subtitle') as string}
+        label={t('hero.label') as string}
         height="h-[420px] md:h-[480px]"
       />
 
@@ -128,7 +130,7 @@ const AboutMain: NextPage = () => {
                 color: 'oklch(0.25 0.05 265)'
               }}
             >
-              우리의 비전
+              {t('sections.vision')}
             </h2>
           </div>
 
@@ -204,7 +206,7 @@ const AboutMain: NextPage = () => {
                 color: 'oklch(0.25 0.05 265)'
               }}
             >
-              우리의 활동
+              {t('sections.activities')}
             </h2>
           </div>
 
@@ -356,7 +358,7 @@ const AboutMain: NextPage = () => {
                 color: 'oklch(0.25 0.05 265)'
               }}
             >
-              우리의 사역
+              {t('sections.ministry')}
             </h2>
           </div>
 
@@ -451,7 +453,7 @@ const AboutMain: NextPage = () => {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? 'ko', ['common'])),
+      ...(await serverSideTranslations(locale ?? 'ko', ['common', 'about'])),
     },
   }
 }

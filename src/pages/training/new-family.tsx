@@ -164,7 +164,7 @@ const NewFamilyEducationPage: NextPage = () => {
                 <Link
                   key={program.id}
                   href={`/training/${program.id}`}
-                  className={`group block rounded-sm overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl stagger-${(index % 6) + 1}`}
+                  className={`group block rounded-sm overflow-hidden transition-all duration-500 hover:-translate-y-2 stagger-${(index % 6) + 1}`}
                   style={{
                     background: 'oklch(0.98 0.003 75)',
                     border: '1px solid oklch(0.92 0.005 75)',
@@ -302,7 +302,7 @@ const NewFamilyEducationPage: NextPage = () => {
           </p>
           <Link
             href="/about/new-family-registration"
-            className="inline-flex items-center px-8 py-3 rounded-sm font-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+            className="inline-flex items-center px-8 py-3 rounded-sm font-medium transition-all duration-300 hover:-translate-y-1"
             style={{
               background: 'oklch(0.98 0.003 75)',
               color: CATEGORY_COLOR,

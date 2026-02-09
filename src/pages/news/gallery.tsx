@@ -679,7 +679,7 @@ const GalleryPage = () => {
 
                 {/* Caption */}
                 {currentPhotos[currentPhotoIndex]?.caption && (
-                  <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-lg max-w-lg text-center">
+                  <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-sm max-w-lg text-center">
                     <p className="font-korean">{currentPhotos[currentPhotoIndex].caption}</p>
                   </div>
                 )}

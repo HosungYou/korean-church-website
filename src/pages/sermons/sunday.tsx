@@ -189,7 +189,7 @@ const SundaySermonsPage = () => {
           style={{ background: 'oklch(0.15 0.05 265)' }}
         >
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="aspect-video w-full rounded-sm overflow-hidden shadow-2xl">
+            <div className="aspect-video w-full rounded-sm overflow-hidden" style={{ boxShadow: '0 8px 30px oklch(0.15 0.05 265 / 0.25)' }}>
               <iframe
                 src={`https://www.youtube.com/embed/${selectedSermon.youtube_video_id}`}
                 title={selectedSermon.title}

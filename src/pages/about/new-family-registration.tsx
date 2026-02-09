@@ -223,7 +223,7 @@ const NewFamilyRegistrationPage: NextPage = () => {
                         className="block text-sm font-medium mb-2"
                         style={labelStyle}
                       >
-                        {t('new_family.form.korean_name')} <span className="text-red-500">*</span>
+                        {t('new_family.form.korean_name')} <span style={{ color: 'oklch(0.55 0.25 25)' }}>*</span>
                       </label>
                       <input
                         type="text"
@@ -292,7 +292,7 @@ const NewFamilyRegistrationPage: NextPage = () => {
                         style={labelStyle}
                       >
                         <Phone className="w-4 h-4 inline mr-1" />
-                        {t('new_family.form.phone')} <span className="text-red-500">*</span>
+                        {t('new_family.form.phone')} <span style={{ color: 'oklch(0.55 0.25 25)' }}>*</span>
                       </label>
                       <input
                         type="tel"
