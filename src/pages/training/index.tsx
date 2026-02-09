@@ -325,7 +325,7 @@ const TrainingPage: NextPage = () => {
             {t('cta.description')}
           </p>
           <Link
-            href="/missions/new-family"
+            href="/about/new-family-registration"
             className="inline-flex items-center px-8 py-3 rounded-sm font-medium transition-all duration-300 hover:-translate-y-1"
             style={{
               background: 'oklch(0.72 0.10 75)',
