@@ -68,21 +68,21 @@ const NewFamilyRegistrationPage: NextPage = () => {
 
     try {
       const { error } = await supabase
-        .from('new_families')
+        .from('new_family_registrations')
         .insert({
-          name: formData.korean_name,
+          korean_name: formData.korean_name,
+          english_name: formData.english_name || null,
           email: formData.email || null,
           phone: formData.phone,
-          address: formData.address || null,
+          address1: formData.address || 'N/A',
+          city: 'State College',
+          state: 'PA',
+          zip_code: '16801',
           birth_date: formData.birth_date || null,
           gender: formData.gender || null,
           previous_church: formData.previous_church || null,
-          baptized: formData.baptized ?? false,
-          notes: formData.notes
-            ? `영문이름: ${formData.english_name}\n\n${formData.notes}`
-            : formData.english_name
-              ? `영문이름: ${formData.english_name}`
-              : null,
+          baptism_date: formData.baptized ? new Date().toISOString().split('T')[0] : null,
+          introduction: formData.notes || null,
           status: 'pending',
         })
 
