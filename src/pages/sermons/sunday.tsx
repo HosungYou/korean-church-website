@@ -183,21 +183,35 @@ const SundaySermonsPage = () => {
       </section>
 
       {/* Video Player Section */}
-      {selectedSermon && selectedSermon.youtube_video_id && (
+      {selectedSermon && (
         <section
           className="py-10"
           style={{ background: 'oklch(0.15 0.05 265)' }}
         >
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="aspect-video w-full rounded-sm overflow-hidden" style={{ boxShadow: '0 8px 30px oklch(0.15 0.05 265 / 0.25)' }}>
-              <iframe
-                src={`https://www.youtube.com/embed/${selectedSermon.youtube_video_id}`}
-                title={selectedSermon.title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
+            {selectedSermon.youtube_video_id ? (
+              <div className="aspect-video w-full rounded-sm overflow-hidden" style={{ boxShadow: '0 8px 30px oklch(0.15 0.05 265 / 0.25)' }}>
+                <iframe
+                  src={`https://www.youtube.com/embed/${selectedSermon.youtube_video_id}`}
+                  title={selectedSermon.title}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <div
+                className="w-full py-16 rounded-sm flex items-center justify-center"
+                style={{
+                  background: 'oklch(0.20 0.05 265)',
+                  boxShadow: '0 8px 30px oklch(0.15 0.05 265 / 0.25)'
+                }}
+              >
+                <p style={{ color: 'oklch(0.65 0.01 75)' }}>
+                  영상이 준비 중입니다.
+                </p>
+              </div>
+            )}
             <div className="mt-6">
               <h2
                 className="text-2xl font-bold font-headline"
